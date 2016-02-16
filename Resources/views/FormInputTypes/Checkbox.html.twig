@@ -1,0 +1,8 @@
+<div class="checkbox {{inputId}}-container{% if error %} has-error{% endif %}">
+    <div class="col-sm-12">
+        <label>
+            <input type="checkbox" id="{{inputId}}" name="{{inputName}}" value="{{value}}" {% if checked %}checked="checked"{% endif %} /> {{configuration['description']}}
+        </label>
+        <p class="form-error-text {{inputId}}-error">{{error}}</p>
+    </div>
+</div>

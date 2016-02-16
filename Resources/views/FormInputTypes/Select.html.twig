@@ -1,0 +1,61 @@
+{% if configuration['multiply'] == false %}
+    {% if configuration['expanded'] == false %}
+        <div class="form-group {{inputId}}-container{% if error %} has-error{% endif %}">
+            <label for="{{inputId}}" class="col-sm-5">{{configuration['description']}}</label>
+            <div class="col-sm-7">
+                <select class="form-control" id="{{inputId}}" name="{{inputName}}">
+                    {% for itemval, itemdescr in configuration['choices'] %}
+                        <option value="{{itemval}}" {% if value == itemval %}selected="selected"{% endif %}>{{itemdescr}}</option>
+                    {% endfor %}
+                </select>
+                <p class="form-error-text {{inputId}}-error">{{error}}</p>
+            </div>
+        </div>        
+    {% else %}
+        <div>
+            <label class="col-sm-5">{{configuration['description']}}</label>
+            <div class="col-sm-7">
+                <div id="{{inputId}}">
+                {% for itemval, itemdescr in configuration['choices'] %}
+                    <div class="radio {{inputId}}-container{% if error %} has-error{% endif %}">
+                        <label>
+                            <input type="radio" name="{{inputName}}" value="{{itemval}}" {% if value == itemval %}checked="checked"{% endif %} /> {{itemdescr}}
+                        </label>
+                    </div>
+                {% endfor %}
+                </div>
+                <p class="form-error-text {{inputId}}-error">{{error}}</p>
+            </div>
+        </div>
+    {% endif %}
+{% else %}
+    {% if configuration['expanded'] == false %}
+        <div class="form-group {{inputId}}-container{% if error %} has-error{% endif %}">
+            <label for="{{inputId}}" class="col-sm-5">{{configuration['description']}}</label>
+            <div class="col-sm-7">
+                <select class="form-control" id="{{inputId}}" name="{{inputName}}[]" multiple="multiple">
+                    {% for itemval, itemdescr in configuration['choices'] %}
+                        <option value="{{itemval}}" {% if itemval in value %}selected="selected"{% endif %}>{{itemdescr}}</option>
+                    {% endfor %}
+                </select>
+                <p class="form-error-text {{inputId}}-error">{{error}}</p>
+            </div>
+        </div>        
+    {% else %}
+        <div>
+            <label class="col-sm-5">{{configuration['description']}}</label>
+            <div class="col-sm-7">
+                <div id="{{inputId}}">
+                {% for itemval, itemdescr in configuration['choices'] %}
+                    <div class="checkbox {{inputId}}-container{% if error %} has-error{% endif %}">
+                        <label>
+                            <input type="checkbox" name="{{inputName}}[]" value="{{itemval}}" {% if itemval in value %}checked="checked"{% endif %} /> {{itemdescr}}
+                        </label>
+                    </div>
+                {% endfor %}
+                </div>
+                <p class="form-error-text {{inputId}}-error">{{error}}</p>
+            </div>
+        </div>
+    {% endif %}
+{% endif %}

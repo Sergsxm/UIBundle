@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>{% block title '' %}</title>
+        {% block stylesheets %}
+                <meta charset="UTF-8" />
+                <meta name="robots" content="noindex, nofollow" />
+                <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
+                <link rel="stylesheet" href="{{asset('bundles/sergsxmui/css/ui.css')}}" />
+        {% endblock %}
+        {% block javascriptsmodules %}
+                <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
+                <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+                <script src="//cdn.tinymce.com/4/tinymce.min.js"></script>
+                <script src="{{asset('bundles/sergsxmui/js/ui.js')}}"></script>
+        {% endblock %}
+        <link rel="icon" type="image/x-icon" href="{{asset('favicon.ico')}}" />
+    </head>
+    <body>
+	<div class="content container">
+            {% block content '' %}
+	</div>
+        {% block javascripts ''%}
+    </body>
+</html>

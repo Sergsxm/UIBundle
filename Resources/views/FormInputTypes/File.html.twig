@@ -1,0 +1,9 @@
+<div class="form-group {{inputId}}-container{% if error %} has-error{% endif %}">
+    <label for="{{inputId}}" class="col-sm-5">{{configuration['description']}}</label>
+    <div class="col-sm-7">
+        <div id="{{inputId}}-files" data-input-name="{{inputName}}"><input type="hidden" name="{{inputName}}" value="{{value}}" />{% if file != null %}{{file.getFileName()}} ({{file.getSize()}} bytes){% else %}File not selected{% endif %}</div>
+        <div><button class="btn btn-default" onclick="$('#{{inputId}}').val('');$('#{{inputId}}-files').html('&lt;input type=&quot;hidden&quot; name=&quot;{{inputName}}&quot; value=&quot;&quot; /&gt;File not selected');$('.{{inputId}}-error').text('');$('.{{inputId}}-container').removeClass('has-error');return false;">Reset</button></div>
+        <input type="file" class="form-file-upload" id="{{inputId}}" name="{{inputNameFile}}" data-replace-input-name="{{inputName}}" />
+        <p class="form-error-text {{inputId}}-error">{{error}}</p>
+    </div>
+</div>

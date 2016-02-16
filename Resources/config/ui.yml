@@ -1,0 +1,12 @@
+form_input_types:
+    text: "Sergsxm\\UIBundle\\FormInputTypes\\Text"
+    textarea: "Sergsxm\\UIBundle\\FormInputTypes\\TextArea"
+    html: "Sergsxm\\UIBundle\\FormInputTypes\\Html"
+    password: "Sergsxm\\UIBundle\\FormInputTypes\\Password"
+    checkbox: "Sergsxm\\UIBundle\\FormInputTypes\\Checkbox"
+    select: "Sergsxm\\UIBundle\\FormInputTypes\\Select"
+    timestamp: "Sergsxm\\UIBundle\\FormInputTypes\\TimeStamp"
+    file: "Sergsxm\\UIBundle\\FormInputTypes\\File"
+
+captcha_types:
+    standart: "Sergsxm\\UIBundle\\CaptchaTypes\\Standart"

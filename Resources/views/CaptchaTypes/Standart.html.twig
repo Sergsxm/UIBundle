@@ -1,0 +1,7 @@
+<div class="form-group {{inputId}}-container{% if error %} has-error{% endif %}">
+    <label for="{{inputId}}" class="col-sm-5">{{configuration['description']}}<div>{{valueTag | raw}}</div></label>
+    <div class="col-sm-7">
+        <input type="text" class="form-control" id="{{inputId}}" name="{{inputName}}" placeholder="{{configuration['description']}}" value="" />
+        <p class="form-error-text {{inputId}}-error">{{error}}</p>
+    </div>
+</div>

@@ -1,0 +1,50 @@
+{% extends "SergsxmUIBundle:Layout:Layout.html.twig" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-12">
+        <h1>{{title | default('')}}</h1>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-3">
+        <ul class="nav nav-pills nav-stacked">
+        {% for tabname,tab in tabs %}
+            <li {% if tabname == activeTab %}class="active"{% endif %}><a href="#" class="sergsxmui-tab-btn" data-tab-name="{{tabname}}">{{tab['description']}}</a></li>
+        {% endfor %}
+        </ul>
+    </div>
+    <div class="col-lg-9">
+        {% for tabname,tab in tabs %}
+            <div id="sergsxmui-tab-wrap-{{tabname}}" class="sergsxmui-tab-wrap" {% if tabname != activeTab %}style="display:none"{% endif %}>
+            {% include 'SergsxmUIBundle:TableLists:TableListTab.html.twig' with tab only %}
+            </div>
+        {% endfor %}
+    </div>
+</div>        
+{% endblock %}                
+
+{% block javascripts %}
+    {{ parent() }}
+    
+    <script>
+        $(function () {
+            $('.sergsxmui-tab-btn').click(function () {
+                $('.sergsxmui-tab-wrap').hide();
+                $('#sergsxmui-tab-wrap-'+$(this).data('tab-name')).show();
+                $(this).closest('ul.nav').find('li.active').removeClass('active');
+                $(this).closest('li').addClass('active');
+            });
+            $('.sergsxmui-tab-checkbox-all').click(function () {
+                var name = $(this).data('tab-name')
+                var checkedStatus = $(this).is(':checked')
+                $('.sergsxmui-tab-checkbox-'+name).each(function () {this.checked = checkedStatus;});
+            });
+            $('.sergsxmui-tab-checkbox').closest('tr').click(function (e) {
+                if ($(e.target).is('td')) {
+                    $(this).find('.sergsxmui-tab-checkbox').each(function () {this.checked = !this.checked;});
+                }
+            });
+        });
+    </script>
+{% endblock %}

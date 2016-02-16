@@ -1,0 +1,15 @@
+{% if root|default(false) == false %}
+    <div id="{{groupId}}">
+        {% if description != '' %}
+            <h2>{{description}}</h2>
+        {% endif %}
+{% endif %}
+        {% for field in fields %}
+            {% include field['defaultTemplate'] with field only %}
+        {% endfor %}
+        {% for group in groups %}
+            {% include group['defaultTemplate'] with group only %}
+        {% endfor %}
+{% if root|default(false) == false %}
+    </div>
+{% endif %}

@@ -1,0 +1,3 @@
+sergsxm_ui_file_upload:
+    path:     /system/ui/file_upload
+    defaults: { _controller: SergsxmUIBundle:File:upload }

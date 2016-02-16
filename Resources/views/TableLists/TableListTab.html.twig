@@ -1,0 +1,156 @@
+<div id="sergsxmui-tab-content-{{name}}">
+    <div id="sergsxmui-tab-errors-{{name}}"></div>
+    <div style="margin-bottom:15px;">
+        {% if searchEnabled == true %}
+            <div class="pull-right">
+                <form class="form-inline" action="" method="get">
+                    <input type="hidden" name="tab" value="{{name}}" />
+                    <div class="form-group">
+                        <div class="input-group">
+                            <input type="text" class="form-control" name="search" value="{{search}}" />
+                            <span class="input-group-btn">
+                                <button type="submit" class="btn btn-default"><i class="glyphicon glyphicon-search"></i></button>
+                            </span>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        {% endif %}
+        {% for action in actions %}
+            {% if (action['permission'] == true) %}
+                {% if action['type'] == 'url' %}
+                    <a href="{{action['url']}}" class="btn btn-default">{{action['description']}}</a>
+                {% elseif action['type'] == 'ajax' %}
+                    <a href="#" class="btn btn-default" onclick="sergsxmuiTabFunction_{{name}}_{{action['name']}}();return false;">{{action['description']}}</a>
+                    <script>
+                        function sergsxmuiTabFunction_{{name}}_{{action['name']}}() {
+                            var checkCount = $('.sergsxmui-tab-checkbox-{{name}}:checked').length;
+                            {% if action['multiply'] == false %}
+                            if (checkCount != 1) {
+                                sergsxmUIFunctions.alert('{% trans %}It should be selected only one entry{% endtrans %}', 'error', '#sergsxmui-tab-errors-{{name}}');
+                                return false;
+                            }
+                            {% else %}
+                            if (checkCount == 0) {
+                                sergsxmUIFunctions.alert('{% trans %}It should be selected at least one entry{% endtrans %}', 'error', '#sergsxmui-tab-errors-{{name}}');
+                                return false;
+                            }
+                            {% endif %}
+                            {% if action['confirmed'] == true %}
+                            sergsxmUIFunctions.confirm('{{action['confirmedMessage']}}', '{{action['confirmedTitle']}}', '{{action['confirmedOk']}}', '{{action['confirmedCancel']}}', function () {
+                                $.ajax({
+                                    type: "POST",
+                                    url: '?tab={{name}}&ajax=true',
+                                    data: "action={{action['name']}}&"+$('.sergsxmui-tab-checkbox-{{name}}').serialize(),
+                                    error: function(){
+                                        sergsxmUIFunctions.alert('{% trans %}Ajax request error{% endtrans %}', 'error', '#sergsxmui-tab-errors-{{name}}');
+                                    },
+                                    success: function(data){
+                                        $('#sergsxmui-tab-content-{{name}}').replaceWith(data);    
+                                    }
+                                });	 
+                            });
+                            {% else %}
+                            $.ajax({
+                                type: "POST",
+                                url: '?tab={{name}}&ajax=true',
+                                data: "action={{action['name']}}&"+$('.sergsxmui-tab-checkbox-{{name}}').serialize(),
+                                error: function(){
+                                    sergsxmUIFunctions.alert('{% trans %}Ajax request error{% endtrans %}', 'error', '#sergsxmui-tab-errors-{{name}}');
+                                },
+                                success: function(data){
+                                    $('#sergsxmui-tab-content-{{name}}').replaceWith(data);    
+                                }
+                            });	 
+                            {% endif %}
+                            return false;
+                        }
+                    </script>
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+        <div class="clearfix"></div>
+    </div>
+    
+    <table class="table table-bordered table-hover table-striped">
+        <thead>
+            <tr>
+                    <th>
+                        <input type="checkbox" class="sergsxmui-tab-checkbox-all" data-tab-name="{{name}}" />
+                    </th>
+                {% for colkey, col in columns %}
+                    {% if col['configuration']['hidden'] == false %}
+                        <th>
+                            {% if col['configuration']['sort'] == true %}
+                                {% if colkey == orderColumn %}
+                                    <a href="?tab={{name}}&ordercolumn={{colkey}}&orderdirection={{(orderDirection == 0 ? 'desc' : 'asc')}}">{{col['configuration']['description']}} {{(orderDirection == 0 ? '<i class="glyphicon glyphicon-arrow-up"></i>' : '<i class="glyphicon glyphicon-arrow-down"></i>') | raw}}</a>
+                                {% else %}
+                                    <a href="?tab={{name}}&ordercolumn={{colkey}}&orderdirection=asc">{{col['configuration']['description']}}</a>
+                                {% endif %}
+                            {% else %}
+                                {{col['configuration']['description']}}
+                            {% endif %}
+                        </th>
+                    {% endif %}
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+                <tr>
+                        <td><input type="checkbox" class="sergsxmui-tab-checkbox sergsxmui-tab-checkbox-{{name}}" name="id[]" value="{{item['id']}}" /></td>
+                    {% for colkey, col in columns %}
+                        {% if col['configuration']['hidden'] == false %}
+                            <td>
+                                {{item['col'~colkey] | raw}}
+                                {% if (loop.first) and (actionErrors[item['id']] is defined) %}
+                                    <p class="ec-error">{{actionErrors[item['id']]}}</p>
+                                {% endif %}
+                            </td>
+                        {% endif %}
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+        
+    {% if (pageCount > 0) %}
+    <nav>
+        <ul class="pagination">
+            <li {% if page == 0 %}class="disabled"{% endif %}>
+                <a href="?tab={{name}}&page={{page - 1}}">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            {% set to = page + 1 %}
+            {% set from = page - 1 %}
+            {% if (to >= pageCount) %}
+                {% set to = pageCount - 1 %}
+            {% endif %}
+            {% if (from < 0) %}
+                {% set from = 0 %}
+            {% endif %}
+            {% if (from > 0) %}
+                <li><a href="?tab={{name}}&page=0">1</a></li>
+            {% endif %}
+            {% if (from > 1) %}
+                <li class="disabled"><a href="#">...</a></li>
+            {% endif %}
+            {% for i in from..to %}
+                <li {% if i == page %}class="active"{% endif %}><a href="?tab={{name}}&page={{i}}">{{i+1}}</a></li>
+            {% endfor %}
+            {% if (to < (pageCount - 2)) %}
+                <li class="disabled"><a href="#">...</a></li>
+            {% endif %}
+            {% if (to < (pageCount - 1)) %}
+                <li><a href="?tab={{name}}&page={{pageCount - 1}}">{{pageCount}}</a></li>
+            {% endif %}
+            <li {% if page == pageCount - 1 %}class="disabled"{% endif %}>
+                <a href="?tab={{name}}&page={{page + 1}}">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>        
+        </ul>
+    </nav>            
+    {% endif %}
+</div>

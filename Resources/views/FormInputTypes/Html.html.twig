@@ -1,0 +1,7 @@
+<div class="form-group {{inputId}}-container{% if error %} has-error{% endif %}">
+    <label for="{{inputId}}" class="col-sm-12">{{configuration['description']}}</label>
+    <div class="col-sm-12">
+        <textarea class="form-control form-wysiwyg" id="{{inputId}}" name="{{inputName}}">{{value}}</textarea>
+        <p class="form-error-text {{inputId}}-error">{{error}}</p>
+    </div>
+</div>

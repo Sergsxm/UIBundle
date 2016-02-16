@@ -1,0 +1,26 @@
+{
+    "name": "sergsxm/ui-bundle",
+    "description": "Sergsxm UIBundle provides functions for creating forms and table lists",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Sergey Hayevoy",
+            "email": "sergsxm@embedded.by"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.9",
+        "symfony/symfony": "2.8.*",
+        "doctrine/orm": "^2.4.8",
+        "doctrine/doctrine-bundle": "~1.4"
+    },
+    "autoload": {
+        "psr-4": { "Sergsxm\\UIBundle\\": "" }
+    },
+    "target-dir": "Sergsxm/UIBundle",
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0.*-dev"
+        }
+    }
+}

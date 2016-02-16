@@ -1,0 +1,6 @@
+services:
+    sergsxm.ui:
+        class: Sergsxm\UIBundle\Services\UIService
+        arguments: ["@service_container"]
+        tags:
+            - {name: kernel.cache_warmer}
