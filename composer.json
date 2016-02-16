@@ -17,7 +17,6 @@
     "autoload": {
         "psr-4": { "Sergsxm\\UIBundle\\": "" }
     },
-    "target-dir": "Sergsxm/UIBundle",
     "extra": {
         "branch-alias": {
             "dev-master": "1.0.*-dev"
