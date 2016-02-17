@@ -361,7 +361,7 @@ class TableListTab
                 } elseif ($colitem['type'] == 'case') {
                     if ($item['col'.$colkey] === false) $item['col'.$colkey] = 'false';
                     if ($item['col'.$colkey] === true) $item['col'.$colkey] = 'true';
-                    $item['col'.$colkey] = ((($item['col'.$colkey] != '') && isset($colitem['configuration']['choices'][$item['col'.$colkey]])) ? $colitem['configuration']['choices'][$item['col'.$colkey]] : '');
+                    $item['col'.$colkey] = ((($item['col'.$colkey] !== null) && isset($colitem['configuration']['choices'][$item['col'.$colkey]])) ? $colitem['configuration']['choices'][$item['col'.$colkey]] : '');
                 }
                 
                 if ($colitem['configuration']['url'] != '') {
