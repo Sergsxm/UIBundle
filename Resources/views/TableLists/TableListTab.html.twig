@@ -21,7 +21,7 @@
                 {% if action['type'] == 'url' %}
                     <a href="{{action['url']}}" class="btn btn-default">{{action['description']}}</a>
                 {% elseif action['type'] == 'ajax' %}
-                    <a href="#" class="btn btn-default" onclick="sergsxmuiTabFunction_{{name}}_{{action['name']}}();return false;">{{action['description']}}</a>
+                    <a href="#" class="btn btn-default {{ action['multiply'] == false ? 'sergsxmui-tab-function-'~name~'-single' : 'sergsxmui-tab-function-'~name~'-multiply' }}" onclick="sergsxmuiTabFunction_{{name}}_{{action['name']}}();return false;">{{action['description']}}</a>
                     <script>
                         function sergsxmuiTabFunction_{{name}}_{{action['name']}}() {
                             var checkCount = $('.sergsxmui-tab-checkbox-{{name}}:checked').length;
@@ -67,6 +67,8 @@
                         }
                     </script>
                 {% endif %}
+            {% else %}
+                <a href="#" class="btn btn-default disabled" onclick="return false;">{{action['description']}}</a>
             {% endif %}
         {% endfor %}
         <div class="clearfix"></div>
@@ -76,7 +78,7 @@
         <thead>
             <tr>
                     <th>
-                        <input type="checkbox" class="sergsxmui-tab-checkbox-all" data-tab-name="{{name}}" />
+                        <input type="checkbox" class="sergsxmui-tab-checkbox-all sergsxmui-tab-checkbox-all-{{name}}" data-tab-name="{{name}}" />
                     </th>
                 {% for colkey, col in columns %}
                     {% if col['configuration']['hidden'] == false %}
@@ -98,7 +100,7 @@
         <tbody>
             {% for item in items %}
                 <tr>
-                        <td><input type="checkbox" class="sergsxmui-tab-checkbox sergsxmui-tab-checkbox-{{name}}" name="id[]" value="{{item['id']}}" /></td>
+                        <td><input type="checkbox" class="sergsxmui-tab-checkbox sergsxmui-tab-checkbox-{{name}}" data-tab-name="{{name}}" name="id[]" value="{{item['id']}}" /></td>
                     {% for colkey, col in columns %}
                         {% if col['configuration']['hidden'] == false %}
                             <td>
@@ -116,7 +118,7 @@
         
     {% if (pageCount > 0) %}
     <nav>
-        <ul class="pagination">
+        <ul class="pagination sergsxmui-tab-pagination">
             <li {% if page == 0 %}class="disabled"{% endif %}>
                 <a href="?tab={{name}}&page={{page - 1}}">
                     <span aria-hidden="true">&laquo;</span>
@@ -151,6 +153,19 @@
                 </a>
             </li>        
         </ul>
+        <div class="btn-group pull-right">
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                {% trans with {'%itemsInPage%': itemsInPage} %}%itemsInPage% items on page{% endtrans %}
+                <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu">
+                {% for i in itemsInPageChoices %}
+                    {% if i != itemsInPage %}
+                    <li><a href="?tab={{name}}&itemsinpage={{i}}">{% trans with {'%itemsInPage%': i} %}%itemsInPage% items on page{% endtrans %}</a></li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        </div>
     </nav>            
     {% endif %}
 </div>

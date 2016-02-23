@@ -224,6 +224,7 @@ class TableListTab
         $this->orderDirection = $request->getSession()->get('tab_'.$request->get('_route').'_'.$this->name.'_orderDirection');
         $this->page = $request->getSession()->get('tab_'.$request->get('_route').'_'.$this->name.'_page');
         $this->search = $request->getSession()->get('tab_'.$request->get('_route').'_'.$this->name.'_search');
+        $this->itemsInPage = $request->getSession()->get('tab_'.$request->get('_route').'_'.$this->name.'_itemsInPage');
         if ($request->get('tab') != $this->name) {
             return false;
         }
@@ -240,6 +241,10 @@ class TableListTab
         if ($request->get('search') !== null) {
             $this->search = $request->get('search');
             $request->getSession()->set('tab_'.$request->get('_route').'_'.$this->name.'_search', $this->search);
+        }
+        if ($request->get('itemsinpage') !== null) {
+            $this->itemsInPage = intval($request->get('itemsinpage'));
+            $request->getSession()->set('tab_'.$request->get('_route').'_'.$this->name.'_itemsInPage', $this->itemsInPage);
         }
         if ($request->get('action') != null) {
             if (isset($this->actions[$request->get('action')]) && ($this->actions[$request->get('action')]['type'] == 'ajax')) {
@@ -328,6 +333,10 @@ class TableListTab
                 }
             }
         }
+        
+        if (!in_array($this->itemsInPage, array(10, 20, 50, 100))) {
+            $this->itemsInPage = 20;
+        }
 
         $itemsCount = $this->container->get('doctrine')->getManager()->createQuery('SELECT count(item.id) FROM '.$fromSql.($whereSql != '' ? ' WHERE '.$whereSql : ' '))->setParameters($parametersSql)->getSingleScalarResult();
 
@@ -391,6 +400,7 @@ class TableListTab
             'search' => $this->search,
             'actions' => $this->actions,
             'actionErrors' => $this->actionErrors,
+            'itemsInPageChoices' => array(10, 20, 50, 100),
         );
     }
 
