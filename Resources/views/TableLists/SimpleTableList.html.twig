@@ -1,0 +1,65 @@
+<div class="row">
+    <div class="col-lg-12">
+        <h1>{{title | default('')}}</h1>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-3">
+        <ul class="nav nav-pills nav-stacked">
+        {% for tabname,tab in tabs %}
+            <li {% if tabname == activeTab %}class="active"{% endif %}><a href="#" class="sergsxmui-tab-btn" data-tab-name="{{tabname}}">{{tab['description']}}</a></li>
+        {% endfor %}
+        </ul>
+    </div>
+    <div class="col-lg-9">
+        {% for tabname,tab in tabs %}
+            <div id="sergsxmui-tab-wrap-{{tabname}}" class="sergsxmui-tab-wrap" {% if tabname != activeTab %}style="display:none"{% endif %}>
+            {% include 'SergsxmUIBundle:TableLists:TableListTab.html.twig' with tab only %}
+            </div>
+        {% endfor %}
+    </div>
+</div>        
+    <script>
+        $(function () {
+            function sergsxmuiTabUpdateVisibility(tabName) {
+                var count = $('.sergsxmui-tab-checkbox-'+tabName+':checked').length;
+                if (count == 1) {
+                    $('.sergsxmui-tab-function-'+tabName+'-single').removeClass('disabled');
+                } else {
+                    $('.sergsxmui-tab-function-'+tabName+'-single').addClass('disabled');
+                }
+                if (count > 0) {
+                    $('.sergsxmui-tab-function-'+tabName+'-multiply').removeClass('disabled');
+                } else {
+                    $('.sergsxmui-tab-function-'+tabName+'-multiply').addClass('disabled');
+                }
+                var ncount = $('.sergsxmui-tab-checkbox-'+tabName+':not(:checked)').length;
+                $('.sergsxmui-tab-checkbox-all-'+tabName)[0].checked = ((ncount == 0) && (count != 0));
+            }
+            $('.sergsxmui-tab-btn').click(function () {
+                $('.sergsxmui-tab-wrap').hide();
+                $('#sergsxmui-tab-wrap-'+$(this).data('tab-name')).show();
+                $(this).closest('ul.nav').find('li.active').removeClass('active');
+                $(this).closest('li').addClass('active');
+                return false;
+            });
+            $('.sergsxmui-tab-checkbox-all').click(function () {
+                var name = $(this).data('tab-name');
+                var checkedStatus = $(this).is(':checked');
+                $('.sergsxmui-tab-checkbox-'+name).each(function () {this.checked = checkedStatus;});
+                sergsxmuiTabUpdateVisibility(name);
+            });
+            $('.sergsxmui-tab-checkbox').click(function () {
+                var name = $(this).data('tab-name');
+                sergsxmuiTabUpdateVisibility(name);
+            });
+            $('.sergsxmui-tab-checkbox').closest('tr').click(function (e) {
+                if ($(e.target).is('td')) {
+                    $(this).find('.sergsxmui-tab-checkbox').each(function () {this.checked = !this.checked;});
+                }
+            });
+        {% for tabname,tab in tabs %}
+            sergsxmuiTabUpdateVisibility('{{tabname}}');
+        {% endfor %}
+        });
+    </script>
