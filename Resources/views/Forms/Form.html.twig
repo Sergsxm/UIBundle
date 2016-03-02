@@ -15,10 +15,10 @@
                 <div>
                     <div class="sergsxmui-tabs-navbar-buttons">
                         {% if readOnly == false %}
-                            {% if backUrl is defined %}<button type="submit" class="btn btn-primary" name="back" value="true">{% trans %}Save{% endtrans %}</button>{% endif %}
-                            <button type="submit" class="btn btn-default">{% trans %}Apply{% endtrans %}</button>
+                            {% if backUrl is defined %}<button type="submit" class="btn btn-primary" name="back" value="true">{% trans from "sergsxmui" %}Save{% endtrans %}</button>{% endif %}
+                            <button type="submit" class="btn btn-default">{% trans from "sergsxmui" %}Apply{% endtrans %}</button>
                         {% endif %}
-                        {% if backUrl is defined %}<a href="{{backUrl}}" class="btn btn-default">{% trans %}Cancel{% endtrans %}</a>{% endif %}
+                        {% if backUrl is defined %}<a href="{{backUrl}}" class="btn btn-default">{% trans from "sergsxmui" %}Cancel{% endtrans %}</a>{% endif %}
                     </div>
                     <ul class="nav nav-pills nav-stacked">
                         {% for group in groups %}
@@ -31,10 +31,10 @@
         </div>
         <div class="hidden-lg hidden-md col-sm-12 col-xs-12">
             {% if readOnly == false %}
-                {% if backUrl is defined %}<button type="submit" class="btn btn-primary" name="back" value="true">{% trans %}Save{% endtrans %}</button>{% endif %}
-                <button type="submit" class="btn btn-default">{% trans %}Apply{% endtrans %}</button>
+                {% if backUrl is defined %}<button type="submit" class="btn btn-primary" name="back" value="true">{% trans from "sergsxmui" %}Save{% endtrans %}</button>{% endif %}
+                <button type="submit" class="btn btn-default">{% trans from "sergsxmui" %}Apply{% endtrans %}</button>
             {% endif %}
-            {% if backUrl is defined %}<a href="{{backUrl}}" class="btn btn-default">{% trans %}Cancel{% endtrans %}</a>{% endif %}
+            {% if backUrl is defined %}<a href="{{backUrl}}" class="btn btn-default">{% trans from "sergsxmui" %}Cancel{% endtrans %}</a>{% endif %}
         </div>
     </div>
 </form>

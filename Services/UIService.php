@@ -21,11 +21,13 @@ class UIService implements CacheWarmerInterface
     
     private $container;
     private $cacheDir;
+    private $debugTrigger;
     
     public function __construct(Container $container) 
     {
         $this->container = $container;
         $this->cacheDir = $this->container->getParameter('kernel.cache_dir').DIRECTORY_SEPARATOR.'sergsxm';
+        $this->debugTrigger = $this->container->getParameter('kernel.debug');
     }
 
 /**
@@ -97,8 +99,9 @@ class UIService implements CacheWarmerInterface
  */    
     public function getFormInputTypes()
     {
-        if (!file_exists($this->cacheDir.DIRECTORY_SEPARATOR.'formInputTypes.php')) {
+        if (($this->debugTrigger == true) || (!file_exists($this->cacheDir.DIRECTORY_SEPARATOR.'formInputTypes.php'))) {
             $this->updateCache();
+            $this->debugTrigger = false;
         }
         
         $types = include($this->cacheDir.DIRECTORY_SEPARATOR.'formInputTypes.php');
@@ -112,8 +115,9 @@ class UIService implements CacheWarmerInterface
  */    
     public function getCaptchaTypes()
     {
-        if (!file_exists($this->cacheDir.DIRECTORY_SEPARATOR.'captchaTypes.php')) {
+        if (($this->debugTrigger == true) || (!file_exists($this->cacheDir.DIRECTORY_SEPARATOR.'captchaTypes.php'))) {
             $this->updateCache();
+            $this->debugTrigger = false;
         }
         
         $types = include($this->cacheDir.DIRECTORY_SEPARATOR.'captchaTypes.php');

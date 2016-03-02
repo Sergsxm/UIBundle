@@ -2,6 +2,7 @@
     "name": "sergsxm/ui-bundle",
     "description": "Sergsxm UIBundle provides functions for creating forms and table lists",
     "license": "MIT",
+    "keywords": ["form", "extra form", "table", "list"],
     "authors": [
         {
             "name": "Sergey Hayevoy",

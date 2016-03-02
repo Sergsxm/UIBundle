@@ -27,12 +27,12 @@
                             var checkCount = $('.sergsxmui-tab-checkbox-{{name}}:checked').length;
                             {% if action['multiply'] == false %}
                             if (checkCount != 1) {
-                                sergsxmUIFunctions.alert('{% trans %}It should be selected only one entry{% endtrans %}', 'error', '#sergsxmui-tab-errors-{{name}}');
+                                sergsxmUIFunctions.alert('{% trans from "sergsxmui" %}It should be selected only one item{% endtrans %}', 'error', '#sergsxmui-tab-errors-{{name}}');
                                 return false;
                             }
                             {% else %}
                             if (checkCount == 0) {
-                                sergsxmUIFunctions.alert('{% trans %}It should be selected at least one entry{% endtrans %}', 'error', '#sergsxmui-tab-errors-{{name}}');
+                                sergsxmUIFunctions.alert('{% trans from "sergsxmui" %}It should be selected one or more items{% endtrans %}', 'error', '#sergsxmui-tab-errors-{{name}}');
                                 return false;
                             }
                             {% endif %}
@@ -43,7 +43,7 @@
                                     url: '?tab={{name}}&ajax=true',
                                     data: "action={{action['name']}}&"+$('.sergsxmui-tab-checkbox-{{name}}').serialize(),
                                     error: function(){
-                                        sergsxmUIFunctions.alert('{% trans %}Ajax request error{% endtrans %}', 'error', '#sergsxmui-tab-errors-{{name}}');
+                                        sergsxmUIFunctions.alert('{% trans from "sergsxmui" %}Ajax request error{% endtrans %}', 'error', '#sergsxmui-tab-errors-{{name}}');
                                     },
                                     success: function(data){
                                         $('#sergsxmui-tab-content-{{name}}').replaceWith(data);    
@@ -56,7 +56,7 @@
                                 url: '?tab={{name}}&ajax=true',
                                 data: "action={{action['name']}}&"+$('.sergsxmui-tab-checkbox-{{name}}').serialize(),
                                 error: function(){
-                                    sergsxmUIFunctions.alert('{% trans %}Ajax request error{% endtrans %}', 'error', '#sergsxmui-tab-errors-{{name}}');
+                                    sergsxmUIFunctions.alert('{% trans from "sergsxmui" %}Ajax request error{% endtrans %}', 'error', '#sergsxmui-tab-errors-{{name}}');
                                 },
                                 success: function(data){
                                     $('#sergsxmui-tab-content-{{name}}').replaceWith(data);    
@@ -155,13 +155,13 @@
         </ul>
         <div class="btn-group pull-right">
             <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                {% trans with {'%itemsInPage%': itemsInPage} %}%itemsInPage% items on page{% endtrans %}
+                {% trans with {'%itemsInPage%': itemsInPage} from "sergsxmui" %}%itemsInPage% items on page{% endtrans %}
                 <span class="caret"></span>
             </button>
             <ul class="dropdown-menu">
                 {% for i in itemsInPageChoices %}
                     {% if i != itemsInPage %}
-                    <li><a href="?tab={{name}}&itemsinpage={{i}}">{% trans with {'%itemsInPage%': i} %}%itemsInPage% items on page{% endtrans %}</a></li>
+                    <li><a href="?tab={{name}}&itemsinpage={{i}}">{% trans with {'%itemsInPage%': i} from "sergsxmui" %}%itemsInPage% items on page{% endtrans %}</a></li>
                     {% endif %}
                 {% endfor %}
             </ul>
