@@ -335,6 +335,25 @@ Example:
     private $fileName;
 ```
 
+To localize the phrases in annotation there are two options: translate and translateDomain. 
+Option *translate* is an array that contains the keys of the configuration array that need to be localized.
+Option *translateDomain* is translation domain for tanslator service.
+
+Example:
+
+```php
+    /**
+     * @var string
+     *
+     * @\Sergsxm\UIBundle\Annotations\Input(
+     *      type="text", 
+     *      configuration={"description"="File name", "required"=true, "requiredError"="The field can not be empty"}, 
+     *      translate={"description", "requiredError"}, 
+     *      translateDomain="sergsxmui")
+     */
+    private $fileName;
+```
+
 Annotation `Sergsxm\UIBundle\Annotations\Tags` is used to mark form input fields. 
 When you call a method `fromAnnotations($tag)` with specified tag, the form will contain only the fields marked with this tag.
 This is useful to create forms for different user roles.

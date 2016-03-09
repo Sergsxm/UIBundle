@@ -46,7 +46,7 @@ class TimeStamp extends FormInput
             'description' => $this->name,
             'required' => false,
             'requiredError' => 'The field can not be empty',
-            'dateTimeFormat' => 'Y-m-d\TH:i'
+            'dateTimeFormat' => 'Y-m-d\TH:i',
         );
     }
 

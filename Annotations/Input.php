@@ -18,4 +18,6 @@ class Input
 {
     public $type;
     public $configuration;
+    public $translate;
+    public $translateDomain;
 }

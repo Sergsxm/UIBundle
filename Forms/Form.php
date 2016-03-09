@@ -392,6 +392,7 @@ class Form implements FormInterface
     public function fromAnnotations($tag = null)
     {
         $reader = $this->container->get('annotation_reader');
+        $translator = $this->container->get('translator');
         if (empty($reader)) {
             throw new FormException(__CLASS__.': annotation reader service not found');
         }
@@ -408,6 +409,13 @@ class Form implements FormInterface
             }
             $input = $reader->getPropertyAnnotation($property, '\Sergsxm\UIBundle\Annotations\Input');
             if (!empty($input)) {
+                if (is_array($input->translate) && is_array($input->configuration)) {
+                    foreach ($input->translate as $transKey) {
+                        if (isset($input->configuration[$transKey])) {
+                            $input->configuration[$transKey] = $translator->trans($input->configuration[$transKey], array(), $input->translateDomain);
+                        }
+                    }
+                }
                 $this->addField($input->type, $property->getName(), $input->configuration);
             }
         }
