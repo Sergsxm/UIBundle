@@ -19,7 +19,7 @@
                 {% for itemval, itemdescr in configuration['choices'] %}
                     <div class="radio {{inputId}}-container{% if error %} has-error{% endif %}">
                         <label>
-                            <input type="radio" name="{{inputName}}" value="{{itemval}}" {% if value == itemval %}checked="checked"{% endif %} /> {{itemdescr}}
+                            <input type="radio" replace-input-id="{{inputId}}" name="{{inputName}}" value="{{itemval}}" {% if value == itemval %}checked="checked"{% endif %} /> {{itemdescr}}
                         </label>
                     </div>
                 {% endfor %}
@@ -49,7 +49,7 @@
                 {% for itemval, itemdescr in configuration['choices'] %}
                     <div class="checkbox {{inputId}}-container{% if error %} has-error{% endif %}">
                         <label>
-                            <input type="checkbox" name="{{inputName}}[]" value="{{itemval}}" {% if itemval in value %}checked="checked"{% endif %} /> {{itemdescr}}
+                            <input type="checkbox" replace-input-id="{{inputId}}" name="{{inputName}}[]" value="{{itemval}}" {% if itemval in value %}checked="checked"{% endif %} /> {{itemdescr}}
                         </label>
                     </div>
                 {% endfor %}
