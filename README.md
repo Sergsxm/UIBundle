@@ -94,6 +94,7 @@ public function render($template = 'SergsxmUIBundle:Forms:Form.html.twig', $para
 public function findInputByName($name);
 public function getValue();
 public function setValue($value);
+public function fromAnnotations($tag = null);
 ```
 
 Assigning functions described in greater detail in the class file. 
@@ -314,6 +315,42 @@ You can change the default templates, but you can describe the output of individ
 ```
 
 So you can create your own templates and put them when calling the render methods of form object.
+
+### 2.6. Annotations
+
+You can create forms from the annotations of mapping object (Doctrine required). 
+For this purpose use method `fromAnnotations($tag = null)`.
+
+Annotation `Sergsxm\UIBundle\Annotations\Input` is used to create input fields.
+Type and configuration parameters are directly passed to the method *addField*.
+
+Example:
+
+```php
+    /**
+     * @var string
+     *
+     * @\Sergsxm\UIBundle\Annotations\Input(type="text", configuration={"description"="File name", "required"=true, "requiredError"="The field can not be empty"})
+     */
+    private $fileName;
+```
+
+Annotation `Sergsxm\UIBundle\Annotations\Tags` is used to mark form input fields. 
+When you call a method `fromAnnotations($tag)` with specified tag, the form will contain only the fields marked with this tag.
+This is useful to create forms for different user roles.
+
+Example:
+
+```php
+    /**
+     * @var string
+     *
+     * @FormAnnotations\Tags(forms={"t2ags", "two"})
+     * @\Sergsxm\UIBundle\Annotations\Tags(forms={"user", "administrator"})
+     * @\Sergsxm\UIBundle\Annotations\Input(type="text", configuration={"description"="File name", "required"=true, "requiredError"="The field can not be empty"})
+     */
+    private $fileName;
+```
 
 ## 3. Table lists usage
 

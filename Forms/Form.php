@@ -383,4 +383,35 @@ class Form implements FormInterface
         return $this;
     }
     
+/**
+ * Load form from class annotations
+ * 
+ * @param string $tag Form tag
+ * @return \Sergsxm\UIBundle\Forms\Form Form object
+ */    
+    public function fromAnnotations($tag = null)
+    {
+        $reader = $this->container->get('annotation_reader');
+        if (empty($reader)) {
+            throw new FormException(__CLASS__.': annotation reader service not found');
+        }
+        if (empty($this->mappingObject)) {
+            throw new FormException(__CLASS__.': you must specify mapping object for import from annotations');
+        }
+        $object = new \ReflectionObject($this->mappingObject);
+        foreach ($object->getProperties() as $property) {
+            if ($tag != null) {
+                $tags = $reader->getPropertyAnnotation($property, '\Sergsxm\UIBundle\Annotations\Tags');
+                if (empty($tags) || !is_array($tags->forms) || !in_array($tag, $tags->forms)) {
+                    continue;
+                }
+            }
+            $input = $reader->getPropertyAnnotation($property, '\Sergsxm\UIBundle\Annotations\Input');
+            if (!empty($input)) {
+                $this->addField($input->type, $property->getName(), $input->configuration);
+            }
+        }
+        return $this;
+    }
+    
 }
