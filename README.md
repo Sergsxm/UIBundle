@@ -364,7 +364,6 @@ Example:
     /**
      * @var string
      *
-     * @FormAnnotations\Tags(forms={"t2ags", "two"})
      * @\Sergsxm\UIBundle\Annotations\Tags(forms={"user", "administrator"})
      * @\Sergsxm\UIBundle\Annotations\Input(type="text", configuration={"description"="File name", "required"=true, "requiredError"="The field can not be empty"})
      */
