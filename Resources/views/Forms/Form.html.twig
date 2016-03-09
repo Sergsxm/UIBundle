@@ -61,7 +61,7 @@
                 $('#{{formId}} .has-error').removeClass('has-error');
                 $('#{{formId}} .form-error-text').text('');
                 for (var input in errors) {
-                    var inputId = $(form[input]).prop('id');
+                    var inputId = ($(form[input]).data('replace-input-id') ? $(form[input]).data('replace-input-id') : $(form[input]).prop('id'));
                     $('.'+inputId+'-container').addClass('has-error');
                     $('.'+inputId+'-error').text(errors[input]);
                 }
