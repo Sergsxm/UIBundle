@@ -253,6 +253,21 @@ Type **file** has following settings:
 | storeFolder        | Folder for saving files                                                             | "uploads"                          |
 | storeDoctrineClass | Doctrine file entity class (must implements Sergsxm\UIBundle\Classes\FileInterface) | ""                                 |
 
+Type **number** has following settings:
+
+| Parameter                  | Parameter description                                                     | Default value                |
+| -------------------------- | ------------------------------------------------------------------------- | ---------------------------- |
+| description                | Field description, which will be displayed to the user as the field name  | such as field name           |
+| required                   | If true field is required                                                 | false                        |
+| requiredError              | Text for the "required" error                                             | "The field can not be empty" |
+| decimalPoint               | Sets the separator for the decimal point                                  | "."                          |
+| thousandSeparator          | Sets the thousands separator                                              | ""                           |
+| decimals                   | Sets the number of decimal points (or null for disable option)            | null                         |
+| minValue                   | Sets minimal value (or null for disable option)                           | null                         |
+| maxValue                   | Sets maximal value (or null for disable option)                           | null                         |
+| valueError                 | Text for the "limits" error                                               | "The number is beyond the set limits" |
+| notNumberError             | Text for the "not a number" error                                         | "This is not a number"       |
+
 *ValidateCallback* function must be callable. The function should return null (if field value is valid) or error text. 
 The first parameter passed to the function is the value of the field. 
 The second parameter specifies by parameter *validateCallbackParameters*.
@@ -458,7 +473,7 @@ Type **number** has following personal settings:
 | ----------------- | ----------------------------------------------------- | --------------------------- |
 | decimals          | Sets the number of decimal points                     | 0                           |
 | thousandSeparator | Sets the thousands separator                          | " "                         |
-| deciamlPoint      | Sets the separator for the decimal point              | ","                         |
+| decimalPoint      | Sets the separator for the decimal point              | ","                         |
 
 Type **datetime** has following personal settings:
 

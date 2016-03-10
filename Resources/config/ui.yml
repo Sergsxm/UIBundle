@@ -7,6 +7,7 @@ form_input_types:
     select: "Sergsxm\\UIBundle\\FormInputTypes\\Select"
     timestamp: "Sergsxm\\UIBundle\\FormInputTypes\\TimeStamp"
     file: "Sergsxm\\UIBundle\\FormInputTypes\\File"
+    number: "Sergsxm\\UIBundle\\FormInputTypes\\Number"
 
 captcha_types:
     standart: "Sergsxm\\UIBundle\\CaptchaTypes\\Standart"
