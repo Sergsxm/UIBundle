@@ -49,6 +49,8 @@ class Text extends FormInput
             'regexpError' => 'The field is not valid',
             'validateCallback' => null,
             'validateCallbackParameters' => null,
+            'uniqueInDoctrine' => false,
+            'uniqueError' => 'This value already exists in the database',
         );
     }
 
@@ -71,7 +73,20 @@ class Text extends FormInput
             $this->error = call_user_func($this->configuration['validateCallback'], $this->value, $this->configuration['validateCallbackParameters']);
             if ($this->error != null) return false;
         }
-        
+        if (($this->configuration['uniqueInDoctrine'] == true) && ($this->mappingObject != null)) {
+            $em = $this->container->get('doctrine')->getEntityManager();
+            $ids = $em->getClassMetadata(get_class($this->mappingObject))->getIdentifierValues($this->mappingObject);
+            $queryConditions = array();
+            foreach ($ids as $idKey=>$idVal) {
+                $queryConditions[] = 'e.'.$idKey.' != :'.$idKey;
+            }
+            $queryConditions[] = 'e.'.$this->name.' = :value ';
+            $result = $em->createQuery('SELECT count(e) FROM '.get_class($this->mappingObject).' e WHERE '.implode(' AND ',$queryConditions))->setParameters($ids)->setParameter('value', $this->value)->getSingleScalarResult();
+            if ($result > 0) {
+                $this->error = $this->configuration['uniqueError'];
+                return false;
+            }
+        }
         $this->error = null;
         return true;
     }

@@ -175,6 +175,8 @@ Type **text** has following settings:
 | regexpError                | Text for the "regular expression" error                                   | "The field is not valid"     |
 | validateCallback           | User-defined function to check the field (see below)                      | null                         |
 | validateCallbackParameters | Additional parameters for validateCallback function                       | null                         |
+| uniqueInDoctrine           | Enables checking the uniqueness of the field in the Doctrine database     | false                        |
+| uniqueError                | Text for the "unique" error                                               | "This value already exists in the database" |       
 
 Type **textarea** has following settings:
 
@@ -333,7 +335,7 @@ So you can create your own templates and put them when calling the render method
 
 ### 2.6. Annotations
 
-You can create forms from the annotations of mapping object (Doctrine required). 
+You can create forms from the annotations of mapping object. 
 For this purpose use method `fromAnnotations($tag = null)`.
 
 Annotation `Sergsxm\UIBundle\Annotations\Input` is used to create input fields.
