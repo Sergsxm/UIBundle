@@ -216,12 +216,12 @@ Type **password** has following settings:
 | description                | Field description, which will be displayed to the user as the field name  | such as field name           |
 | required                   | If true field is required                                                 | false                        |
 | requiredError              | Text for the "required" error                                             | "The field can not be empty" |
-| encoder                    | Symfony2 PasswordEncoderInterface to encode password, or null             | null                         |
+| encoder                    | PasswordEncoderInterface to encode password, or null, or "@factory" to use security.encoder_factory service | null                         |
 | repeat                     | If true it requires password repetition                                   | false                        |
 | repeatError                | Text for the "repeat" error                                               | "Values​do not match"        |
 | repeatDescription          | Repeat field description, which will be displayed to the user             | ""                           |
 | mapNullValues              | If false, the mapping property will not change when field is empty        | true                         |
-| regexp                     | Regular expression with which the entered text will be checked            | "/\^[\S]{5,99}$/i"            |
+| regexp                     | Regular expression with which the entered text will be checked            | "/\^[\S]{5,99}$/i"           |
 | regexpError                | Text for the "regular expression" error                                   | "The field is not valid"     |
 | randomizeSalt              | If true salt will be replaces by random value                             | true                         |
 | mappingSaltProperty        | Property name to store salt value in mapping object                       | ""                           |

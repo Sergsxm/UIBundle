@@ -43,6 +43,9 @@ class Password extends FormInput
             $this->salt = $this->mappingProperty->getValue($mappingObject);
         }
         $this->valueRepeat = $this->value;
+        if (is_string($this->configuration['encoder']) && ($this->configuration['encoder'] == '@factory') && ($mappingObject != null)) {
+            $this->configuration['encoder'] = $this->container->get('security.encoder_factory')->getEncoder($mappingObject);
+        }
     }    
     
 /**
@@ -147,7 +150,7 @@ class Password extends FormInput
             $this->salt = rtrim(strtr(base64_encode($randomValue), '/+', '-_'), '=');
         }
         if (($this->mappingObject !== null) && (($this->configuration['mapNullValues'] == true) || ($value != ''))) {
-            $this->mappingProperty->setValue($this->mappingObject, $value);
+            $this->mappingProperty->setValue($this->mappingObject, $this->getValue());
             if ($this->configuration['mappingSaltProperty'] != '') {
                 $this->mappingSaltProperty->setValue($this->mappingObject, $this->salt);
             }
