@@ -104,7 +104,7 @@ class Password extends FormInput
             $this->error = $this->configuration['repeatError'];
             return false;
         }
-        if (!preg_match($this->configuration['regexp'].'u', $this->value)) {
+        if (($this->value != '') && !preg_match($this->configuration['regexp'].'u', $this->value)) {
             $this->error = $this->configuration['regexpError'];
             return false;
         }
