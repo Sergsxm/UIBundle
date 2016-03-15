@@ -38,9 +38,9 @@ class Password extends FormInput
         parent::__construct($container, $formBag, $name, $configuration, $prefix, $mappingObject);
         if (($this->mappingObject !== null) && ($this->configuration['mappingSaltProperty'] != '')) {
             $reflector = new \ReflectionObject($mappingObject);
-            $this->mappingProperty = $reflector->getProperty($this->configuration['mappingSaltProperty']);
-            $this->mappingProperty->setAccessible(true);
-            $this->salt = $this->mappingProperty->getValue($mappingObject);
+            $this->mappingSaltProperty = $reflector->getProperty($this->configuration['mappingSaltProperty']);
+            $this->mappingSaltProperty->setAccessible(true);
+            $this->salt = $this->mappingSaltProperty->getValue($mappingObject);
         }
         $this->valueRepeat = $this->value;
         if (is_string($this->configuration['encoder']) && ($this->configuration['encoder'] == '@factory') && ($mappingObject != null)) {
