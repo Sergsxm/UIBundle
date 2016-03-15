@@ -138,6 +138,16 @@ class TableListTab
                 'hidden' => false,
                 'choices' => array(),
             ), $configuration);
+        } elseif ($type == 'array') {
+            $configuration = array_merge(array (
+                'url' => '',
+                'join' => '',
+                'description' => $name,
+                'sort' => false,
+                'search' => false,
+                'hidden' => false,
+                'callback' => null,
+            ), $configuration);
         } else {
             throw new TableListException(__CLASS__.': unknown col type "'.$type.'"');
         }
@@ -356,7 +366,9 @@ class TableListTab
         }
         foreach ($items as &$item) {
             foreach ($this->cols as $colkey => $colitem) {
-                if (!isset($item['col'.$colkey])) $item['col'.$colkey] = '';
+                if (!isset($item['col'.$colkey])) {
+                    $item['col'.$colkey] = '';
+                }
                 
                 if ($colitem['type'] == 'text') {
                     if ($item['col'.$colkey] instanceof \Sergsxm\UIBundle\Classes\FileInterface) {
@@ -368,9 +380,23 @@ class TableListTab
                 } elseif ($colitem['type'] == 'datetime') {
                     $item['col'.$colkey] = ($item['col'.$colkey] instanceof \DateTime ? $item['col'.$colkey]->format($colitem['configuration']['format']) : '');
                 } elseif ($colitem['type'] == 'case') {
-                    if ($item['col'.$colkey] === false) $item['col'.$colkey] = 'false';
-                    if ($item['col'.$colkey] === true) $item['col'.$colkey] = 'true';
+                    if ($item['col'.$colkey] === false) {
+                        $item['col'.$colkey] = 'false';
+                    }
+                    if ($item['col'.$colkey] === true) {
+                        $item['col'.$colkey] = 'true';
+                    }
                     $item['col'.$colkey] = ((($item['col'.$colkey] !== null) && isset($colitem['configuration']['choices'][$item['col'.$colkey]])) ? $colitem['configuration']['choices'][$item['col'.$colkey]] : '');
+                } elseif ($colitem['type'] == 'array') {
+                    if ($colitem['configuration']['callback'] === null) {
+                        $item['col'.$colkey] = (is_array($item['col'.$colkey]) ? count($item['col'.$colkey]) : '');
+                    } else {
+                        if (is_array($item['col'.$colkey])) {
+                            $item['col'.$colkey] = call_user_func($colitem['configuration']['callback'], $item['col'.$colkey]);
+                        } else {
+                            $item['col'.$colkey] = '';
+                        }
+                    }
                 }
                 
                 if ($colitem['configuration']['url'] != '') {

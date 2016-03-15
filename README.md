@@ -489,6 +489,12 @@ Type **case** has following personal settings:
 | -------------- | ------------------------------------------------------------------------------------------ | --------------------------- |
 | choices        | Array of possible values (format: value=>description)                                      | array()                     |
 
+Type **array** has following personal settings:
+
+| Parameter      | Parameter description                                                                      | Default value               |
+| -------------- | ------------------------------------------------------------------------------------------ | --------------------------- |
+| callback       | Function to convert array to string (if null string will contain count of array items)     | null                        |
+
 Type **image** is **text** type, default value of parameter *pattern* is "\<img src="{{text}}" />".
 
 Type **boolean** is **case** type, default value of parameter *choices* is `array('false' => '<i class="fa fa-times"></i>', 'true' => '<i class="fa fa-check"></i>')`.
