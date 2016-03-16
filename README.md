@@ -196,6 +196,7 @@ Type **timestamp** has following settings:
 | required        | If true field is required                                                                  | false                        |
 | requiredError   | Text for the "required" error                                                              | "The field can not be empty" |
 | dateTimeFormat  | Timestamp format accepted by [date()](http://php.net/manual/en/function.date.php) function | "Y-m-d\TH:i"                 |
+| timeZone        | Timezone (string or \DateTimeZone or null)                                                 | null                         |
 
 Type **html** has following settings:
 
@@ -482,6 +483,7 @@ Type **datetime** has following personal settings:
 | Parameter      | Parameter description                                                                      | Default value               |
 | -------------- | ------------------------------------------------------------------------------------------ | --------------------------- |
 | format         | Timestamp format accepted by [date()](http://php.net/manual/en/function.date.php) function | "Y-m-d H:i"                 |
+| timeZone       | Timezone (string or \DateTimeZone or null)                                                 | null                        |
 
 Type **case** has following personal settings:
 

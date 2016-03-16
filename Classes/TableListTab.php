@@ -105,7 +105,13 @@ class TableListTab
                 'search' => false,
                 'hidden' => false,
                 'format' => 'Y-m-d H:i',
+                'timeZone' => null,
             ), $configuration);
+            if ($configuration['timeZone'] != null) {
+                if (!$configuration['timeZone'] instanceof \DateTimeZone) {
+                    $configuration['timeZone'] = new \DateTimeZone($configuration['timeZone']);
+                }
+            }
         } elseif ($type == 'image') {
             $type = 'text';
             $configuration = array_merge(array (
@@ -378,6 +384,9 @@ class TableListTab
                 } elseif ($colitem['type'] == 'number') {
                     $item['col'.$colkey] = number_format($item['col'.$colkey], $colitem['configuration']['decimals'], $colitem['configuration']['deciamlPoint'], $colitem['configuration']['thousandSeparator']);
                 } elseif ($colitem['type'] == 'datetime') {
+                    if (($item['col'.$colkey] instanceof \DateTime) && ($colitem['configuration']['timeZone'] != null)) {
+                        $item['col'.$colkey]->setTimezone($colitem['configuration']['timeZone']);
+                    }
                     $item['col'.$colkey] = ($item['col'.$colkey] instanceof \DateTime ? $item['col'.$colkey]->format($colitem['configuration']['format']) : '');
                 } elseif ($colitem['type'] == 'case') {
                     if ($item['col'.$colkey] === false) {

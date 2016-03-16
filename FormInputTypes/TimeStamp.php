@@ -13,10 +13,34 @@ namespace Sergsxm\UIBundle\FormInputTypes;
 
 use Sergsxm\UIBundle\Classes\FormInput;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\DependencyInjection\Container;
+use Sergsxm\UIBundle\Classes\FormBag;
 
 class TimeStamp extends FormInput
 {
 
+/**
+ * Constructor
+ * 
+ * @param Container $container Symfony2 container
+ * @param FormBag $formBag Form`s parameters bag
+ * @param string $name Input name
+ * @param array $configuration Input configuration
+ * @param string $prefix Input prefix
+ * @param object $mappingObject Object for input value mapping
+ */
+    public function __construct(Container $container, FormBag $formBag, $name, $configuration = array(), $prefix = '', $mappingObject = null)
+    {
+        parent::__construct($container, $formBag, $name, $configuration, $prefix, $mappingObject);
+        if ($this->configuration['timeZone'] != null) {
+            if (!$this->configuration['timeZone'] instanceof \DateTimeZone) {
+                $this->configuration['timeZone'] = new \DateTimeZone($this->configuration['timeZone']);
+            }
+            if ($this->value instanceof \DateTime) {
+                $this->value->setTimezone($this->configuration['timeZone']);
+            }
+        }
+    }    
 /**
  * Get type of form input
  * 
@@ -47,6 +71,7 @@ class TimeStamp extends FormInput
             'required' => false,
             'requiredError' => 'The field can not be empty',
             'dateTimeFormat' => 'Y-m-d\TH:i',
+            'timeZone' => null,
         );
     }
 
@@ -84,9 +109,13 @@ class TimeStamp extends FormInput
                 $value = null; 
             } else {
                 if (($this->configuration['dateTimeFormat'] == 'Y-m-d\TH:i') || ($this->configuration['dateTimeFormat'] == 'Y-m-d\TH:i:s')) {
-                    $value = new \DateTime($textValue);
+                    $value = new \DateTime($textValue, $this->configuration['timeZone']);
                 } else {
-                    $value = \DateTime::createFromFormat($this->configuration['dateTimeFormat'], $textValue);
+                    if ($this->configuration['timeZone'] != null) {
+                        $value = \DateTime::createFromFormat($this->configuration['dateTimeFormat'], $textValue, $this->configuration['timeZone']);
+                    } else {
+                        $value = \DateTime::createFromFormat($this->configuration['dateTimeFormat'], $textValue);
+                    }
                 }
             }
             return $this->setValue($value);
