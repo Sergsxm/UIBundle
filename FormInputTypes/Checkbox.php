@@ -75,6 +75,9 @@ class Checkbox extends FormInput
  */    
     public function bindRequest(Request $request = null, $prefix = '')
     {
+        if ($this->disabled == true) {
+            return true;
+        }
         if ($request === null) {
             $request = $this->container->get('request_stack')->getMasterRequest();
         }
@@ -105,6 +108,7 @@ class Checkbox extends FormInput
             'value' => 'on',
             'checked' => ($this->configuration['checkedValue'] === $this->value ? true : false),
             'error' => $this->error,
+            'disabled' => $this->disabled,
         );
     }
 
@@ -116,6 +120,9 @@ class Checkbox extends FormInput
  */    
     public function getJsValidation($idPrefix)
     {
+        if ($this->disabled == true) {
+            return '';
+        }
         if ($this->configuration['required'] == true) {
             return 'if (!form["'.$this->prefix.$this->name.'"].checked) {errors["'.$this->prefix.$this->name.'"] = '.json_encode($this->configuration['requiredError']).';}'.self::JS_EOL;
         }

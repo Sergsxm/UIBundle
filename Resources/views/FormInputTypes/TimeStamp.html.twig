@@ -1,7 +1,7 @@
 <div class="form-group {{inputId}}-container{% if error %} has-error{% endif %}">
     <label for="{{inputId}}" class="col-sm-5">{{configuration['description']}}</label>
     <div class="col-sm-7">
-        <input type="datetime-local" class="form-control" id="{{inputId}}" name="{{inputName}}" placeholder="гггг-мм-ддTчч:мм" value="{% if value %}{{value | date(configuration['dateTimeFormat'], false)}}{% endif %}" />
+        <input {% if disabled %}disabled="disabled"{% endif %} type="datetime-local" class="form-control" id="{{inputId}}" name="{{inputName}}" placeholder="гггг-мм-ддTчч:мм" value="{% if value %}{{value | date(configuration['dateTimeFormat'], false)}}{% endif %}" />
         <p class="form-error-text {{inputId}}-error">{{error}}</p>
     </div>
 </div>

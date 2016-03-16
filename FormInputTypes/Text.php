@@ -99,6 +99,9 @@ class Text extends FormInput
  */    
     public function getJsValidation($idPrefix)
     {
+        if ($this->disabled == true) {
+            return '';
+        }
         $code = '';
         if ($this->configuration['required'] == true) {
             $code .= 'if (form["'.$this->prefix.$this->name.'"].value == "") {errors["'.$this->prefix.$this->name.'"] = '.json_encode($this->configuration['requiredError']).';} else'.self::JS_EOL;

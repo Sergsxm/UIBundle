@@ -58,6 +58,9 @@ class Select extends FormInput
                 $this->value = $this->mappingProperty->getValue($mappingObject);
             }
         }
+        if (isset($configuration['disabled'])) {
+            $this->disabled = $configuration['disabled'];
+        }
     }
     
 /**
@@ -135,6 +138,9 @@ class Select extends FormInput
  */    
     public function bindRequest(Request $request = null, $prefix = '')
     {
+        if ($this->disabled == true) {
+            return true;
+        }
         if ($request === null) {
             $request = $this->container->get('request_stack')->getMasterRequest();
         }
@@ -190,6 +196,9 @@ class Select extends FormInput
  */    
     public function getJsValidation($idPrefix)
     {
+        if ($this->disabled == true) {
+            return '';
+        }
         $code = '';
         if (($this->configuration['multiply'] == true) && ($this->configuration['required'] == true)) {
             $code .= 'var j = 0;if (form["'.$this->prefix.$this->name.'[]"].length != undefined) {for (var i in form["'.$this->prefix.$this->name.'[]"]) {if ((form["'.$this->prefix.$this->name.'[]"][i].selected) || (form["'.$this->prefix.$this->name.'[]"][i].checked)) {j++;}}}if (j == 0) {errors["'.$this->prefix.$this->name.'[]"] = '.json_encode($this->configuration['requiredError']).';}'.self::JS_EOL;

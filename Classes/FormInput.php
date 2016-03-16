@@ -29,6 +29,7 @@ abstract class FormInput
     protected $mappingObject = null;
     protected $mappingProperty;
     protected $error = null;
+    protected $disabled = false;
     
 /**
  * Constructor
@@ -63,6 +64,9 @@ abstract class FormInput
             $this->mappingProperty = $reflector->getProperty($name);
             $this->mappingProperty->setAccessible(true);
             $this->value = $this->mappingProperty->getValue($mappingObject);
+        }
+        if (isset($configuration['disabled'])) {
+            $this->disabled = $configuration['disabled'];
         }
     }
     
@@ -136,6 +140,9 @@ abstract class FormInput
  */    
     public function bindRequest(Request $request = null, $prefix = '')
     {
+        if ($this->disabled == true) {
+            return true;
+        }
         if ($request === null) {
             $request = $this->container->get('request_stack')->getMasterRequest();
         }
@@ -165,6 +172,7 @@ abstract class FormInput
             'configuration' => $this->configuration,
             'value' => $this->value,
             'error' => $this->error,
+            'disabled' => $this->disabled,
         );
     }
     

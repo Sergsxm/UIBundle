@@ -163,6 +163,7 @@ Type **checkbox** has following settings:
 | requiredError  | Text for the "required" error                                             | "The field must be checked" |
 | uncheckedValue | Value for unchecked condition                                             | false                       |
 | checkedValue   | Value for checked condition                                               | true                        |
+| disabled       | Set field to disabled state                                               | false                       |
 
 Type **text** has following settings:
 
@@ -177,6 +178,7 @@ Type **text** has following settings:
 | validateCallbackParameters | Additional parameters for validateCallback function                       | null                         |
 | uniqueInDoctrine           | Enables checking the uniqueness of the field in the Doctrine database     | false                        |
 | uniqueError                | Text for the "unique" error                                               | "This value already exists in the database" |       
+| disabled                   | Set field to disabled state                                               | false                        |
 
 Type **textarea** has following settings:
 
@@ -187,6 +189,7 @@ Type **textarea** has following settings:
 | requiredError              | Text for the "required" error                                             | "The field can not be empty" |
 | regexp                     | Regular expression with which the entered text will be checked            | "/\^[\s\S]*$/i"               |
 | regexpError                | Text for the "regular expression" error                                   | "The field is not valid"     |
+| disabled                   | Set field to disabled state                                               | false                        |
 
 Type **timestamp** has following settings:
 
@@ -197,6 +200,7 @@ Type **timestamp** has following settings:
 | requiredError   | Text for the "required" error                                                              | "The field can not be empty" |
 | dateTimeFormat  | Timestamp format accepted by [date()](http://php.net/manual/en/function.date.php) function | "Y-m-d\TH:i"                 |
 | timeZone        | Timezone (string or \DateTimeZone or null)                                                 | null                         |
+| disabled        | Set field to disabled state                                                                | false                        |
 
 Type **html** has following settings:
 
@@ -209,6 +213,7 @@ Type **html** has following settings:
 | allowTags                  | If filled all tags other than listed, will be removed (format: "h1,p,a")  | null                         |
 | allowStyleProperty         | If false all "style" attributes will be removed                           | true                         |
 | replaceUrl                 | If true all links will be replaced with JavaScript calls                  | false                        |
+| disabled                   | Set field to disabled state                                               | false                        |
 
 Type **password** has following settings:
 
@@ -226,6 +231,7 @@ Type **password** has following settings:
 | regexpError                | Text for the "regular expression" error                                   | "The field is not valid"     |
 | randomizeSalt              | If true salt will be replaces by random value                             | true                         |
 | mappingSaltProperty        | Property name to store salt value in mapping object                       | ""                           |
+| disabled                   | Set field to disabled state                                               | false                        |
 
 Type **select** has following settings:
 
@@ -240,6 +246,7 @@ Type **select** has following settings:
 | expanded         | If true *select* will show extended (radio buttons, checkboxes)                              | false                         |
 | explodeValue     | Only for multiply select: if true output value will be exploded to string (if false - array) | false                         |
 | explodeSeparator | Explode separator (when *explodeValue* is true)                                              | ","                           |
+| disabled         | Set field to disabled state                                                                  | false                         |
 
 Type **file** has following settings:
 
@@ -255,6 +262,7 @@ Type **file** has following settings:
 | storeType          | Type of file store (see below)                                                      | ST_FILE                            |
 | storeFolder        | Folder for saving files                                                             | "uploads"                          |
 | storeDoctrineClass | Doctrine file entity class (must implements Sergsxm\UIBundle\Classes\FileInterface) | ""                                 |
+| disabled           | Set field to disabled state                                                         | false                              |
 
 Type **number** has following settings:
 
@@ -270,6 +278,7 @@ Type **number** has following settings:
 | maxValue                   | Sets maximal value (or null for disable option)                           | null                         |
 | valueError                 | Text for the "limits" error                                               | "The number is beyond the set limits" |
 | notNumberError             | Text for the "not a number" error                                         | "This is not a number"       |
+| disabled                   | Set field to disabled state                                               | false                        |
 
 *ValidateCallback* function must be callable. The function should return null (if field value is valid) or error text. 
 The first parameter passed to the function is the value of the field. 

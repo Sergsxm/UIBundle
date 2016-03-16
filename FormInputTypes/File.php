@@ -68,6 +68,9 @@ class File extends FormInput
                 $this->value = null;
             }
         }
+        if (isset($configuration['disabled'])) {
+            $this->disabled = $configuration['disabled'];
+        }
     }
     
 /**
@@ -142,6 +145,9 @@ class File extends FormInput
  */    
     public function getJsValidation($idPrefix)
     {
+        if ($this->disabled == true) {
+            return '';
+        }
         $code = '';
         if ($this->configuration['required'] == true) {
             $code .= 'if ((form["'.$this->prefix.$this->name.'"].value == "") && (form["'.$this->prefix.$this->name.'_file"].value == "")) {errors["'.$this->prefix.$this->name.'"] = '.json_encode($this->configuration['requiredError']).';}'.self::JS_EOL;
@@ -187,6 +193,9 @@ class File extends FormInput
  */    
     public function bindRequest(Request $request = null, $prefix = '')
     {
+        if ($this->disabled == true) {
+            return true;
+        }
         if ($request === null) {
             $request = $this->container->get('request_stack')->getMasterRequest();
         }
@@ -256,6 +265,7 @@ class File extends FormInput
             'value' => ($this->value != null ? $this->value->getId() : null),
             'file' => $this->value,
             'error' => $this->error,
+            'disabled' => $this->disabled,
         );
     }
 
