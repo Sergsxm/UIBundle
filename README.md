@@ -526,10 +526,17 @@ Parameter $url is action URL or route name.
 
 URL actions has following additional configuration settings:
 
-| Parameter      | Parameter description                                                                      | Default value               |
-| -------------- | ------------------------------------------------------------------------------------------ | --------------------------- |
-| description    | Action description, which will be displayed at the button                                  | such as action name         |
-| permission     | Allows to turn off the button, if it is prohibited by user permissions                     | true                        |
+| Parameter        | Parameter description                                                                      | Default value               |
+| ---------------- | ------------------------------------------------------------------------------------------ | --------------------------- |
+| description      | Action description, which will be displayed at the button                                  | such as action name         |
+| permission       | Allows to turn off the button, if it is prohibited by user permissions                     | true                        |
+| sendIds          | If true checked IDs will be sent to a URL through a GET request                            | false                       |
+| multiply         | If true it may be checked a lot of rows, if false it is to be checked only one row         | true                        |
+| confirmed        | If true action requires confirmation                                                       | false                       |
+| confirmedMessage | Сonfirmation message                                                                       | "Please confirm this operation" |
+| confirmedTitle   | Сonfirmation window title                                                                  | "Warning"                   |
+| confirmedOk      | Label for OK button                                                                        | "OK"                        |
+| confirmedCancel  | Label for cancel button                                                                    | "Cancel"                    |
 
 ### 3.4. Ajax actions
 

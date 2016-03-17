@@ -19,7 +19,45 @@
         {% for action in actions %}
             {% if (action['permission'] == true) %}
                 {% if action['type'] == 'url' %}
-                    <a href="{{action['url']}}" class="btn btn-default">{{action['description']}}</a>
+                    {% if action['sendIds'] == false %}
+                        <a href="{{action['url']}}" class="btn btn-default" {% if action['confirmed'] == true %}onclick="sergsxmuiTabFunction_{{name}}_{{action['name']}}(this);return false;"{% endif %}>{{action['description']}}</a>
+                        {% if action['confirmed'] == true %}
+                        <script>
+                            function sergsxmuiTabFunction_{{name}}_{{action['name']}}(that) {
+                                sergsxmUIFunctions.confirm('{{action['confirmedMessage']}}', '{{action['confirmedTitle']}}', '{{action['confirmedOk']}}', '{{action['confirmedCancel']}}', function () {
+                                    location.href = $(that).attr('href');
+                                });
+                                return false;
+                            }
+                        </script>
+                        {% endif %}
+                    {% else %}
+                        <a href="#" class="btn btn-default {{ action['multiply'] == false ? 'sergsxmui-tab-function-'~name~'-single' : 'sergsxmui-tab-function-'~name~'-multiply' }}" onclick="sergsxmuiTabFunction_{{name}}_{{action['name']}}();return false;">{{action['description']}}</a>
+                        <script>
+                            function sergsxmuiTabFunction_{{name}}_{{action['name']}}() {
+                                var checkCount = $('.sergsxmui-tab-checkbox-{{name}}:checked').length;
+                                {% if action['multiply'] == false %}
+                                if (checkCount != 1) {
+                                    sergsxmUIFunctions.alert('{% trans from "sergsxmui" %}It should be selected only one item{% endtrans %}', 'error', '#sergsxmui-tab-errors-{{name}}');
+                                    return false;
+                                }
+                                {% else %}
+                                if (checkCount == 0) {
+                                    sergsxmUIFunctions.alert('{% trans from "sergsxmui" %}It should be selected one or more items{% endtrans %}', 'error', '#sergsxmui-tab-errors-{{name}}');
+                                    return false;
+                                }
+                                {% endif %}
+                                {% if action['confirmed'] == true %}
+                                sergsxmUIFunctions.confirm('{{action['confirmedMessage']}}', '{{action['confirmedTitle']}}', '{{action['confirmedOk']}}', '{{action['confirmedCancel']}}', function () {
+                                    location.href = '{{action['url']}}?'+$('.sergsxmui-tab-checkbox-{{name}}').serialize();
+                                });
+                                {% else %}
+                                location.href = '{{action['url']}}?'+$('.sergsxmui-tab-checkbox-{{name}}').serialize();
+                                {% endif %}
+                                return false;
+                            }
+                        </script>
+                    {% endif %}
                 {% elseif action['type'] == 'ajax' %}
                     <a href="#" class="btn btn-default {{ action['multiply'] == false ? 'sergsxmui-tab-function-'~name~'-single' : 'sergsxmui-tab-function-'~name~'-multiply' }}" onclick="sergsxmuiTabFunction_{{name}}_{{action['name']}}();return false;">{{action['description']}}</a>
                     <script>

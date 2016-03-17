@@ -189,6 +189,13 @@ class TableListTab
                 'description' => $name,
                 'permission' => true,
                 'url' => $url,
+                'sendIds' => false,
+                'multiply' => true,
+                'confirmed' => false,
+                'confirmedMessage' => 'Please confirm this operation',
+                'confirmedTitle' => 'Warning',
+                'confirmedOk' => 'OK',
+                'confirmedCancel' => 'Cancel',
             ), $configuration);
         $this->actions[$name] = $configuration;
         return $this;
