@@ -241,9 +241,6 @@ class TableListTab
         $this->page = $request->getSession()->get('tab_'.$request->get('_route').'_'.$this->name.'_page');
         $this->search = $request->getSession()->get('tab_'.$request->get('_route').'_'.$this->name.'_search');
         $this->itemsInPage = $request->getSession()->get('tab_'.$request->get('_route').'_'.$this->name.'_itemsInPage');
-        if ($request->get('tab') != $this->name) {
-            return false;
-        }
         if ($request->get('ordercolumn') !== null) {
             $this->orderColumn = intval($request->get('ordercolumn'));
             $this->orderDirection = ($request->get('orderdirection') == 'desc' ? 1 : 0);
@@ -292,6 +289,19 @@ class TableListTab
         return false;
     }
 
+/**
+ * Get tab description
+ * 
+ * @return array Tab description
+ */    
+    public function getDescription()
+    {
+        return array(
+            'name' => $this->name,
+            'description' => $this->description,
+        );
+    }
+    
 /**
  * Get view of tab
  * 

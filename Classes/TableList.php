@@ -151,12 +151,12 @@ class TableList
         }
         $this->ajaxMode = ($request->get('ajax') == 'true' ? true : false);
         $this->activeTab = $request->getSession()->get('tab_'.$request->get('_route').'_tab');
-        foreach ($this->tabs as $tabName=>$tab) {
-            if ($request->get('tab') == $tabName) {
-                $this->activeTab = $tabName;
-                $request->getSession()->set('tab_'.$request->get('_route').'_tab', $this->activeTab);
-            }
-            $tab->bindRequest($request);
+        if (($request->get('tab') != null) && isset($this->tabs[$request->get('tab')])) {
+            $this->activeTab = $request->get('tab');
+            $request->getSession()->set('tab_'.$request->get('_route').'_tab', $this->activeTab);
+        }
+        if (isset($this->tabs[$this->activeTab])) {
+            $this->tabs[$this->activeTab]->bindRequest($request);
         }
     }
 
@@ -167,25 +167,27 @@ class TableList
  */    
     public function getView()
     {
-        $view = array();
         if (($this->activeTab == null) || (!isset($this->tabs[$this->activeTab]))) {
             $tabNames = array_keys($this->tabs);
             $this->activeTab = $tabNames[0];
         }
         if ($this->ajaxMode == true) {
-            $view[$this->activeTab] = $this->tabs[$this->activeTab]->getView();
+            $view = $this->tabs[$this->activeTab]->getView();
             return array(
                 'ajaxMode' => true,
                 'activeTab' => $this->activeTab,
-                'tabs' => $view,
+                'tab' => $view,
             );
         }
+        $description = array();
         foreach ($this->tabs as $tabName=>$tab) {
-            $view[$tabName] = $tab->getView();
+            $description[$tabName] = $tab->getDescription();
         }
+        $view = $this->tabs[$this->activeTab]->getView();
         return array(
             'activeTab' => $this->activeTab,
-            'tabs' => $view,
+            'tabsDescription' => $description,
+            'tab' => $view,
         );
     }
 

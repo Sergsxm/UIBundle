@@ -9,17 +9,15 @@
 <div class="row">
     <div class="col-lg-3">
         <ul class="nav nav-pills nav-stacked">
-        {% for tabname,tab in tabs %}
-            <li {% if tabname == activeTab %}class="active"{% endif %}><a href="#" class="sergsxmui-tab-btn" data-tab-name="{{tabname}}">{{tab['description']}}</a></li>
+        {% for tabname,tab in tabsDescription %}
+            <li {% if tabname == activeTab %}class="active"{% endif %}><a href="?tab={{tabname}}" class="sergsxmui-tab-btn">{{tab['description']}}</a></li>
         {% endfor %}
         </ul>
     </div>
     <div class="col-lg-9">
-        {% for tabname,tab in tabs %}
-            <div id="sergsxmui-tab-wrap-{{tabname}}" class="sergsxmui-tab-wrap" {% if tabname != activeTab %}style="display:none"{% endif %}>
-            {% include 'SergsxmUIBundle:TableLists:TableListTab.html.twig' with tab only %}
-            </div>
-        {% endfor %}
+        <div id="sergsxmui-tab-wrap-{{activeTab}}" class="sergsxmui-tab-wrap">
+        {% include 'SergsxmUIBundle:TableLists:TableListTab.html.twig' with tab only %}
+        </div>
     </div>
 </div>        
 {% endblock %}                
@@ -44,13 +42,6 @@
                 var ncount = $('.sergsxmui-tab-checkbox-'+tabName+':not(:checked)').length;
                 $('.sergsxmui-tab-checkbox-all-'+tabName)[0].checked = ((ncount == 0) && (count != 0));
             }
-            $('.sergsxmui-tab-btn').click(function () {
-                $('.sergsxmui-tab-wrap').hide();
-                $('#sergsxmui-tab-wrap-'+$(this).data('tab-name')).show();
-                $(this).closest('ul.nav').find('li.active').removeClass('active');
-                $(this).closest('li').addClass('active');
-                return false;
-            });
             $('.sergsxmui-tab-checkbox-all').click(function () {
                 var name = $(this).data('tab-name');
                 var checkedStatus = $(this).is(':checked');
@@ -66,9 +57,7 @@
                     $(this).find('.sergsxmui-tab-checkbox').each(function () {this.checked = !this.checked;});
                 }
             });
-        {% for tabname,tab in tabs %}
-            sergsxmuiTabUpdateVisibility('{{tabname}}');
-        {% endfor %}
+            sergsxmuiTabUpdateVisibility('{{activeTab}}');
         });
     </script>
 {% endblock %}
