@@ -144,7 +144,7 @@
                             <td>
                                 {{item['col'~colkey] | raw}}
                                 {% if (loop.first) and (actionErrors[item['id']] is defined) %}
-                                    <p class="ec-error">{{actionErrors[item['id']]}}</p>
+                                    <p class="sergsxmui-list-error">{{actionErrors[item['id']]}}</p>
                                 {% endif %}
                             </td>
                         {% endif %}

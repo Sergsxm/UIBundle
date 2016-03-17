@@ -15,3 +15,9 @@
 .pagination.sergsxmui-tab-pagination {
     margin-top: 0px;
 }
+
+.sergsxmui-list-error {
+    color: #f00;
+    font-style: italic;
+    margin: 0;    
+}
