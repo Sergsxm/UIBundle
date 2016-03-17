@@ -266,7 +266,7 @@ class TableListTab
             $this->itemsInPage = intval($request->get('itemsinpage'));
             $request->getSession()->set('tab_'.$request->get('_route').'_'.$this->name.'_itemsInPage', $this->itemsInPage);
         }
-        if ($request->get('action') != null) {
+        if (($request->get('action') != null) && ($request->get('csrf_token') == $this->getCsrfToken())) {
             if (isset($this->actions[$request->get('action')]) && ($this->actions[$request->get('action')]['type'] == 'ajax')) {
                 $action = $this->actions[$request->get('action')];
                 if ($action['permission'] == true) {
@@ -453,6 +453,7 @@ class TableListTab
             'actions' => $this->actions,
             'actionErrors' => $this->actionErrors,
             'itemsInPageChoices' => array(10, 20, 50, 100),
+            'csrfToken' => $this->generateCsrfToken(),
         );
     }
 
@@ -478,6 +479,32 @@ class TableListTab
     public function render($template, $parameters = array(), Response $response = null)
     {
         return $this->container->get('templating')->renderResponse($template, array_merge($parameters, $this->getView()), $response);
+    }
+
+/**
+ * Get CSFR token for validation
+ * 
+ * @return string Token
+ */    
+    private function getCsrfToken()
+    {
+        return $this->container->get('request_stack')->getMasterRequest()->getSession()->get('sergsxm_table_csrf');
+    }
+
+/**
+ * Generate CSFR token
+ * 
+ * @return string Token
+ */    
+    private function generateCsrfToken()
+    {
+        if ($this->container->get('request_stack')->getMasterRequest()->getSession()->has('sergsxm_table_csrf')) {
+            return $this->getCsrfToken();
+        }
+        $randomValue = random_bytes(32);
+        $token = rtrim(strtr(base64_encode($randomValue), '/+', '-_'), '=');
+        $this->container->get('request_stack')->getMasterRequest()->getSession()->set('sergsxm_table_csrf', $token);
+        return $token;
     }
     
 }

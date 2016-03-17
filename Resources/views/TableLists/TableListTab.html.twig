@@ -78,7 +78,7 @@
                             sergsxmUIFunctions.confirm('{{action['confirmedMessage']}}', '{{action['confirmedTitle']}}', '{{action['confirmedOk']}}', '{{action['confirmedCancel']}}', function () {
                                 $.ajax({
                                     type: "POST",
-                                    url: '?tab={{name}}&ajax=true',
+                                    url: '?tab={{name}}&ajax=true&csrf_token={{csrfToken}}',
                                     data: "action={{action['name']}}&"+$('.sergsxmui-tab-checkbox-{{name}}').serialize(),
                                     error: function(){
                                         sergsxmUIFunctions.alert('{% trans from "sergsxmui" %}Ajax request error{% endtrans %}', 'error', '#sergsxmui-tab-errors-{{name}}');
@@ -91,7 +91,7 @@
                             {% else %}
                             $.ajax({
                                 type: "POST",
-                                url: '?tab={{name}}&ajax=true',
+                                url: '?tab={{name}}&ajax=true&csrf_token={{csrfToken}}',
                                 data: "action={{action['name']}}&"+$('.sergsxmui-tab-checkbox-{{name}}').serialize(),
                                 error: function(){
                                     sergsxmUIFunctions.alert('{% trans from "sergsxmui" %}Ajax request error{% endtrans %}', 'error', '#sergsxmui-tab-errors-{{name}}');
