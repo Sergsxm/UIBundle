@@ -289,7 +289,12 @@ class Form implements FormInterface
                 $reflector = new \ReflectionObject($this->mappingObject);
                 $property = $reflector->getProperty('id');
                 $property->setAccessible(true);
-                $hash .= '_'.$property->getValue($this->mappingObject);
+                $val = $property->getValue($this->mappingObject);
+                if (in_array(gettype($val), array('boolean', 'integer', 'double', 'string'))) {
+                    $hash .= '_'.$val;
+                } else {
+                    $hash .= '_'.gettype($val);
+                }
                 unset($property);
                 unset($reflector);
             }
