@@ -46,7 +46,7 @@ class UIService implements CacheWarmerInterface
         
         foreach ($this->container->get('kernel')->getBundles() as $bundle) {
             if (file_exists($bundle->getPath().DIRECTORY_SEPARATOR.'Resources'.DIRECTORY_SEPARATOR.'config'.DIRECTORY_SEPARATOR.'ui.yml')) {
-                $parameters = YamlParser::parse($bundle->getPath().DIRECTORY_SEPARATOR.'Resources'.DIRECTORY_SEPARATOR.'config'.DIRECTORY_SEPARATOR.'ui.yml');
+                $parameters = YamlParser::parse(file_get_contents($bundle->getPath().DIRECTORY_SEPARATOR.'Resources'.DIRECTORY_SEPARATOR.'config'.DIRECTORY_SEPARATOR.'ui.yml'));
                 
                 if (isset($parameters['form_input_types']) && is_array($parameters['form_input_types'])) {
                     foreach ($parameters['form_input_types'] as $typeName => $typeClass) {
