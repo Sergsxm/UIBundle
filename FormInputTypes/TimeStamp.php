@@ -33,6 +33,9 @@ class TimeStamp extends FormInput
     {
         parent::__construct($container, $formBag, $name, $configuration, $prefix, $mappingObject);
         if ($this->configuration['timeZone'] != null) {
+            if ($this->configuration['timeZone'] == 'default') {
+                $this->configuration['timeZone'] = date_default_timezone_get();
+            }
             if (!$this->configuration['timeZone'] instanceof \DateTimeZone) {
                 $this->configuration['timeZone'] = new \DateTimeZone($this->configuration['timeZone']);
             }

@@ -108,6 +108,9 @@ class TableListTab
                 'timeZone' => null,
             ), $configuration);
             if ($configuration['timeZone'] != null) {
+                if ($configuration['timeZone'] == 'default') {
+                    $configuration['timeZone'] = date_default_timezone_get();
+                }
                 if (!$configuration['timeZone'] instanceof \DateTimeZone) {
                     $configuration['timeZone'] = new \DateTimeZone($configuration['timeZone']);
                 }
