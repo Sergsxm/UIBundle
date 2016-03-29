@@ -212,7 +212,8 @@ Type **html** has following settings:
 | disableFilters             | Turns off all HTML filters, the field value is passed as is               | false                        |
 | allowTags                  | If filled all tags other than listed, will be removed (format: "h1,p,a")  | null                         |
 | allowStyleProperty         | If false all "style" attributes will be removed                           | true                         |
-| replaceUrl                 | If true all links will be replaced with JavaScript calls                  | false                        |
+| replaceUrl                 | If true all links will be replaced with JavaScript calls or redirect      | false                        |
+| replaceUrlPath             | Links will be replaced with redirect to this URL with "path" get-parameter | null                        |
 | disabled                   | Set field to disabled state                                               | false                        |
 
 Type **password** has following settings:

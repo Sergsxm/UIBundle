@@ -49,6 +49,7 @@ class Html extends FormInput
             'allowTags' => null,
             'allowStyleProperty' => true,
             'replaceUrl' => false,
+            'replaceUrlPath' => null,
         );
     }
 
@@ -83,7 +84,16 @@ class Html extends FormInput
         }
         if (in_array($matches[1], $allowedProperties)) {
             if (($matches[1] == 'href') && ($this->configuration['replaceUrl'] == true)) {
-                return 'href="#" onclick="window.open(\''.$matches[2].'\');"';
+                if ($this->configuration['replaceUrlPath'] == null) {
+                    return 'href="#" onclick="window.open(\''.$matches[2].'\');"';
+                } else {
+                    if (strpos($this->configuration['replaceUrlPath'], '/') === false) {
+                        $replaceUrl = $this->container->get('router')->generate($this->configuration['replaceUrlPath'], array('path' => $matches[2]));
+                    } else {
+                        $replaceUrl = $this->configuration['replaceUrlPath'].'?path='.urlencode($matches[2]);
+                    }
+                    return 'href="'.$replaceUrl.'"';
+                }
             }
             return $matches[1].'="'.$matches[2].'"';
         }
@@ -132,6 +142,42 @@ class Html extends FormInput
         }
         return '<'.$matches[1].' '.preg_replace_callback('/([A-z][A-z0-9]*)[\s]*\=[\s]*"([^"]*)"/i', array($this, $methodName) , $matches[2]).'>';
     }
+
+/**
+ * Clear HTML code
+ * 
+ * @param string $code HTML code
+ * @return string Cleared code
+ */    
+    private function clearHtmlCode($code)
+    {
+        if ($this->configuration['disableFilters'] == false) {
+            if ($this->configuration['allowTags'] != null) {
+                $allowtags = explode(',', $this->configuration['allowTags']);
+                $allowtagsstr = '';
+                foreach ($allowtags as $tag) {
+                    $allowtagsstr .= '<'.trim($tag).'>';
+                }
+                $code = strip_tags($code, $allowtagsstr);
+            }
+            $code = preg_replace_callback('/<([A-z][A-z0-9]*)[\s]+([^>]*)>/i', array($this, 'clearHtmlProperties') , $code);
+        }
+        return $code;
+    }
+
+/**
+ * Unclear HTML code
+ * 
+ * @param string $code HTML code
+ * @return string Uncleared code
+ */    
+    private function unclearHtmlCode($code)
+    {
+        if ($this->configuration['replaceUrl'] == true) {
+            $code = preg_replace('/\shref="#" onclick="window\.open\(\'([^"\']*)\'\);"/ui', ' href="$1"', $code);
+        }
+        return $code;
+    }
     
 /**
  * Set value
@@ -141,18 +187,28 @@ class Html extends FormInput
  */
     public function setValue($value)
     {
-        if ($this->configuration['disableFilters'] == false) {
-            if ($this->configuration['allowTags'] != null) {
-                $allowtags = explode(',', $this->configuration['allowTags']);
-                $allowtagsstr = '';
-                foreach ($allowtags as $tag) {
-                    $allowtagsstr .= '<'.trim($tag).'>';
-                }
-                $value = strip_tags($value, $allowtagsstr);
-            }
-            $value = preg_replace_callback('/<([A-z][A-z0-9]*)[\s]+([^>]*)>/i', array($this, 'clearHtmlProperties') , $value);
-        }
-        return parent::setValue($value);
+        return parent::setValue($this->clearHtmlCode($value));
+    }
+
+/**
+ * Get view array for input template
+ * 
+ * @param string $idPrefix Prefix for input`s id property
+ * @return array View array
+ */    
+    public function getInputView($idPrefix)
+    {
+        return array(
+            'type' => $this->getType(),
+            'defaultTemplate' => $this->getDefaultTemplate(),
+            'name' => $this->name,
+            'inputName' => $this->prefix.$this->name,
+            'inputId' => $idPrefix.$this->prefix.$this->name,
+            'configuration' => $this->configuration,
+            'value' => $this->unclearHtmlCode($this->value),
+            'error' => $this->error,
+            'disabled' => $this->disabled,
+        );
     }
     
 /**
