@@ -1,8 +1,11 @@
 <div class="form-group {{inputId}}-container{% if error %} has-error{% endif %}">
     <label for="{{inputId}}" class="col-sm-5">{{configuration['description']}}</label>
     <div class="col-sm-7">
-        <div id="{{inputId}}-files" data-input-name="{{inputName}}"><input type="hidden" name="{{inputName}}" value="{{value}}" />{% if file != null %}{{file.getFileName()}} ({{file.getSize()}} bytes){% else %}File not selected{% endif %}</div>
-        <div><button {% if disabled %}disabled="disabled"{% endif %} class="btn btn-default" onclick="$('#{{inputId}}').val('');$('#{{inputId}}-files').html('&lt;input type=&quot;hidden&quot; name=&quot;{{inputName}}&quot; value=&quot;&quot; /&gt;File not selected');$('.{{inputId}}-error').text('');$('.{{inputId}}-container').removeClass('has-error');return false;">Reset</button></div>
+        <div id="{{inputId}}-files"><input type="hidden" name="{{inputName}}" value="{{value}}" />{% if file != null %}{% trans with {'%name%': file.getFileName(), '%size%': file.getSize()} from "sergsxmui" %}%name% (%size% bytes){% endtrans %}{% else %}{% trans from "sergsxmui" %}File not selected{% endtrans %}{% endif %}</div>
+        <div>
+            <button {% if disabled %}disabled="disabled"{% endif %} class="btn btn-default" onclick="$('#{{inputId}}').val('');$('#{{inputId}}-files').html('&lt;input type=&quot;hidden&quot; name=&quot;{{inputName}}&quot; value=&quot;&quot; /&gt;{% trans from "sergsxmui" %}File not selected{% endtrans %}');$('.{{inputId}}-error').text('');$('.{{inputId}}-container').removeClass('has-error');return false;">{% trans from "sergsxmui" %}Reset{% endtrans %}</button>
+            <button {% if disabled %}disabled="disabled"{% endif %} class="btn btn-primary" onclick="$('#{{inputId}}').click();return false;">{% trans from "sergsxmui" %}Change{% endtrans %}</button>
+        </div>
         <input {% if disabled %}disabled="disabled"{% endif %} type="file" class="form-file-upload" id="{{inputId}}" name="{{inputNameFile}}" data-replace-input-name="{{inputName}}" />
         <p class="form-error-text {{inputId}}-error">{{error}}</p>
     </div>

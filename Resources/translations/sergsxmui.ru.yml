@@ -5,3 +5,8 @@ It should be selected only one item: Необходимо выделить то�
 It should be selected one or more items: Необходимо выделить один или несколько элементов
 Ajax request error: Ошибка Ajax запроса
 %itemsInPage% items on page: %itemsInPage% элементов на странице
+File not selected: Файл не выбран
+Change: Изменить
+Reset: Сбросить
+%name% (%size% bytes): %name% (%size% байт)
+

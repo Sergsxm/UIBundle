@@ -76,70 +76,9 @@
             return !Object.keys(errors).length;
         }
         $(function () {
-            if (($('#{{formId}} textarea.form-wysiwyg').length) && (tinymce != undefined) && (typeof tinymce === 'object')) {
-                tinymce.init({
-                    selector: "#{{formId}} textarea.form-wysiwyg",
-                    locale: '{{app.request.locale}}',
-                    plugins: [
-                        "advlist autolink lists link image charmap print preview anchor",
-                        "searchreplace visualblocks code fullscreen",
-                        "insertdatetime media table contextmenu paste"
-                    ],
-                    toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image"
-                });
-            }
-            $('#{{formId}} input.form-file-upload').change(function () {
-                if ((this.files == undefined) || (this.files[0] == undefined)) {
-                    return false;
-                }
-                var errors = formValidation_{{formId}}(this, true);
-                if (errors[$(this).data('replace-input-name')] != undefined) {
-                    return false;
-                }
-                $fileInput = $(this);
-                $progressBar = $('<div />').css({
-                    color: '#777',
-                }).text('0 %').insertAfter(this);
-                var file = this.files[0];
-                var formData = new FormData();
-                formData.append($fileInput.prop('name'), file);
-                formData.append('form_id', '{{formId}}');
-                formData.append('input_name', $fileInput.prop('name'));
-                $.ajax({
-                    url : '{{path('sergsxm_ui_file_upload')}}',
-                    type : 'POST',
-                    data : formData,
-                    processData: false,
-                    contentType: false,
-                    cache: false,
-                    xhr: function () {
-                        var xhr = new window.XMLHttpRequest();
-                        if (!xhr.upload) {
-                            return xhr;
-                        }
-                        xhr.upload.addEventListener("progress", function (e) {
-                            if (e.lengthComputable) {
-                                var completed = e.loaded / e.total;
-                                $progressBar.text(Math.ceil(completed * 100) + ' %');
-                            }
-                        }, false);
-                        return xhr;
-                    },
-                    success: function (data) {
-                        $fileInput.val('');
-                        $filesContainer = $('#'+$fileInput.prop('id')+'-files');
-                        $filesContainer.html('<input type="hidden" name="'+$filesContainer.data('input-name')+'" value="'+data.id+'" />'+data.fileName+' ('+data.size+' bytes)');
-                    },
-                    error: function (data) {
-                        if (data.error) {
-                            alert(data.error);
-                        }
-                    },
-                    complete: function () {
-                        $progressBar.remove();
-                    }
-                });
-            });    
+            sergsxmUIFunctions.initWysiwyg('#{{formId}} textarea.form-wysiwyg');
+            sergsxmUIFunctions.initFileUploadInput('#{{formId}} input.form-file-upload', '{{formId}}', '{% trans with {'%name%': '%name%', '%size%': '%size%'} from "sergsxmui" %}%name% (%size% bytes){% endtrans %}', '{% trans from "sergsxmui" %}File not selected{% endtrans %}', formValidation_{{formId}});
+
             $('#{{formId}} input, #{{formId}} textarea, #{{formId}} select').change(function () {
                 formValidation_{{formId}}(this);
             });

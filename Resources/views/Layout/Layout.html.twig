@@ -14,6 +14,9 @@
                 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
                 <script src="//cdn.tinymce.com/4/tinymce.min.js"></script>
                 <script src="{{asset('bundles/sergsxmui/js/ui.js')}}"></script>
+                <script>
+                    sergsxmUIFunctions.initContext('{{app.request.locale}}', '{{path('sergsxm_ui_file_upload')}}');
+                </script>    
         {% endblock %}
         <link rel="icon" type="image/x-icon" href="{{asset('favicon.ico')}}" />
     </head>
