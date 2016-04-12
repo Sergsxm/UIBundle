@@ -220,7 +220,7 @@ class File extends FormInput
                     $value->storeInfo();
                     //$this->storeFileInfo($value);
                 } elseif ($this->configuration['storeType'] == self::ST_DOCTRINE) {
-                    $em = $this->container->get('doctrine')->getEntityManager();
+                    $em = $this->container->get('doctrine')->getManager();
                     $em->persist($value);
                     $em->flush();
                 }

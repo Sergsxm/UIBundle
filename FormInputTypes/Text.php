@@ -74,7 +74,7 @@ class Text extends FormInput
             if ($this->error != null) return false;
         }
         if (($this->configuration['uniqueInDoctrine'] == true) && ($this->mappingObject != null)) {
-            $em = $this->container->get('doctrine')->getEntityManager();
+            $em = $this->container->get('doctrine')->getManager();
             $ids = $em->getClassMetadata(get_class($this->mappingObject))->getIdentifierValues($this->mappingObject);
             $queryConditions = array();
             foreach ($ids as $idKey=>$idVal) {

@@ -65,7 +65,7 @@ class FileController extends Controller
             if ($fieldParameters['storeType'] == FileInputType::ST_FILE) {
                 $value->storeInfo();
             } elseif ($fieldParameters['storeType'] == FileInputType::ST_DOCTRINE) {
-                $em = $this->getDoctrine()->getEntityManager();
+                $em = $this->getDoctrine()->getManager();
                 $em->persist($value);
                 $em->flush();
             }
