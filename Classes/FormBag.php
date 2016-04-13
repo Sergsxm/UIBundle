@@ -45,6 +45,16 @@ class FormBag
     }
 
 /**
+ * Get form identifier
+ * 
+ * @return string Form ID
+ */    
+    public function getFormId()
+    {
+        return $this->formId;
+    }
+    
+/**
  * Store parameters to session
  */    
     private function store()

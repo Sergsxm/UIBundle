@@ -127,12 +127,12 @@ class File implements FileInterface
  * @param string $fileName File ID (same as content file)
  * @return \self File object
  */    
-    public static function restore($fileName)
+    static public function restore($fileName)
     {
         if (!file_exists($fileName)) {
             return null;
         }
-        $value = new self();
+        $value = new static();
         $value->setContentFile($fileName);
         
         $infoFile = $fileName.'.info';

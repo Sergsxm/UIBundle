@@ -86,6 +86,7 @@
         $(function () {
             sergsxmUIFunctions.initWysiwyg('#{{formId}} textarea.form-wysiwyg');
             sergsxmUIFunctions.initFileUploadInput('#{{formId}} input.form-file-upload', '{{formId}}', '{% trans with {'%name%': '%name%', '%size%': '%size%'} from "sergsxmui" %}%name% (%size% bytes){% endtrans %}', '{% trans from "sergsxmui" %}File not selected{% endtrans %}', formValidation_{{formId}});
+            sergsxmUIFunctions.initImageUploadInput('#{{formId}} input.form-image-upload', '{{formId}}', '<div class="thumbnail sergsxmui-form-thumbnail"><img src="%thumbnail%" title="{% trans with {'%name%': '%name%', '%size%': '%size%'} from "sergsxmui" %}%name% (%size% bytes){% endtrans %}" /></div>', '<div class="thumbnail sergsxmui-form-thumbnail"><img src="{{asset('bundles/sergsxmui/img/foo.png')}}" title="{% trans from "sergsxmui" %}File not selected{% endtrans %}" /></div>', formValidation_{{formId}});
 
             $('#{{formId}} input, #{{formId}} textarea, #{{formId}} select').change(function () {
                 formValidation_{{formId}}(this);

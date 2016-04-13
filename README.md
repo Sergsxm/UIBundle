@@ -152,7 +152,7 @@ If you do not need this feature, you can specify in the configuration of the fie
 
 ### 2.3. Input types
 
-Supported input types: checkbox, text, textarea, timestamp, html, password, select, file.
+Supported input types: checkbox, text, textarea, timestamp, html, password, select, file, number, image.
 
 Type **checkbox** has following settings:
 
@@ -281,12 +281,32 @@ Type **number** has following settings:
 | notNumberError             | Text for the "not a number" error                                         | "This is not a number"       |
 | disabled                   | Set field to disabled state                                               | false                        |
 
+Type **image** has following settings:
+
+| Parameter          | Parameter description                                                               | Default value                      |
+| ------------------ | ----------------------------------------------------------------------------------- | ---------------------------------- |
+| description        | Field description, which will be displayed to the user as the field name            | such as field name                 |
+| required           | If true field is required                                                           | false                              |
+| requiredError      | Text for the "required" error                                                       | "The field can not be empty"       |
+| maxSize            | Maximum allowed file size (null for unlimited)                                      | null                               |
+| maxSizeError       | Text for oversize error                                                             | "File size is larger than allowed" |
+| minWidth           | Minimal image width (null for unlimited)                                            | null                               |
+| minHeight          | Minimal image height (null for unlimited)                                           | null                               |
+| maxWidth           | Maximal image width (null for unlimited)                                            | null                               |
+| maxHeight          | Maximal image height (null for unlimited)                                           | null                               |
+| imageSizeError     | Text for image size error                                                           | "Wrong image size"                 |
+| notImageError      | Text for "not an image" error                                                       | "The file is not an image"         |
+| storeType          | Type of file store (see below)                                                      | ST_FILE                            |
+| storeFolder        | Folder for saving files                                                             | "uploads"                          |
+| storeDoctrineClass | Doctrine file entity class (must implements Sergsxm\UIBundle\Classes\ImageInterface) | ""                                |
+| disabled           | Set field to disabled state                                                         | false                              |
+
 *ValidateCallback* function must be callable. The function should return null (if field value is valid) or error text. 
 The first parameter passed to the function is the value of the field. 
 The second parameter specifies by parameter *validateCallbackParameters*.
 
 *StoreType* specifies the type of save file. 
-Types defined by constants in the class \Sergsxm\UIBundle\FormInputTypes\File.
+Types defined by constants in the class \Sergsxm\UIBundle\FormInputTypes\File (\Sergsxm\UIBundle\FormInputTypes\Image for image type).
 There are two types: ST_FILE and ST_DOCTRINE.
 When you type ST_FILE file is saved in *storeFolder* folder.
 The file with the extension info, which stores information about the file, will creates in the same folder.

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * File form input type
+ * Image form input type
  * This file is part of SergSXM UI package
  *
  * @package    SergSXM UI
@@ -12,12 +12,12 @@
 namespace Sergsxm\UIBundle\FormInputTypes;
 
 use Sergsxm\UIBundle\Classes\FormInput;
-use Sergsxm\UIBundle\Classes\FileInterface;
+use Sergsxm\UIBundle\Classes\ImageInterface;
 use Sergsxm\UIBundle\Classes\FormBag;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\HttpFoundation\Request;
 
-class File extends FormInput
+class Image extends FormInput
 {
 
     const ST_FILE = 0;
@@ -62,7 +62,7 @@ class File extends FormInput
             $value = $this->mappingProperty->getValue($mappingObject);
             if (($this->configuration['storeType'] == self::ST_FILE) && is_string($value)) {
                 $this->value = $this->restoreFromFile($value);
-            } elseif ($value instanceof FileInterface) {
+            } elseif ($value instanceof ImageInterface) {
                 $this->value = $value;
             } else {
                 $this->value = null;
@@ -80,7 +80,7 @@ class File extends FormInput
  */
     public function getType()
     {
-        return 'file';
+        return 'image';
     }
     
 /**
@@ -90,7 +90,7 @@ class File extends FormInput
  */
     public function getDefaultTemplate()
     {
-        return 'SergsxmUIBundle:FormInputTypes:File.html.twig';
+        return 'SergsxmUIBundle:FormInputTypes:Image.html.twig';
     }
     
 /**
@@ -106,8 +106,12 @@ class File extends FormInput
             //'multiply' => false,
             'maxSize' => null,
             'maxSizeError' => 'File size is larger than allowed',
-            'mimeTypes' => null,
-            'mimeTypesError' => 'Invalid file type',
+            'minWidth' => null,
+            'minHeight' => null,
+            'maxWidth' => null,
+            'maxHeight' => null,
+            'imageSizeError' => 'Wrong image size',
+            'notImageError' => 'The file is not an image',
             'storeType' => self::ST_FILE,
             'storeFolder' => 'uploads',
             'storeDoctrineClass' => '',
@@ -129,9 +133,28 @@ class File extends FormInput
             $this->error = $this->configuration['maxSizeError'];
             return false;
         }
-        if (($this->configuration['mimeTypes'] != null) && ($this->value != null) && (!in_array($this->value->getMimeType(), $this->configuration['mimeTypes']))) {
-            $this->error = $this->configuration['mimeTypesError'];
-            return false;
+        if ($this->value != null) {
+            $imageSize = $this->value->getImageSize();
+            if ($imageSize === null) {
+                $this->error = $this->configuration['notImageError'];
+                return false;
+            }
+            if (($this->configuration['minWidth'] !== null) && ($imageSize['width'] < $this->configuration['minWidth'])) {
+                $this->error = $this->configuration['imageSizeError'];
+                return false;
+            }
+            if (($this->configuration['maxWidth'] !== null) && ($imageSize['width'] > $this->configuration['maxWidth'])) {
+                $this->error = $this->configuration['imageSizeError'];
+                return false;
+            }
+            if (($this->configuration['minHeight'] !== null) && ($imageSize['height'] < $this->configuration['minHeight'])) {
+                $this->error = $this->configuration['imageSizeError'];
+                return false;
+            }
+            if (($this->configuration['maxHeight'] !== null) && ($imageSize['height'] > $this->configuration['maxHeight'])) {
+                $this->error = $this->configuration['imageSizeError'];
+                return false;
+            }
         }
         $this->error = null;
         return true;
@@ -145,6 +168,7 @@ class File extends FormInput
  */    
     public function getJsValidation($idPrefix)
     {
+        // TODO js image size validation
         if ($this->disabled == true) {
             return '';
         }
@@ -152,16 +176,13 @@ class File extends FormInput
         if ($this->configuration['required'] == true) {
             $code .= 'if ((form["'.$this->prefix.$this->name.'"].value == "") && (form["'.$this->prefix.$this->name.'_file"].value == "")) {errors["'.$this->prefix.$this->name.'"] = '.json_encode($this->configuration['requiredError']).';}'.self::JS_EOL;
         }
-        if (($this->configuration['maxSize'] != null) || ($this->configuration['mimeTypes'] != null)) {
-            $code .= 'if ((form["'.$this->prefix.$this->name.'_file"] != undefined) && (form["'.$this->prefix.$this->name.'_file"].files != undefined) && (form["'.$this->prefix.$this->name.'_file"].files[0] != undefined)) {'.self::JS_EOL;
-            if ($this->configuration['maxSize'] != null) {
-                $code .= 'if (form["'.$this->prefix.$this->name.'_file"].files[0].size > '.$this->configuration['maxSize'].') {errors["'.$this->prefix.$this->name.'"] = '.json_encode($this->configuration['maxSizeError']).';}'.self::JS_EOL;
-            }
-            if ($this->configuration['mimeTypes'] != null) {
-                $code .= 'if (function (v) {var a = '.json_encode($this->configuration['mimeTypes']).';for(var i in a) {if(a[i] == v) return true;}return false;}(form["'.$this->prefix.$this->name.'_file"].files[0].type) == false) {errors["'.$this->prefix.$this->name.'"] = '.json_encode($this->configuration['mimeTypesError']).';}'.self::JS_EOL;
-            }
-            $code .= '}'.self::JS_EOL;
+        $code .= 'if ((form["'.$this->prefix.$this->name.'_file"] != undefined) && (form["'.$this->prefix.$this->name.'_file"].files != undefined) && (form["'.$this->prefix.$this->name.'_file"].files[0] != undefined)) {'.self::JS_EOL;
+        if ($this->configuration['maxSize'] != null) {
+            $code .= 'if (form["'.$this->prefix.$this->name.'_file"].files[0].size > '.$this->configuration['maxSize'].') {errors["'.$this->prefix.$this->name.'"] = '.json_encode($this->configuration['maxSizeError']).';}'.self::JS_EOL;
         }
+        $mimeTypes = array('image/jpeg', 'image/png', 'image/gif');
+        $code .= 'if (function (v) {var a = '.json_encode($mimeTypes).';for(var i in a) {if(a[i] == v) return true;}return false;}(form["'.$this->prefix.$this->name.'_file"].files[0].type) == false) {errors["'.$this->prefix.$this->name.'"] = '.json_encode($this->configuration['notImageError']).';}'.self::JS_EOL;
+        $code .= '}'.self::JS_EOL;
         return $code;
     }
     
@@ -203,7 +224,7 @@ class File extends FormInput
         if ($request->getMethod() == 'POST') {
             if ($request->files->has($prefix.$this->prefix.$this->name.'_file') && (($file = $request->files->get($prefix.$this->prefix.$this->name.'_file')) != null)) {
                 if ($this->configuration['storeType'] == self::ST_FILE) {
-                    $value = new \Sergsxm\UIBundle\Classes\File();
+                    $value = new \Sergsxm\UIBundle\Classes\Image();
                 } elseif ($this->configuration['storeType'] == self::ST_DOCTRINE) {
                     $value = new $this->configuration['storeDoctrineClass'];
                 }
@@ -246,12 +267,20 @@ class File extends FormInput
     public function getInputView($idPrefix)
     {
         $this->formBag->set($this->prefix.$this->name.'_file', array(
-            'type' => 'file',
+            'type' => 'image',
             'maxSize' => $this->configuration['maxSize'],
-            'mimeTypes' => $this->configuration['mimeTypes'],
+            'minWidth' => $this->configuration['minWidth'],
+            'maxWidth' => $this->configuration['maxWidth'],
+            'minHeight' => $this->configuration['minHeight'],
+            'maxHeight' => $this->configuration['maxHeight'],
             'storeType' => $this->configuration['storeType'],
             'storeFolder' => $this->configuration['storeFolder'],
             'storeDoctrineClass' => $this->configuration['storeDoctrineClass'],
+        ));
+        $thumbnail = $this->container->get('router')->generate('sergsxm_ui_file_thumbnail', array(
+            'form_id' => $this->formBag->getFormId(), 
+            'input_name' => $this->prefix.$this->name.'_file',
+            'id' => ($this->value != null ? $this->value->getId() : null)
         ));
         return array(
             'type' => $this->getType(),
@@ -263,17 +292,18 @@ class File extends FormInput
             'inputIdFile' => $idPrefix.$this->prefix.$this->name.'_file',
             'configuration' => $this->configuration,
             'value' => ($this->value != null ? $this->value->getId() : null),
-            'file' => $this->value,
+            'image' => $this->value,
             'error' => $this->error,
             'disabled' => $this->disabled,
+            'thumbnail' => $thumbnail,
         );
     }
 
 /**
- * Restore file entity from doctrine store
+ * Restore image entity from doctrine store
  * 
- * @param string $id File id
- * @return File File entity
+ * @param string $id Image id
+ * @return Image Image entity
  */    
     private function restoreFromDoctrine($id)
     {
@@ -281,14 +311,14 @@ class File extends FormInput
     }
     
 /**
- * Restore file entity from file store
+ * Restore image entity from file store
  * 
- * @param string $id File id
- * @return File File entity
+ * @param string $id Image id
+ * @return Image Image entity
  */    
     private function restoreFromFile($id)
     {
-        return \Sergsxm\UIBundle\Classes\File::restore($id);
+        return \Sergsxm\UIBundle\Classes\Image::restore($id);
     }
     
 }

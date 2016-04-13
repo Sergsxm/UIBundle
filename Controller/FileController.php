@@ -13,11 +13,19 @@ namespace Sergsxm\UIBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Sergsxm\UIBundle\FormInputTypes\File as FileInputType;
+use Sergsxm\UIBundle\FormInputTypes\Image as ImageInputType;
 
 class FileController extends Controller
 {
-
+    const imageWidth = 180;
+    const imageHeight = 140;
+    const quality = 75;
+    const backgroundRed = 255;
+    const backgroundGreen = 255;
+    const backgroundBlue = 255;
+    
 /**
  * Ajax upload action
  * 
@@ -33,25 +41,32 @@ class FileController extends Controller
         }
         $formBag = new \Sergsxm\UIBundle\Classes\FormBag($request->getSession());
         $formBag->setFormId($formId);
-        $fieldParameters = $formBag->get($request->get('input_name'));
-        if (!is_array($fieldParameters)) {
+        $inputName = $request->get('input_name');
+        $fieldParameters = $formBag->get($inputName);
+        if (!is_array($fieldParameters) || (($fieldParameters['type'] != 'file') && ($fieldParameters['type'] != 'image'))) {
             return new JsonResponse(array('error' => 'Unknown inputName'));
         }
+        $thumbnail = '';
         $file = $this->getRequest()->files->get($request->get('input_name'));
         if (empty($file)) {
             return new JsonResponse(array('error' => 'Upload error'));
         }
         try {
-            if (($fieldParameters['mimeTypes'] != null) && (!in_array($file->getMimeType(), $fieldParameters['mimeTypes']))) {
-                return new JsonResponse(array('error' => 'Invalid file type'));
-            }
             if (($fieldParameters['maxSize'] != null) && ($file->getSize() > $fieldParameters['maxSize'])) {
                 return new JsonResponse(array('error' => 'File size is larger than allowed'));
             }
-            if ($fieldParameters['storeType'] == FileInputType::ST_FILE) {
-                $value = new \Sergsxm\UIBundle\Classes\File();
-            } elseif ($fieldParameters['storeType'] == FileInputType::ST_DOCTRINE) {
-                $value = new $fieldParameters['storeDoctrineClass'];
+            if ($fieldParameters['type'] == 'file') {
+                if ($fieldParameters['storeType'] == FileInputType::ST_FILE) {
+                    $value = new \Sergsxm\UIBundle\Classes\File();
+                } elseif ($fieldParameters['storeType'] == FileInputType::ST_DOCTRINE) {
+                    $value = new $fieldParameters['storeDoctrineClass'];
+                }
+            } elseif ($fieldParameters['type'] == 'image') {
+                if ($fieldParameters['storeType'] == ImageInputType::ST_FILE) {
+                    $value = new \Sergsxm\UIBundle\Classes\Image();
+                } elseif ($fieldParameters['storeType'] == ImageInputType::ST_DOCTRINE) {
+                    $value = new $fieldParameters['storeDoctrineClass'];
+                }
             }
             $value->setFileName($file->getClientOriginalName());
             $value->setMimeType($file->getMimeType());
@@ -62,12 +77,59 @@ class FileController extends Controller
             } while (file_exists($fieldParameters['storeFolder'].DIRECTORY_SEPARATOR.$newFileName));
             $file->move($fieldParameters['storeFolder'], $newFileName);
             $value->setContentFile($fieldParameters['storeFolder'].DIRECTORY_SEPARATOR.$newFileName);
-            if ($fieldParameters['storeType'] == FileInputType::ST_FILE) {
-                $value->storeInfo();
-            } elseif ($fieldParameters['storeType'] == FileInputType::ST_DOCTRINE) {
-                $em = $this->getDoctrine()->getManager();
-                $em->persist($value);
-                $em->flush();
+            if ($fieldParameters['type'] == 'file') {
+                if (($fieldParameters['mimeTypes'] != null) && (!in_array($file->getMimeType(), $fieldParameters['mimeTypes']))) {
+                    @unlink($value->getContentFile());
+                    return new JsonResponse(array('error' => 'Invalid file type'));
+                }
+            } elseif ($fieldParameters['type'] == 'image') {
+                $imageInfo = @getimagesize($value->getContentFile());
+                if (!isset($imageInfo[0]) || !isset($imageInfo[1])) {
+                    @unlink($value->getContentFile());
+                    return new JsonResponse(array('error' => 'Invalid image type'));
+                }
+                if (!in_array($imageInfo[2], array(IMAGETYPE_GIF, IMAGETYPE_JPEG, IMAGETYPE_PNG))) {
+                    @unlink($value->getContentFile());
+                    return new JsonResponse(array('error' => 'Invalid image type'));
+                }
+                if (($fieldParameters['minWidth'] !== null) && ($imageInfo[0] < $fieldParameters['minWidth'])) {
+                    @unlink($value->getContentFile());
+                    return new JsonResponse(array('error' => 'Invalid image size'));
+                }
+                if (($fieldParameters['maxWidth'] !== null) && ($imageInfo[0] > $fieldParameters['maxWidth'])) {
+                    @unlink($value->getContentFile());
+                    return new JsonResponse(array('error' => 'Invalid image size'));
+                }
+                if (($fieldParameters['minHeight'] !== null) && ($imageInfo[1] < $fieldParameters['minHeight'])) {
+                    @unlink($value->getContentFile());
+                    return new JsonResponse(array('error' => 'Invalid image size'));
+                }
+                if (($fieldParameters['maxHeight'] !== null) && ($imageInfo[1] > $fieldParameters['maxHeight'])) {
+                    @unlink($value->getContentFile());
+                    return new JsonResponse(array('error' => 'Invalid image size'));
+                }
+            }
+            if ($fieldParameters['type'] == 'file') {
+                if ($fieldParameters['storeType'] == FileInputType::ST_FILE) {
+                    $value->storeInfo();
+                } elseif ($fieldParameters['storeType'] == FileInputType::ST_DOCTRINE) {
+                    $em = $this->getDoctrine()->getManager();
+                    $em->persist($value);
+                    $em->flush();
+                }
+            } elseif ($fieldParameters['type'] == 'image') {
+                if ($fieldParameters['storeType'] == ImageInputType::ST_FILE) {
+                    $value->storeInfo();
+                } elseif ($fieldParameters['storeType'] == ImageInputType::ST_DOCTRINE) {
+                    $em = $this->getDoctrine()->getManager();
+                    $em->persist($value);
+                    $em->flush();
+                }
+                $thumbnail = $this->container->get('router')->generate('sergsxm_ui_file_thumbnail', array(
+                    'form_id' => $formId, 
+                    'input_name' => $inputName,
+                    'id' => $value->getId()
+                ));
             }
         } catch (\Exception $e) {
             return new JsonResponse(array('error' => 'Exception: '.$e->getMessage()));
@@ -79,6 +141,93 @@ class FileController extends Controller
             'uploadDate' => $value->getUploadDate(),
             'mimeType' => $value->getMimeType(),
             'id' => $value->getId(),
+            'thumbnail' => $thumbnail,
         ));
     }
+
+/**
+ * Get thumbnail of image
+ * 
+ * @return Response
+ */    
+    public function thumbnailAction()
+    {
+        $request = $this->get('request_stack')->getMasterRequest();
+        
+        $formId = $request->get('form_id');
+        if ($formId == null) {
+            return new Response('Unknown formId', 404);
+        }
+        $formBag = new \Sergsxm\UIBundle\Classes\FormBag($request->getSession());
+        $formBag->setFormId($formId);
+        $fieldParameters = $formBag->get($request->get('input_name'));
+        if (!is_array($fieldParameters) || ($fieldParameters['type'] != 'image')) {
+            return new Response('Unknown inputName', 404);
+        }
+        $id = $request->get('id');
+        if ($fieldParameters['storeType'] == ImageInputType::ST_FILE) {
+            $image = \Sergsxm\UIBundle\Classes\Image::restore($id);
+        } elseif ($fieldParameters['storeType'] == ImageInputType::ST_DOCTRINE) {
+            $image = $this->container->get('doctrine')->getRepository($fieldParameters['storeDoctrineClass'])->find($id);
+        }
+        if (empty($image)) {
+            return new Response('Unknown id', 404);
+        }
+        $params = getimagesize($image->getContentFile());
+        $source = '';
+        switch ($params[2]) {
+            case IMAGETYPE_GIF: $source = @imagecreatefromgif($image->getContentFile()); break;
+            case IMAGETYPE_JPEG: $source = @imagecreatefromjpeg($image->getContentFile()); break;
+            case IMAGETYPE_PNG: $source = @imagecreatefrompng($image->getContentFile()); break;
+        }
+        $thumb = imagecreatetruecolor(self::imageWidth, self::imageHeight);
+        if (($params[2] == IMAGETYPE_PNG) || ($params[2] == IMAGETYPE_GIF)) {
+            $transparencyIndex = imagecolortransparent($source);
+            $transparencyColor = array('red' => self::backgroundRed, 'green' => self::backgroundGreen, 'blue' => self::backgroundBlue);
+            if ($transparencyIndex >= 0) {
+                $transparencyColor = imagecolorsforindex($source, $transparencyIndex);
+            }
+            $transparencyIndex = imagecolorallocate($thumb, $transparencyColor['red'], $transparencyColor['green'], $transparencyColor['blue']);
+            imagefill($thumb, 0, 0, $transparencyIndex);
+            imagecolortransparent($thumb, $transparencyIndex);
+        } else {
+            $transparencyIndex = imagecolorallocate($thumb, self::backgroundRed, self::backgroundGreen, self::backgroundBlue);
+            imagefill($thumb, 0, 0, $transparencyIndex);
+        }
+        $src_aspect = $params[0] / $params[1];
+        $thumb_aspect = self::imageWidth / self::imageHeight;
+        if ($src_aspect < $thumb_aspect) {   
+            $newsx = self::imageWidth;
+            $newsy = self::imageHeight;
+            $newx = 0;
+            $newy = 0;
+            $srcsx = $params[0];
+            $srcsy = $params[0] / $thumb_aspect;
+            $srcx = 0;
+            $srcy = ($params[1] - $srcsy) / 2;
+        } else {
+            $newsx = self::imageWidth;
+            $newsy = self::imageHeight;
+            $newx = 0;
+            $newy = 0;
+            $srcsx = $params[1] * $thumb_aspect;
+            $srcsy = $params[1];
+            $srcx = ($params[0] - $srcsx) / 2;
+            $srcy = 0;
+        }
+        $newsx = max($newsx, 1);
+        $newsy = max($newsy, 1);
+        imagecopyresampled($thumb, $source, $newx, $newy, $srcx, $srcy, $newsx, $newsy, $srcsx, $srcsy);
+        
+        ob_start();
+        imagejpeg($thumb, null, self::quality);
+        $thumbString = ob_get_contents();
+        ob_end_clean();
+        
+        $response = new Response($thumbString);
+        $response->headers->replace(array('Content-type' => 'image/jpeg'));
+        $response->setExpires(new \DateTime('+1 week'));
+        return $response;
+    }
+    
 }
