@@ -51,7 +51,23 @@ Install bundle assets by command `php app/console assets:install`.
 
 Now you can use the bundle.
 
-If you will change layout template, remember to add CSS and JS files on it.
+If you will change layout template, remember to add CSS and JS files of this bundle and initialization section on it (and Bootstrap, jQuery, TinyMCE files of course):
+
+```twig
+<html>
+    <head>
+        ...
+        ...
+        <link rel="stylesheet" href="{{asset('bundles/sergsxmui/css/ui.css')}}" />
+        <script src="{{asset('bundles/sergsxmui/js/ui.js')}}"></script>
+        <script>
+            sergsxmUIFunctions.initContext('{{app.request.locale}}', '{{path('sergsxm_ui_file_upload')}}');
+        </script>    
+    </head>
+    ...
+    ...
+</html>
+```
 
 ### 1.1. Third-party modules
 
