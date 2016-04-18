@@ -22,9 +22,9 @@ class FileController extends Controller
     const imageWidth = 180;
     const imageHeight = 140;
     const quality = 75;
-    const backgroundRed = 255;
-    const backgroundGreen = 255;
-    const backgroundBlue = 255;
+    const backgroundRed = 238;
+    const backgroundGreen = 238;
+    const backgroundBlue = 238;
     
 /**
  * Ajax upload action
@@ -194,29 +194,22 @@ class FileController extends Controller
             $transparencyIndex = imagecolorallocate($thumb, self::backgroundRed, self::backgroundGreen, self::backgroundBlue);
             imagefill($thumb, 0, 0, $transparencyIndex);
         }
-        $src_aspect = $params[0] / $params[1];
-        $thumb_aspect = self::imageWidth / self::imageHeight;
-        if ($src_aspect < $thumb_aspect) {   
-            $newsx = self::imageWidth;
-            $newsy = self::imageHeight;
-            $newx = 0;
-            $newy = 0;
+        $factor = max(self::imageWidth / $params[0], self::imageHeight / $params[1]);
+        $factor = min($factor, 1);
+        $srcsx = self::imageWidth / $factor;
+        $srcsy = self::imageHeight / $factor;
+        if ($srcsx > $params[0]) {
             $srcsx = $params[0];
-            $srcsy = $params[0] / $thumb_aspect;
-            $srcx = 0;
-            $srcy = ($params[1] - $srcsy) / 2;
-        } else {
-            $newsx = self::imageWidth;
-            $newsy = self::imageHeight;
-            $newx = 0;
-            $newy = 0;
-            $srcsx = $params[1] * $thumb_aspect;
-            $srcsy = $params[1];
-            $srcx = ($params[0] - $srcsx) / 2;
-            $srcy = 0;
         }
-        $newsx = max($newsx, 1);
-        $newsy = max($newsy, 1);
+        if ($srcsy > $params[1]) {
+            $srcsy = $params[1];
+        }
+        $newsx = $srcsx * $factor;
+        $newsy = $srcsy * $factor;
+        $srcx = ($params[0] - $srcsx) / 2;
+        $srcy = ($params[1] - $srcsy) / 2;
+        $newx = (self::imageWidth - $newsx) / 2;
+        $newy = (self::imageHeight - $newsy) / 2;
         imagecopyresampled($thumb, $source, $newx, $newy, $srcx, $srcy, $newsx, $newsy, $srcsx, $srcsy);
         
         ob_start();
