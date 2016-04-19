@@ -20,6 +20,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class Form implements FormInterface
 {
+    const MO_PARENT = 'parent';
     
     private $container;
     private $formBag;
@@ -64,7 +65,7 @@ class Form implements FormInterface
  * @return \Sergsxm\UIBundle\Forms\Form Form object
  * @throws FormException
  */    
-    public function addField($type, $name, $configuration = array(), $mappingObject = 'parent')
+    public function addField($type, $name, $configuration = array(), $mappingObject = self::MO_PARENT)
     {
         if ($this->isFrozen == true) {
             throw new FormException(__CLASS__.': you can`t add fields after bindRequest() or getView() methods are called');
@@ -78,7 +79,7 @@ class Form implements FormInterface
             }
         }
         
-        if ($mappingObject === 'parent') {
+        if ($mappingObject === self::MO_PARENT) {
             $mappingObject = $this->mappingObject;
         }
         
@@ -392,19 +393,23 @@ class Form implements FormInterface
  * Load form from class annotations
  * 
  * @param string $tag Form tag
+ * @param object $mappingObject Mapping object
  * @return \Sergsxm\UIBundle\Forms\Form Form object
  */    
-    public function fromAnnotations($tag = null)
+    public function fromAnnotations($tag = null, $mappingObject = self::MO_PARENT)
     {
+        if ($mappingObject == self::MO_PARENT) {
+            $mappingObject = $this->mappingObject;
+        }
         $reader = $this->container->get('annotation_reader');
         $translator = $this->container->get('translator');
         if (empty($reader)) {
             throw new FormException(__CLASS__.': annotation reader service not found');
         }
-        if (empty($this->mappingObject)) {
+        if (!is_object($mappingObject)) {
             throw new FormException(__CLASS__.': you must specify mapping object for import from annotations');
         }
-        $object = new \ReflectionObject($this->mappingObject);
+        $object = new \ReflectionObject($mappingObject);
         foreach ($object->getProperties() as $property) {
             if ($tag != null) {
                 $tags = $reader->getPropertyAnnotation($property, '\Sergsxm\UIBundle\Annotations\Tags');
@@ -421,7 +426,7 @@ class Form implements FormInterface
                         }
                     }
                 }
-                $this->addField($input->type, $property->getName(), $input->configuration);
+                $this->addField($input->type, $property->getName(), $input->configuration, $mappingObject);
             }
         }
         return $this;

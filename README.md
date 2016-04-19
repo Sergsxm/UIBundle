@@ -94,7 +94,7 @@ $object is a object for properties mapping. Leave this parameter or set it to nu
 Now you have Form (Sergsxm\UIBundle\Forms\Form) object. This object contains following methods:
 
 ```php
-public function addField($type, $name, $configuration = array(), $mappingObject = 'parent');
+public function addField($type, $name, $configuration = array(), $mappingObject = self::MO_PARENT);
 public function openGroup($name, $description = '', $condition = '');
 public function closeGroup();
 public function enableCaptcha($type, $configuration = array());
@@ -110,7 +110,7 @@ public function render($template = 'SergsxmUIBundle:Forms:Form.html.twig', $para
 public function findInputByName($name);
 public function getValue();
 public function setValue($value);
-public function fromAnnotations($tag = null);
+public function fromAnnotations($tag = null, $mappingObject = self::MO_PARENT);
 ```
 
 Assigning functions described in greater detail in the class file. 
@@ -383,7 +383,7 @@ So you can create your own templates and put them when calling the render method
 ### 2.6. Annotations
 
 You can create forms from the annotations of mapping object. 
-For this purpose use method `fromAnnotations($tag = null)`.
+For this purpose use method `fromAnnotations($tag = null, $mappingObject = self::MO_PARENT)`.
 
 Annotation `Sergsxm\UIBundle\Annotations\Input` is used to create input fields.
 Type and configuration parameters are directly passed to the method *addField*.
