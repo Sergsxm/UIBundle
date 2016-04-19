@@ -276,6 +276,9 @@ class Image extends FormInput
             'storeType' => $this->configuration['storeType'],
             'storeFolder' => $this->configuration['storeFolder'],
             'storeDoctrineClass' => $this->configuration['storeDoctrineClass'],
+            'maxSizeError' => $this->configuration['maxSizeError'],
+            'imageSizeError' => $this->configuration['imageSizeError'],
+            'notImageError' => $this->configuration['notImageError'],
         ));
         $thumbnail = $this->container->get('router')->generate('sergsxm_ui_file_thumbnail', array(
             'form_id' => $this->formBag->getFormId(), 

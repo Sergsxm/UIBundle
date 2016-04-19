@@ -252,6 +252,8 @@ class File extends FormInput
             'storeType' => $this->configuration['storeType'],
             'storeFolder' => $this->configuration['storeFolder'],
             'storeDoctrineClass' => $this->configuration['storeDoctrineClass'],
+            'maxSizeError' => $this->configuration['maxSizeError'],
+            'mimeTypesError' => $this->configuration['mimeTypesError'],
         ));
         return array(
             'type' => $this->getType(),

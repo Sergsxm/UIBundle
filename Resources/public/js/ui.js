@@ -11,12 +11,26 @@ var sergsxmUIFunctions = {
     
     locale: 'en',
     fileUploadPath: '',
-    
+
+/**
+ * Init context for UI Bundle
+ * This function must call in page initialization
+ * 
+ * @param {string} locale Current locale code (2 letters, e.g. en, ru)
+ * @param {string} fileUploadPath Ajax file upload URL
+ */    
     initContext : function (locale, fileUploadPath) {
         this.locale = locale;
         this.fileUploadPath = fileUploadPath;
     },
-    
+
+/**
+ * Put bootstrap alert box into alerts container
+ * 
+ * @param {string} message Alert message
+ * @param {string} type Alert type (success, error, warning, info)
+ * @param {string|jQuery} container Container for alert box
+ */    
     alert : function (message, type, container) {
         var cssclass = 'alert-info';
         if (type == 'success') {
@@ -28,7 +42,16 @@ var sergsxmUIFunctions = {
         }
         $('<div class="alert '+cssclass+' alert-dismissible" role="alert" style="display:none"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'+message+'</div>').appendTo(container).slideDown(200);
     },
-    
+
+/**
+ * Show bootstrap confirm dialog window
+ * 
+ * @param {string} message Confirm message
+ * @param {string} title Confirm dialog title
+ * @param {string} okText Text on OK button
+ * @param {string} cancelText Text on Cancel button
+ * @param {function} callBack Callback function (when OK button is pressed)
+ */    
     confirm : function (message, title, okText, cancelText, callBack) {
         var $alert = 
         $(' <div class="modal fade">\
@@ -60,7 +83,13 @@ var sergsxmUIFunctions = {
             $alert.modal('hide');
         });
     },
-    
+
+/**
+ * Init WYSIWYG editor area
+ * Function used TinyMCE
+ * 
+ * @param {string} selector Textarea selector
+ */    
     initWysiwyg : function (selector) {
         if (($(selector).length) && (tinymce != undefined) && (typeof tinymce === 'object')) {
             tinymce.init({
@@ -75,13 +104,29 @@ var sergsxmUIFunctions = {
             });
         }
     },
-    
+
+/**
+ * Check parameter is a function
+ * 
+ * @param {mixed} functionToCheck Function to check
+ * @returns {Boolean} Parameter is a function
+ */    
     isFunction : function (functionToCheck) {
         var getType = {};
         return functionToCheck && getType.toString.call(functionToCheck) === '[object Function]';
     },
-    
-    initFileUploadInput : function (selector, formId, fileTemplate, emptyFileTemplate, validator) {
+
+/**
+ * Init single file upload inputs
+ * 
+ * @param {string} selector Input selector
+ * @param {string} formId Form ID (need for ajax request)
+ * @param {string} fileTemplate File HTML template to insert into file container (use replaces %name%, %size%)
+ * @param {string} emptyFileTemplate Empty file HTML template
+ * @param {function} validator Validator function (parameters: element, true)
+ * @param {function} errorFunction Function to place element error (parameters: element ID, error text)
+ */    
+    initFileUploadInput : function (selector, formId, fileTemplate, emptyFileTemplate, validator, errorFunction) {
         $(selector).css({position: 'fixed', top: '-100px'});
         $(selector).change(function () {
             if ((this.files == undefined) || (this.files[0] == undefined)) {
@@ -128,7 +173,11 @@ var sergsxmUIFunctions = {
                 },
                 error: function (data) {
                     if (data.error) {
-                        alert(data.error);
+                        if (sergsxmUIFunctions.isFunction(errorFunction)) {
+                            errorFunction(inputId, data.error);
+                        } else {
+                            alert(data.error);
+                        }
                     }
                 },
                 complete: function () {
@@ -139,7 +188,17 @@ var sergsxmUIFunctions = {
         });    
     },
     
-    initImageUploadInput : function (selector, formId, imageTemplate, emptyImageTemplate, validator) {
+/**
+ * Init single image upload inputs
+ * 
+ * @param {string} selector Input selector
+ * @param {string} formId Form ID (need for ajax request)
+ * @param {string} imageTemplate Image HTML template to insert into image container (use replaces %name%, %size%, %thumbnail%)
+ * @param {string} emptyImageTemplate Empty image HTML template
+ * @param {function} validator Validator function (parameters: element, true)
+ * @param {function} errorFunction Function to place element error (parameters: element ID, error text)
+ */    
+    initImageUploadInput : function (selector, formId, imageTemplate, emptyImageTemplate, validator, errorFunction) {
         $(selector).css({position: 'fixed', top: '-100px'});
         $(selector).change(function () {
             if ((this.files == undefined) || (this.files[0] == undefined)) {
@@ -186,7 +245,11 @@ var sergsxmUIFunctions = {
                 },
                 error: function (data) {
                     if (data.error) {
-                        alert(data.error);
+                        if (sergsxmUIFunctions.isFunction(errorFunction)) {
+                            errorFunction(inputId, data.error);
+                        } else {
+                            alert(data.error);
+                        }
                     }
                 },
                 complete: function () {

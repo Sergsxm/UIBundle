@@ -37,23 +37,23 @@ class FileController extends Controller
         
         $formId = $request->get('form_id');
         if ($formId == null) {
-            return new JsonResponse(array('error' => 'Unknown formId'));
+            return new JsonResponse(array('error' => 'Unknown form ID'), 406);
         }
         $formBag = new \Sergsxm\UIBundle\Classes\FormBag($request->getSession());
         $formBag->setFormId($formId);
         $inputName = $request->get('input_name');
         $fieldParameters = $formBag->get($inputName);
         if (!is_array($fieldParameters) || (($fieldParameters['type'] != 'file') && ($fieldParameters['type'] != 'image'))) {
-            return new JsonResponse(array('error' => 'Unknown inputName'));
+            return new JsonResponse(array('error' => 'Unknown input name'), 406);
         }
         $thumbnail = '';
         $file = $this->getRequest()->files->get($request->get('input_name'));
         if (empty($file)) {
-            return new JsonResponse(array('error' => 'Upload error'));
+            return new JsonResponse(array('error' => 'Upload error'), 406);
         }
         try {
             if (($fieldParameters['maxSize'] != null) && ($file->getSize() > $fieldParameters['maxSize'])) {
-                return new JsonResponse(array('error' => 'File size is larger than allowed'));
+                return new JsonResponse(array('error' => $fieldParameters['maxSizeError']), 406);
             }
             if ($fieldParameters['type'] == 'file') {
                 if ($fieldParameters['storeType'] == FileInputType::ST_FILE) {
@@ -80,33 +80,33 @@ class FileController extends Controller
             if ($fieldParameters['type'] == 'file') {
                 if (($fieldParameters['mimeTypes'] != null) && (!in_array($file->getMimeType(), $fieldParameters['mimeTypes']))) {
                     @unlink($value->getContentFile());
-                    return new JsonResponse(array('error' => 'Invalid file type'));
+                    return new JsonResponse(array('error' => $fieldParameters['mimeTypesError']), 406);
                 }
             } elseif ($fieldParameters['type'] == 'image') {
                 $imageInfo = @getimagesize($value->getContentFile());
                 if (!isset($imageInfo[0]) || !isset($imageInfo[1])) {
                     @unlink($value->getContentFile());
-                    return new JsonResponse(array('error' => 'Invalid image type'));
+                    return new JsonResponse(array('error' => $fieldParameters['notImageError']), 406);
                 }
                 if (!in_array($imageInfo[2], array(IMAGETYPE_GIF, IMAGETYPE_JPEG, IMAGETYPE_PNG))) {
                     @unlink($value->getContentFile());
-                    return new JsonResponse(array('error' => 'Invalid image type'));
+                    return new JsonResponse(array('error' => $fieldParameters['notImageError']), 406);
                 }
                 if (($fieldParameters['minWidth'] !== null) && ($imageInfo[0] < $fieldParameters['minWidth'])) {
                     @unlink($value->getContentFile());
-                    return new JsonResponse(array('error' => 'Invalid image size'));
+                    return new JsonResponse(array('error' => $fieldParameters['imageSizeError']), 406);
                 }
                 if (($fieldParameters['maxWidth'] !== null) && ($imageInfo[0] > $fieldParameters['maxWidth'])) {
                     @unlink($value->getContentFile());
-                    return new JsonResponse(array('error' => 'Invalid image size'));
+                    return new JsonResponse(array('error' => $fieldParameters['imageSizeError']), 406);
                 }
                 if (($fieldParameters['minHeight'] !== null) && ($imageInfo[1] < $fieldParameters['minHeight'])) {
                     @unlink($value->getContentFile());
-                    return new JsonResponse(array('error' => 'Invalid image size'));
+                    return new JsonResponse(array('error' => $fieldParameters['imageSizeError']), 406);
                 }
                 if (($fieldParameters['maxHeight'] !== null) && ($imageInfo[1] > $fieldParameters['maxHeight'])) {
                     @unlink($value->getContentFile());
-                    return new JsonResponse(array('error' => 'Invalid image size'));
+                    return new JsonResponse(array('error' => $fieldParameters['imageSizeError']), 406);
                 }
             }
             if ($fieldParameters['type'] == 'file') {
@@ -156,13 +156,13 @@ class FileController extends Controller
         
         $formId = $request->get('form_id');
         if ($formId == null) {
-            return new Response('Unknown formId', 404);
+            return new Response('Unknown form ID', 406);
         }
         $formBag = new \Sergsxm\UIBundle\Classes\FormBag($request->getSession());
         $formBag->setFormId($formId);
         $fieldParameters = $formBag->get($request->get('input_name'));
         if (!is_array($fieldParameters) || ($fieldParameters['type'] != 'image')) {
-            return new Response('Unknown inputName', 404);
+            return new Response('Unknown input name', 406);
         }
         $id = $request->get('id');
         if ($fieldParameters['storeType'] == ImageInputType::ST_FILE) {
@@ -171,7 +171,7 @@ class FileController extends Controller
             $image = $this->container->get('doctrine')->getRepository($fieldParameters['storeDoctrineClass'])->find($id);
         }
         if (empty($image)) {
-            return new Response('Unknown id', 404);
+            return new Response('Unknown ID', 406);
         }
         $params = getimagesize($image->getContentFile());
         $source = '';
