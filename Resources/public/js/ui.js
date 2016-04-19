@@ -171,12 +171,12 @@ var sergsxmUIFunctions = {
                     $fileInput.val('');
                     $filesContainer.html('<input type="hidden" name="'+inputName+'" value="'+data.id+'" />'+insertion);
                 },
-                error: function (data) {
-                    if (data.error) {
+                error: function (response) {
+                    if (response.responseJSON.error) {
                         if (sergsxmUIFunctions.isFunction(errorFunction)) {
-                            errorFunction(inputId, data.error);
+                            errorFunction(inputId, response.responseJSON.error);
                         } else {
-                            alert(data.error);
+                            alert(response.responseJSON.error);
                         }
                     }
                 },
@@ -243,12 +243,12 @@ var sergsxmUIFunctions = {
                     $fileInput.val('');
                     $filesContainer.html('<input type="hidden" name="'+inputName+'" value="'+data.id+'" />'+insertion);
                 },
-                error: function (data) {
-                    if (data.error) {
+                error: function (response) {
+                    if (response.responseJSON.error) {
                         if (sergsxmUIFunctions.isFunction(errorFunction)) {
-                            errorFunction(inputId, data.error);
+                            errorFunction(inputId, response.responseJSON.error);
                         } else {
-                            alert(data.error);
+                            alert(response.responseJSON.error);
                         }
                     }
                 },
