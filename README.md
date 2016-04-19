@@ -214,7 +214,8 @@ Type **timestamp** has following settings:
 | description     | Field description, which will be displayed to the user as the field name                   | such as field name           |
 | required        | If true field is required                                                                  | false                        |
 | requiredError   | Text for the "required" error                                                              | "The field can not be empty" |
-| dateTimeFormat  | Timestamp format accepted by [date()](http://php.net/manual/en/function.date.php) function | "Y-m-d\TH:i"                 |
+| dateTimeFormat  | Timestamp format accepted by [date()](http://php.net/manual/en/function.date.php) function | "Y-m-d\TH:i:s"               |
+| formatError     | Text for the "datetime format" error                                                       | "Bad datetime format"        |
 | timeZone        | Timezone (string or \DateTimeZone or null)                                                 | null                         |
 | disabled        | Set field to disabled state                                                                | false                        |
 
