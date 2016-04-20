@@ -132,5 +132,16 @@ class FormBag
             $this->store();
         }
     }
+
+/**
+ * Clear form bag
+ */    
+    public function clear()
+    {
+        if ($this->session->has('sergsxm_form_'.$this->formId)) {
+            $this->session->remove('sergsxm_form_'.$this->formId);
+            $this->parameters = array();
+        }
+    }
             
 }

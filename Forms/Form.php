@@ -122,6 +122,11 @@ class Form implements FormInterface
         return $this->result;
     }
 
+    public function clear()
+    {
+        $this->formBag->clear();
+    }
+    
 /**
  * Get bind result
  * 

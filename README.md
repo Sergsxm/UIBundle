@@ -103,6 +103,7 @@ public function getFormId();
 public function setFormId($formId);
 public function setReadOnly($readOnly);
 public function bindRequest(Request $request = null);
+public function clear();
 public function getResult();
 public function getView();
 public function renderView($template = 'SergsxmUIBundle:Forms:Form.html.twig', $parameters = array());
@@ -153,6 +154,8 @@ if ($form->bindRequest()) {
     echo 'Data saved!';
     var_dump($form->getValue());
     var_dump($object);
+    $form->clear();
+    die;
 }
         
 return $form->render('SergsxmUIBundle:Forms:Form.html.twig', array('title' => 'New form', 'backUrl' => '/123'));
