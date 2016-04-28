@@ -178,7 +178,7 @@ class Standart extends Captcha
  */    
     public function getJsValidation($idPrefix)
     {
-        return 'if (!/^[A-Za-z0-9]{6}$/i.test(form["captcha"].value)) {errors["captcha"] = '.json_encode($this->configuration['validateError']).';}'.self::JS_EOL;
+        return 'if (!/^[A-Za-z0-9]{6}$/i.test(form["captcha"].value)) {errors["'.$idPrefix.'captcha"] = '.json_encode($this->configuration['validateError']).';}'.self::JS_EOL;
     }
     
 }

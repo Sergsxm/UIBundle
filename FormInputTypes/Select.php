@@ -201,7 +201,7 @@ class Select extends FormInput
         }
         $code = '';
         if (($this->configuration['multiply'] == true) && ($this->configuration['required'] == true)) {
-            $code .= 'var j = 0;if (form["'.$this->prefix.$this->name.'[]"].length != undefined) {for (var i in form["'.$this->prefix.$this->name.'[]"]) {if ((form["'.$this->prefix.$this->name.'[]"][i].selected) || (form["'.$this->prefix.$this->name.'[]"][i].checked)) {j++;}}}if (j == 0) {errors["'.$this->prefix.$this->name.'[]"] = '.json_encode($this->configuration['requiredError']).';}'.self::JS_EOL;
+            $code .= 'var j = 0;if (form["'.$this->prefix.$this->name.'[]"] !== undefined) {for (var i in form["'.$this->prefix.$this->name.'[]"]) {if ((form["'.$this->prefix.$this->name.'[]"][i].selected) || (form["'.$this->prefix.$this->name.'[]"][i].checked)) {j++;}}}if (j == 0) {errors["'.$idPrefix.$this->prefix.$this->name.'"] = '.json_encode($this->configuration['requiredError']).';}'.self::JS_EOL;
         }
         return $code;
     }

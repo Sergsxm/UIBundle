@@ -1,12 +1,29 @@
 <div class="form-group {{inputId}}-container{% if error %} has-error{% endif %}">
     <label for="{{inputId}}" class="col-sm-5">{{configuration['description']}}</label>
     <div class="col-sm-7">
-        <div id="{{inputId}}-files"><input type="hidden" name="{{inputName}}" value="{{value}}" />{% if file != null %}{% trans with {'%name%': file.getFileName(), '%size%': file.getSize()} from "sergsxmui" %}%name% (%size% bytes){% endtrans %}{% else %}{% trans from "sergsxmui" %}File not selected{% endtrans %}{% endif %}</div>
-        <div>
-            <button {% if disabled %}disabled="disabled"{% endif %} class="btn btn-default" onclick="$('#{{inputId}}').val('');$('#{{inputId}}-files').html('&lt;input type=&quot;hidden&quot; name=&quot;{{inputName}}&quot; value=&quot;&quot; /&gt;{% trans from "sergsxmui" %}File not selected{% endtrans %}');$('.{{inputId}}-error').text('');$('.{{inputId}}-container').removeClass('has-error');return false;">{% trans from "sergsxmui" %}Reset{% endtrans %}</button>
-            <button {% if disabled %}disabled="disabled"{% endif %} class="btn btn-primary" onclick="$('#{{inputId}}').click();return false;">{% trans from "sergsxmui" %}Change{% endtrans %}</button>
-        </div>
-        <input {% if disabled %}disabled="disabled"{% endif %} type="file" class="form-file-upload" id="{{inputId}}" name="{{inputNameFile}}" data-replace-input-name="{{inputName}}" />
-        <p class="form-error-text {{inputId}}-error">{{error}}</p>
+        {% if configuration['multiply'] == false %}
+            <div id="{{inputId}}-files" data-input-name="{{inputName}}"><input type="hidden" name="{{inputName}}" value="{{(value != null ? value.getId() : '')}}" />{% if value != null %}{% trans with {'%name%': value.getFileName(), '%size%': value.getSize()} from "sergsxmui" %}%name% (%size% bytes){% endtrans %}{% else %}{% trans from "sergsxmui" %}File not selected{% endtrans %}{% endif %}</div>
+            <div>
+                <button {% if disabled %}disabled="disabled"{% endif %} class="btn btn-default" onclick="$('#{{inputId}}').val('');$('#{{inputId}}-files').html('&lt;input type=&quot;hidden&quot; name=&quot;{{inputName}}&quot; value=&quot;&quot; /&gt;{% trans from "sergsxmui" %}File not selected{% endtrans %}');$('.{{inputId}}-error').text('');$('.{{inputId}}-container').removeClass('has-error');return false;">{% trans from "sergsxmui" %}Reset{% endtrans %}</button>
+                <button {% if disabled %}disabled="disabled"{% endif %} class="btn btn-primary" onclick="$('#{{inputId}}').click();return false;">{% trans from "sergsxmui" %}Change{% endtrans %}</button>
+            </div>
+            <input {% if disabled %}disabled="disabled"{% endif %} type="file" class="form-file-upload" id="{{inputId}}" name="{{inputNameFile}}" />
+            <p class="form-error-text {{inputId}}-error">{{error}}</p>
+        {% else %}
+            <ul id="{{inputId}}-files" class="list-group form-draggable" data-input-name="{{inputName}}[]">
+                {% for file in value %}
+                    <li class="list-group-item">
+                        <input type="hidden" name="{{inputName}}[]" value="{{file.getId()}}" />
+                        {% trans with {'%name%': file.getFileName(), '%size%': file.getSize()} from "sergsxmui" %}%name% (%size% bytes){% endtrans %}
+                        <button type="button" class="close" onclick="$(this).closest('.list-group-item').remove();return false;"><span>&times;</span></button>
+                    </li>
+                {% endfor %}
+            </ul>
+            <div>
+                <button {% if disabled %}disabled="disabled"{% endif %} class="btn btn-primary" onclick="$('#{{inputId}}').click();return false;">{% trans from "sergsxmui" %}Upload{% endtrans %}</button>
+            </div>
+            <input {% if disabled %}disabled="disabled"{% endif %} type="file" class="form-file-upload-multiply" id="{{inputId}}" name="{{inputNameFile}}" />
+            <p class="form-error-text {{inputId}}-error">{{error}}</p>
+        {% endif %}
     </div>
 </div>

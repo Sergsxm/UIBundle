@@ -47,12 +47,11 @@
             var form = document.forms['{{formId}}'];
             var errors = {};
             {{jsValidation | raw}}
-            if (element != undefined) {
-                var inputId = ($(element).data('replace-input-id') ? $(element).data('replace-input-id') : $(element).prop('id')), inputName = ($(element).data('replace-input-name') ? $(element).data('replace-input-name') : $(element).prop('name'));
-                
-                if (errors[inputName] != undefined) {
+            if (element !== undefined) {
+                var inputId = ($(element).data('replace-input-id') ? $(element).data('replace-input-id') : $(element).prop('id'));
+                if (errors[inputId] != undefined) {
                     $('.'+inputId+'-container').addClass('has-error');
-                    $('.'+inputId+'-error').text(errors[inputName]);
+                    $('.'+inputId+'-error').text(errors[inputId]);
                 } else {
                     $('.'+inputId+'-container').removeClass('has-error');
                     $('.'+inputId+'-error').text('');
@@ -60,36 +59,27 @@
             } else {
                 $('#{{formId}} .has-error').removeClass('has-error');
                 $('#{{formId}} .form-error-text').text('');
-                for (var input in errors) {
-                    var inputId = ($(form[input]).data('replace-input-id') ? $(form[input]).data('replace-input-id') : $(form[input]).prop('id'));
+                for (var inputId in errors) {
                     $('.'+inputId+'-container').addClass('has-error');
-                    $('.'+inputId+'-error').text(errors[input]);
+                    $('.'+inputId+'-error').text(errors[inputId]);
                 }
             }
             {{jsVisibility | raw}}
-            if ((log != undefined) && (log == true)) {
+            if ((log !== undefined) && (log == true)) {
                 return errors;
             }
-            if (!Object.keys) {
-                Object.keys = function (obj) {
-                    var arr = [], key;
-                    for (key in obj) {
-                        if (obj.hasOwnProperty(key)) {
-                            arr.push(key);
-                        }
-                    }
-                    return arr;
-                };
+            for (var inputId in errors) {
+                return false;
             }
-            return !Object.keys(errors).length;
+            return true;
         }
         $(function () {
             sergsxmUIFunctions.initWysiwyg('#{{formId}} textarea.form-wysiwyg');
+            sergsxmUIFunctions.initDraggableElements('#{{formId}} .form-draggable');
             sergsxmUIFunctions.initFileUploadInput(
                 '#{{formId}} input.form-file-upload', 
                 '{{formId}}', 
-                '{% trans with {'%name%': '%name%', '%size%': '%size%'} from "sergsxmui" %}%name% (%size% bytes){% endtrans %}', 
-                '{% trans from "sergsxmui" %}File not selected{% endtrans %}', 
+                '%input%{% trans with {'%name%': '%name%', '%size%': '%size%'} from "sergsxmui" %}%name% (%size% bytes){% endtrans %}', 
                 formValidation_{{formId}},
                 function (id, error) {
                     $('.'+id+'-container').addClass('has-error');
@@ -99,8 +89,17 @@
             sergsxmUIFunctions.initImageUploadInput(
                 '#{{formId}} input.form-image-upload', 
                 '{{formId}}', 
-                '<div class="thumbnail sergsxmui-form-thumbnail"><img src="%thumbnail%" title="{% trans with {'%name%': '%name%', '%size%': '%size%'} from "sergsxmui" %}%name% (%size% bytes){% endtrans %}" /></div>', 
-                '<div class="thumbnail sergsxmui-form-thumbnail"><img src="{{asset('bundles/sergsxmui/img/foo.png')}}" title="{% trans from "sergsxmui" %}File not selected{% endtrans %}" /></div>', 
+                '%input%<div class="thumbnail sergsxmui-form-thumbnail"><img src="%thumbnail%" title="{% trans with {'%name%': '%name%', '%size%': '%size%'} from "sergsxmui" %}%name% (%size% bytes){% endtrans %}" /></div>', 
+                formValidation_{{formId}},
+                function (id, error) {
+                    $('.'+id+'-container').addClass('has-error');
+                    $('.'+id+'-error').text(error);
+                }
+            );
+            sergsxmUIFunctions.initMultiplyFileUploadInput(
+                '#{{formId}} input.form-file-upload-multiply', 
+                '{{formId}}', 
+                '<li class="list-group-item">%input%{% trans with {'%name%': '%name%', '%size%': '%size%'} from "sergsxmui" %}%name% (%size% bytes){% endtrans %}<button type="button" class="close" onclick="$(this).closest(\'.list-group-item\').remove();return false;"><span>&times;</span></button></li>', 
                 formValidation_{{formId}},
                 function (id, error) {
                     $('.'+id+'-container').addClass('has-error');

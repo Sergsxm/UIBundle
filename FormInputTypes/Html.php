@@ -223,7 +223,7 @@ class Html extends FormInput
             return '';
         }
         if ($this->configuration['required'] == true) {
-            return 'if (form["'.$this->prefix.$this->name.'"].value == "") {errors["'.$this->prefix.$this->name.'"] = '.json_encode($this->configuration['requiredError']).';}'.self::JS_EOL;
+            return 'if (form["'.$this->prefix.$this->name.'"].value == "") {errors["'.$idPrefix.$this->prefix.$this->name.'"] = '.json_encode($this->configuration['requiredError']).';}'.self::JS_EOL;
         }
     }
     

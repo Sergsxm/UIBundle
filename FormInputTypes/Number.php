@@ -114,16 +114,16 @@ class Number extends FormInput
         }
         $code = '';
         if ($this->configuration['required'] == true) {
-            $code .= 'if (form["'.$this->prefix.$this->name.'"].value == "") {errors["'.$this->prefix.$this->name.'"] = '.json_encode($this->configuration['requiredError']).';}'.self::JS_EOL;
+            $code .= 'if (form["'.$this->prefix.$this->name.'"].value == "") {errors["'.$idPrefix.$this->prefix.$this->name.'"] = '.json_encode($this->configuration['requiredError']).';}'.self::JS_EOL;
         }
         $code .= 'if (form["'.$this->prefix.$this->name.'"].value != "") {'.self::JS_EOL;
         $code .= 'var v = parseFloat(form["'.$this->prefix.$this->name.'"].value.replace('.json_encode($this->configuration['thousandSeparator']).', \'\').replace('.json_encode($this->configuration['decimalPoint']).', \'.\'));'.self::JS_EOL;
-        $code .= 'if (isNaN(v)) {errors["'.$this->prefix.$this->name.'"] = '.json_encode($this->configuration['notNumberError']).';}'.self::JS_EOL;
+        $code .= 'if (isNaN(v)) {errors["'.$idPrefix.$this->prefix.$this->name.'"] = '.json_encode($this->configuration['notNumberError']).';}'.self::JS_EOL;
         if ($this->configuration['minValue'] !== null) {
-            $code .= 'else if (v < '.$this->configuration['minValue'].') {errors["'.$this->prefix.$this->name.'"] = '.json_encode($this->configuration['valueError']).';}'.self::JS_EOL;
+            $code .= 'else if (v < '.$this->configuration['minValue'].') {errors["'.$idPrefix.$this->prefix.$this->name.'"] = '.json_encode($this->configuration['valueError']).';}'.self::JS_EOL;
         }
         if ($this->configuration['maxValue'] !== null) {
-            $code .= 'else if (v > '.$this->configuration['maxValue'].') {errors["'.$this->prefix.$this->name.'"] = '.json_encode($this->configuration['valueError']).';}'.self::JS_EOL;
+            $code .= 'else if (v > '.$this->configuration['maxValue'].') {errors["'.$idPrefix.$this->prefix.$this->name.'"] = '.json_encode($this->configuration['valueError']).';}'.self::JS_EOL;
         }
         $code .= '}'.self::JS_EOL;
         return $code;

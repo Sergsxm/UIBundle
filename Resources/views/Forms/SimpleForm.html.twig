@@ -39,12 +39,11 @@
             var form = document.forms['{{formId}}'];
             var errors = {};
             {{jsValidation | raw}}
-            if (element != undefined) {
-                var inputId = ($(element).data('replace-input-id') ? $(element).data('replace-input-id') : $(element).prop('id')), inputName = ($(element).data('replace-input-name') ? $(element).data('replace-input-name') : $(element).prop('name'));
-                
-                if (errors[inputName] != undefined) {
+            if (element !== undefined) {
+                var inputId = ($(element).data('replace-input-id') ? $(element).data('replace-input-id') : $(element).prop('id'));
+                if (errors[inputId] != undefined) {
                     $('.'+inputId+'-container').addClass('has-error');
-                    $('.'+inputId+'-error').text(errors[inputName]);
+                    $('.'+inputId+'-error').text(errors[inputId]);
                 } else {
                     $('.'+inputId+'-container').removeClass('has-error');
                     $('.'+inputId+'-error').text('');
@@ -52,14 +51,15 @@
             } else {
                 $('#{{formId}} .has-error').removeClass('has-error');
                 $('#{{formId}} .form-error-text').text('');
-                for (var input in errors) {
-                    var inputId = ($(form[input]).data('replace-input-id') ? $(form[input]).data('replace-input-id') : $(form[input]).prop('id'));
+                for (var inputId in errors) {
+                    console.log(inputId);
                     $('.'+inputId+'-container').addClass('has-error');
-                    $('.'+inputId+'-error').text(errors[input]);
+                    $('.'+inputId+'-error').text(errors[inputId]);
                 }
+                console.log(errors.length);
             }
             {{jsVisibility | raw}}
-            if ((log != undefined) && (log == true)) {
+            if ((log !== undefined) && (log == true)) {
                 return errors;
             }
             if (!Object.keys) {
@@ -77,6 +77,7 @@
         }
         $(function () {
             sergsxmUIFunctions.initWysiwyg('#{{formId}} textarea.form-wysiwyg');
+            sergsxmUIFunctions.initDraggableElements('#{{formId}} .form-draggable');
             sergsxmUIFunctions.initFileUploadInput(
                 '#{{formId}} input.form-file-upload', 
                 '{{formId}}', 

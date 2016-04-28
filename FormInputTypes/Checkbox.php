@@ -124,7 +124,7 @@ class Checkbox extends FormInput
             return '';
         }
         if ($this->configuration['required'] == true) {
-            return 'if (!form["'.$this->prefix.$this->name.'"].checked) {errors["'.$this->prefix.$this->name.'"] = '.json_encode($this->configuration['requiredError']).';}'.self::JS_EOL;
+            return 'if (!form["'.$this->prefix.$this->name.'"].checked) {errors["'.$idPrefix.$this->prefix.$this->name.'"] = '.json_encode($this->configuration['requiredError']).';}'.self::JS_EOL;
         }
     }
     

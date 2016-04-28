@@ -174,14 +174,14 @@ class Image extends FormInput
         }
         $code = '';
         if ($this->configuration['required'] == true) {
-            $code .= 'if ((form["'.$this->prefix.$this->name.'"].value == "") && (form["'.$this->prefix.$this->name.'_file"].value == "")) {errors["'.$this->prefix.$this->name.'"] = '.json_encode($this->configuration['requiredError']).';}'.self::JS_EOL;
+            $code .= 'if ((form["'.$this->prefix.$this->name.'"].value == "") && (form["'.$this->prefix.$this->name.'_file"].value == "")) {errors["'.$idPrefix.$this->prefix.$this->name.'"] = '.json_encode($this->configuration['requiredError']).';}'.self::JS_EOL;
         }
         $code .= 'if ((form["'.$this->prefix.$this->name.'_file"] != undefined) && (form["'.$this->prefix.$this->name.'_file"].files != undefined) && (form["'.$this->prefix.$this->name.'_file"].files[0] != undefined)) {'.self::JS_EOL;
         if ($this->configuration['maxSize'] != null) {
-            $code .= 'if (form["'.$this->prefix.$this->name.'_file"].files[0].size > '.$this->configuration['maxSize'].') {errors["'.$this->prefix.$this->name.'"] = '.json_encode($this->configuration['maxSizeError']).';}'.self::JS_EOL;
+            $code .= 'if (form["'.$this->prefix.$this->name.'_file"].files[0].size > '.$this->configuration['maxSize'].') {errors["'.$idPrefix.$this->prefix.$this->name.'"] = '.json_encode($this->configuration['maxSizeError']).';}'.self::JS_EOL;
         }
         $mimeTypes = array('image/jpeg', 'image/png', 'image/gif');
-        $code .= 'if (function (v) {var a = '.json_encode($mimeTypes).';for(var i in a) {if(a[i] == v) return true;}return false;}(form["'.$this->prefix.$this->name.'_file"].files[0].type) == false) {errors["'.$this->prefix.$this->name.'"] = '.json_encode($this->configuration['notImageError']).';}'.self::JS_EOL;
+        $code .= 'if (function (v) {var a = '.json_encode($mimeTypes).';for(var i in a) {if(a[i] == v) return true;}return false;}(form["'.$this->prefix.$this->name.'_file"].files[0].type) == false) {errors["'.$idPrefix.$this->prefix.$this->name.'"] = '.json_encode($this->configuration['notImageError']).';}'.self::JS_EOL;
         $code .= '}'.self::JS_EOL;
         return $code;
     }

@@ -283,6 +283,7 @@ Type **file** has following settings:
 | storeType          | Type of file store (see below)                                                      | ST_FILE                            |
 | storeFolder        | Folder for saving files                                                             | "uploads"                          |
 | storeDoctrineClass | Doctrine file entity class (must implements Sergsxm\UIBundle\Classes\FileInterface) | ""                                 |
+| multiply           | If true possible to upload multiply files in one field                              | false                              |
 | disabled           | Set field to disabled state                                                         | false                              |
 
 Type **number** has following settings:

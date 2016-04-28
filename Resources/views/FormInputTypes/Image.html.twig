@@ -1,7 +1,7 @@
 <div class="form-group {{inputId}}-container{% if error %} has-error{% endif %}">
     <label for="{{inputId}}" class="col-sm-5">{{configuration['description']}}</label>
     <div class="col-sm-7">
-        <div id="{{inputId}}-images">
+        <div id="{{inputId}}-images" data-input-name="{{inputName}}">
             <input type="hidden" name="{{inputName}}" value="{{value}}" />
             <div class="thumbnail sergsxmui-form-thumbnail"><img src="{{image != null ? thumbnail : asset('bundles/sergsxmui/img/foo.png')}}" title="{% if image != null %}{% trans with {'%name%': image.getFileName(), '%size%': image.getSize()} from "sergsxmui" %}%name% (%size% bytes){% endtrans %}{% else %}{% trans from "sergsxmui" %}Image not selected{% endtrans %}{% endif %}" /></div>
         </div>
@@ -9,7 +9,7 @@
             <button {% if disabled %}disabled="disabled"{% endif %} class="btn btn-default" onclick="$('#{{inputId}}').val('');$('#{{inputId}}-images').html('&lt;input type=&quot;hidden&quot; name=&quot;{{inputName}}&quot; value=&quot;&quot; /&gt;&lt;div class=&quot;thumbnail sergsxmui-form-thumbnail&quot;&gt;&lt;img src=&quot;bundles/sergsxmui/img/foo.png&quot; title=&quot;{% trans from "sergsxmui" %}Image not selected{% endtrans %}&quot; /&gt;&lt;/div&gt;');$('.{{inputId}}-error').text('');$('.{{inputId}}-container').removeClass('has-error');return false;">{% trans from "sergsxmui" %}Reset{% endtrans %}</button>
             <button {% if disabled %}disabled="disabled"{% endif %} class="btn btn-primary" onclick="$('#{{inputId}}').click();return false;">{% trans from "sergsxmui" %}Change{% endtrans %}</button>
         </div>
-        <input {% if disabled %}disabled="disabled"{% endif %} type="file" accept="image/*" class="form-image-upload" id="{{inputId}}" name="{{inputNameFile}}" data-replace-input-name="{{inputName}}" />
+        <input {% if disabled %}disabled="disabled"{% endif %} type="file" accept="image/*" class="form-image-upload" id="{{inputId}}" name="{{inputNameFile}}" />
         <p class="form-error-text {{inputId}}-error">{{error}}</p>
     </div>
 </div>

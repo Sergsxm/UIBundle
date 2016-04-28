@@ -104,9 +104,9 @@ class Text extends FormInput
         }
         $code = '';
         if ($this->configuration['required'] == true) {
-            $code .= 'if (form["'.$this->prefix.$this->name.'"].value == "") {errors["'.$this->prefix.$this->name.'"] = '.json_encode($this->configuration['requiredError']).';} else'.self::JS_EOL;
+            $code .= 'if (form["'.$this->prefix.$this->name.'"].value == "") {errors["'.$idPrefix.$this->prefix.$this->name.'"] = '.json_encode($this->configuration['requiredError']).';} else'.self::JS_EOL;
         }
-        $code .= 'if ((form["'.$this->prefix.$this->name.'"].value != "") && !'.$this->configuration['regexp'].'.test(form["'.$this->prefix.$this->name.'"].value)) {errors["'.$this->prefix.$this->name.'"] = '.json_encode($this->configuration['regexpError']).';}'.self::JS_EOL;
+        $code .= 'if ((form["'.$this->prefix.$this->name.'"].value != "") && !'.$this->configuration['regexp'].'.test(form["'.$this->prefix.$this->name.'"].value)) {errors["'.$idPrefix.$this->prefix.$this->name.'"] = '.json_encode($this->configuration['regexpError']).';}'.self::JS_EOL;
         return $code;
     }
     
