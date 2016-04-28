@@ -320,6 +320,7 @@ Type **image** has following settings:
 | storeType          | Type of file store (see below)                                                      | ST_FILE                            |
 | storeFolder        | Folder for saving files                                                             | "uploads"                          |
 | storeDoctrineClass | Doctrine file entity class (must implements Sergsxm\UIBundle\Classes\ImageInterface) | ""                                |
+| multiply           | If true possible to upload multiply images in one field                             | false                              |
 | disabled           | Set field to disabled state                                                         | false                              |
 
 *ValidateCallback* function must be callable. The function should return null (if field value is valid) or error text. 

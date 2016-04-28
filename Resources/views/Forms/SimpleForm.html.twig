@@ -52,28 +52,18 @@
                 $('#{{formId}} .has-error').removeClass('has-error');
                 $('#{{formId}} .form-error-text').text('');
                 for (var inputId in errors) {
-                    console.log(inputId);
                     $('.'+inputId+'-container').addClass('has-error');
                     $('.'+inputId+'-error').text(errors[inputId]);
                 }
-                console.log(errors.length);
             }
             {{jsVisibility | raw}}
             if ((log !== undefined) && (log == true)) {
                 return errors;
             }
-            if (!Object.keys) {
-                Object.keys = function (obj) {
-                    var arr = [], key;
-                    for (key in obj) {
-                        if (obj.hasOwnProperty(key)) {
-                            arr.push(key);
-                        }
-                    }
-                    return arr;
-                };
+            for (var inputId in errors) {
+                return false;
             }
-            return !Object.keys(errors).length;
+            return true;
         }
         $(function () {
             sergsxmUIFunctions.initWysiwyg('#{{formId}} textarea.form-wysiwyg');
@@ -81,8 +71,7 @@
             sergsxmUIFunctions.initFileUploadInput(
                 '#{{formId}} input.form-file-upload', 
                 '{{formId}}', 
-                '{% trans with {'%name%': '%name%', '%size%': '%size%'} from "sergsxmui" %}%name% (%size% bytes){% endtrans %}', 
-                '{% trans from "sergsxmui" %}File not selected{% endtrans %}', 
+                '%input%{% trans with {'%name%': '%name%', '%size%': '%size%'} from "sergsxmui" %}%name% (%size% bytes){% endtrans %}', 
                 formValidation_{{formId}},
                 function (id, error) {
                     $('.'+id+'-container').addClass('has-error');
@@ -92,8 +81,27 @@
             sergsxmUIFunctions.initImageUploadInput(
                 '#{{formId}} input.form-image-upload', 
                 '{{formId}}', 
-                '<div class="thumbnail sergsxmui-form-thumbnail"><img src="%thumbnail%" title="{% trans with {'%name%': '%name%', '%size%': '%size%'} from "sergsxmui" %}%name% (%size% bytes){% endtrans %}" /></div>', 
-                '<div class="thumbnail sergsxmui-form-thumbnail"><img src="{{asset('bundles/sergsxmui/img/foo.png')}}" title="{% trans from "sergsxmui" %}File not selected{% endtrans %}" /></div>', 
+                '%input%<div class="thumbnail sergsxmui-form-thumbnail"><img src="%thumbnail%" title="{% trans with {'%name%': '%name%', '%size%': '%size%'} from "sergsxmui" %}%name% (%size% bytes){% endtrans %}" /></div>', 
+                formValidation_{{formId}},
+                function (id, error) {
+                    $('.'+id+'-container').addClass('has-error');
+                    $('.'+id+'-error').text(error);
+                }
+            );
+            sergsxmUIFunctions.initMultiplyFileUploadInput(
+                '#{{formId}} input.form-file-upload-multiply', 
+                '{{formId}}', 
+                '<li class="list-group-item">%input%{% trans with {'%name%': '%name%', '%size%': '%size%'} from "sergsxmui" %}%name% (%size% bytes){% endtrans %}<button type="button" class="close" onclick="$(this).closest(\'.list-group-item\').remove();return false;"><span>&times;</span></button></li>', 
+                formValidation_{{formId}},
+                function (id, error) {
+                    $('.'+id+'-container').addClass('has-error');
+                    $('.'+id+'-error').text(error);
+                }
+            );
+            sergsxmUIFunctions.initMultiplyImageUploadInput(
+                '#{{formId}} input.form-image-upload-multiply', 
+                '{{formId}}', 
+                '<div class="thumbnail sergsxmui-form-thumbnail">%input%<img src="%thumbnail%" title="{% trans with {'%name%': '%name%', '%size%': '%size%'} from "sergsxmui" %}%name% (%size% bytes){% endtrans %}" /><button type="button" class="close" onclick="$(this).closest(\'.thumbnail\').remove();return false;"><span>&times;</span></button></div>',
                 formValidation_{{formId}},
                 function (id, error) {
                     $('.'+id+'-container').addClass('has-error');

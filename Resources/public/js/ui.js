@@ -28,6 +28,7 @@ var SergsxmUIDraggableElement = (function () {
         this.$container = $(container);
         this.$moveElement = null;
         this.savedZIndex = null;
+        this.savedPosition = null;
         this.moveOffsetX = null;
         this.moveOffsetY = null;
         this.moveCurrentX = null;
@@ -228,6 +229,7 @@ var SergsxmUIDraggableElement = (function () {
         this.moveCurrentX = 0;
         this.moveCurrentY = 0;
         this.savedZIndex = this.$moveElement.css('z-index');
+        this.savedPosition = this.$moveElement.css('position');
         this.createShadow(this.$moveElement);
         this.$moveElement.css({position: "relative", top: 0, left: 0, 'z-index': 999});  
         return true;
@@ -243,7 +245,7 @@ var SergsxmUIDraggableElement = (function () {
             return false;
         }
         this.destroyShadow();
-        this.$moveElement.css({position: "static", top: 0, left: 0, 'z-index': this.savedZIndex});
+        this.$moveElement.css({position: this.savedPosition, top: 0, left: 0, 'z-index': this.savedZIndex});
         this.$moveElement = null;
         return true;
     };
@@ -587,6 +589,74 @@ var sergsxmUIFunctions = {
                 },
                 success: function (data) {
                     var insertion = fileTemplate.replace('%name%', data.fileName).replace('%size%', data.size).replace('%input%', '<input type="hidden" name="'+inputName+'" value="'+data.id+'" />');
+                    $fileInput.val('');
+                    $filesContainer.append(insertion);
+                },
+                error: function (response) {
+                    if (response.responseJSON.error) {
+                        if (sergsxmUIFunctions.isFunction(errorFunction)) {
+                            errorFunction(inputId, response.responseJSON.error);
+                        } else {
+                            alert(response.responseJSON.error);
+                        }
+                    }
+                },
+                complete: function () {
+                    $progressBar.remove();
+                }
+            });
+        });    
+    },
+
+/**
+ * Init multiply image upload inputs
+ * 
+ * @param {string} selector Input selector
+ * @param {string} formId Form ID (need for ajax request)
+ * @param {string} imageTemplate Image HTML template to insert into image container (use replaces %name%, %size%, %thumbnail%)
+ * @param {function} validator Validator function (parameters: element, true)
+ * @param {function} errorFunction Function to place element error (parameters: element ID, error text)
+ */    
+    initMultiplyImageUploadInput : function (selector, formId, imageTemplate, validator, errorFunction) {
+        $(selector).css({position: 'fixed', top: '-100px'});
+        $(selector).change(function () {
+            if ((this.files === undefined) || (this.files[0] === undefined)) {
+                return false;
+            }
+            var inputId = ($(this).data('replace-input-id') ? $(this).data('replace-input-id') : $(this).prop('id'));
+            if (sergsxmUIFunctions.isFunction(validator)) {
+                var errors = validator(this, true);
+                if (errors[inputId] !== undefined) {
+                    return false;
+                }
+            }
+            var $fileInput = $(this), $filesContainer = $('#'+inputId+'-images'), file = this.files[0], formData = new FormData(), inputName = $filesContainer.data('input-name');
+            formData.append($fileInput.prop('name'), file);
+            formData.append('form_id', formId);
+            formData.append('input_name', $fileInput.prop('name'));
+            var $progressBar = $('<div class="progress"><div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%"><span class="sr-only">0%</span></div></div>').insertAfter($filesContainer);
+            $.ajax({
+                url : sergsxmUIFunctions.fileUploadPath,
+                type : 'POST',
+                data : formData,
+                processData: false,
+                contentType: false,
+                cache: false,
+                xhr: function () {
+                    var xhr = new window.XMLHttpRequest();
+                    if (!xhr.upload) {
+                        return xhr;
+                    }
+                    xhr.upload.addEventListener("progress", function (e) {
+                        if (e.lengthComputable) {
+                            var completed = Math.ceil(e.loaded * 100 / e.total);
+                            $progressBar.attr('aria-valuenow', completed).css({width: completed+'%'}).find('span.sr-only').text(completed+'%');
+                        }
+                    }, false);
+                    return xhr;
+                },
+                success: function (data) {
+                    var insertion = imageTemplate.replace('%thumbnail%', data.thumbnail).replace('%name%', data.fileName).replace('%size%', data.size).replace('%input%', '<input type="hidden" name="'+inputName+'" value="'+data.id+'" />');
                     $fileInput.val('');
                     $filesContainer.append(insertion);
                 },

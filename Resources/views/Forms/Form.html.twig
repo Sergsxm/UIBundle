@@ -106,6 +106,16 @@
                     $('.'+id+'-error').text(error);
                 }
             );
+            sergsxmUIFunctions.initMultiplyImageUploadInput(
+                '#{{formId}} input.form-image-upload-multiply', 
+                '{{formId}}', 
+                '<div class="thumbnail sergsxmui-form-thumbnail">%input%<img src="%thumbnail%" title="{% trans with {'%name%': '%name%', '%size%': '%size%'} from "sergsxmui" %}%name% (%size% bytes){% endtrans %}" /><button type="button" class="close" onclick="$(this).closest(\'.thumbnail\').remove();return false;"><span>&times;</span></button></div>',
+                formValidation_{{formId}},
+                function (id, error) {
+                    $('.'+id+'-container').addClass('has-error');
+                    $('.'+id+'-error').text(error);
+                }
+            );
 
             $('#{{formId}} input, #{{formId}} textarea, #{{formId}} select').change(function () {
                 formValidation_{{formId}}(this);

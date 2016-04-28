@@ -60,12 +60,27 @@ class Image extends FormInput
             $this->mappingProperty = $reflector->getProperty($name);
             $this->mappingProperty->setAccessible(true);
             $value = $this->mappingProperty->getValue($mappingObject);
-            if (($this->configuration['storeType'] == self::ST_FILE) && is_string($value)) {
-                $this->value = $this->restoreFromFile($value);
-            } elseif ($value instanceof ImageInterface) {
-                $this->value = $value;
+            if ($this->configuration['multiply'] == false) {
+                if (($this->configuration['storeType'] == self::ST_FILE) && is_string($value)) {
+                    $this->value = $this->restoreFromFile($value);
+                } elseif ($value instanceof ImageInterface) {
+                    $this->value = $value;
+                } else {
+                    $this->value = null;
+                }
             } else {
-                $this->value = null;
+                $this->value = array();
+                if (($this->configuration['storeType'] == self::ST_FILE) && (is_array($value))) {
+                    foreach ($value as $file) {
+                        $this->value[] = $this->restoreFromFile($file);
+                    }
+                } elseif (($this->configuration['storeType'] == self::ST_DOCTRINE) && ($value instanceof \Doctrine\Common\Collections\ArrayCollection)) {
+                    foreach ($value->toArray() as $file) {
+                        if ($file instanceof ImageInterface) {
+                            $this->value[] = $file;
+                        }
+                    }
+                }
             }
         }
         if (isset($configuration['disabled'])) {
@@ -102,8 +117,7 @@ class Image extends FormInput
             'description' => $this->name,
             'required' => false,
             'requiredError' => 'The field can not be empty',
-            // TODO multiply file upload
-            //'multiply' => false,
+            'multiply' => false,
             'maxSize' => null,
             'maxSizeError' => 'File size is larger than allowed',
             'minWidth' => null,
@@ -125,35 +139,69 @@ class Image extends FormInput
  */
     public function validateValue()
     {
-        if (($this->configuration['required'] == true) && ($this->value == null)) {
-            $this->error = $this->configuration['requiredError'];
-            return false;
-        }
-        if (($this->configuration['maxSize'] != null) && ($this->value != null) && ($this->value->getSize() > $this->configuration['maxSize'])) {
-            $this->error = $this->configuration['maxSizeError'];
-            return false;
-        }
-        if ($this->value != null) {
-            $imageSize = $this->value->getImageSize();
-            if ($imageSize === null) {
-                $this->error = $this->configuration['notImageError'];
+        if ($this->configuration['multiply'] == false) {
+            if (($this->configuration['required'] == true) && ($this->value == null)) {
+                $this->error = $this->configuration['requiredError'];
                 return false;
             }
-            if (($this->configuration['minWidth'] !== null) && ($imageSize['width'] < $this->configuration['minWidth'])) {
-                $this->error = $this->configuration['imageSizeError'];
+            if (($this->configuration['maxSize'] != null) && ($this->value != null) && ($this->value->getSize() > $this->configuration['maxSize'])) {
+                $this->error = $this->configuration['maxSizeError'];
                 return false;
             }
-            if (($this->configuration['maxWidth'] !== null) && ($imageSize['width'] > $this->configuration['maxWidth'])) {
-                $this->error = $this->configuration['imageSizeError'];
+            if ($this->value != null) {
+                $imageSize = $this->value->getImageSize();
+                if ($imageSize === null) {
+                    $this->error = $this->configuration['notImageError'];
+                    return false;
+                }
+                if (($this->configuration['minWidth'] !== null) && ($imageSize['width'] < $this->configuration['minWidth'])) {
+                    $this->error = $this->configuration['imageSizeError'];
+                    return false;
+                }
+                if (($this->configuration['maxWidth'] !== null) && ($imageSize['width'] > $this->configuration['maxWidth'])) {
+                    $this->error = $this->configuration['imageSizeError'];
+                    return false;
+                }
+                if (($this->configuration['minHeight'] !== null) && ($imageSize['height'] < $this->configuration['minHeight'])) {
+                    $this->error = $this->configuration['imageSizeError'];
+                    return false;
+                }
+                if (($this->configuration['maxHeight'] !== null) && ($imageSize['height'] > $this->configuration['maxHeight'])) {
+                    $this->error = $this->configuration['imageSizeError'];
+                    return false;
+                }
+            }
+        } else {
+            if (($this->configuration['required'] == true) && (count($this->value) == 0)) {
+                $this->error = $this->configuration['requiredError'];
                 return false;
             }
-            if (($this->configuration['minHeight'] !== null) && ($imageSize['height'] < $this->configuration['minHeight'])) {
-                $this->error = $this->configuration['imageSizeError'];
-                return false;
-            }
-            if (($this->configuration['maxHeight'] !== null) && ($imageSize['height'] > $this->configuration['maxHeight'])) {
-                $this->error = $this->configuration['imageSizeError'];
-                return false;
+            foreach ($this->value as $value) {
+                if (($this->configuration['maxSize'] != null) && ($value->getSize() > $this->configuration['maxSize'])) {
+                    $this->error = $this->configuration['maxSizeError'];
+                    return false;
+                }
+                $imageSize = $value->getImageSize();
+                if ($imageSize === null) {
+                    $this->error = $this->configuration['notImageError'];
+                    return false;
+                }
+                if (($this->configuration['minWidth'] !== null) && ($imageSize['width'] < $this->configuration['minWidth'])) {
+                    $this->error = $this->configuration['imageSizeError'];
+                    return false;
+                }
+                if (($this->configuration['maxWidth'] !== null) && ($imageSize['width'] > $this->configuration['maxWidth'])) {
+                    $this->error = $this->configuration['imageSizeError'];
+                    return false;
+                }
+                if (($this->configuration['minHeight'] !== null) && ($imageSize['height'] < $this->configuration['minHeight'])) {
+                    $this->error = $this->configuration['imageSizeError'];
+                    return false;
+                }
+                if (($this->configuration['maxHeight'] !== null) && ($imageSize['height'] > $this->configuration['maxHeight'])) {
+                    $this->error = $this->configuration['imageSizeError'];
+                    return false;
+                }
             }
         }
         $this->error = null;
@@ -168,21 +216,33 @@ class Image extends FormInput
  */    
     public function getJsValidation($idPrefix)
     {
-        // TODO js image size validation
         if ($this->disabled == true) {
             return '';
         }
         $code = '';
-        if ($this->configuration['required'] == true) {
-            $code .= 'if ((form["'.$this->prefix.$this->name.'"].value == "") && (form["'.$this->prefix.$this->name.'_file"].value == "")) {errors["'.$idPrefix.$this->prefix.$this->name.'"] = '.json_encode($this->configuration['requiredError']).';}'.self::JS_EOL;
+        if ($this->configuration['multiply'] == false) {
+            if ($this->configuration['required'] == true) {
+                $code .= 'if ((form["'.$this->prefix.$this->name.'"].value == "") && (form["'.$this->prefix.$this->name.'_file"].value == "")) {errors["'.$idPrefix.$this->prefix.$this->name.'"] = '.json_encode($this->configuration['requiredError']).';}'.self::JS_EOL;
+            }
+            $code .= 'if ((form["'.$this->prefix.$this->name.'_file"] != undefined) && (form["'.$this->prefix.$this->name.'_file"].files != undefined) && (form["'.$this->prefix.$this->name.'_file"].files[0] != undefined)) {'.self::JS_EOL;
+            if ($this->configuration['maxSize'] != null) {
+                $code .= 'if (form["'.$this->prefix.$this->name.'_file"].files[0].size > '.$this->configuration['maxSize'].') {errors["'.$idPrefix.$this->prefix.$this->name.'"] = '.json_encode($this->configuration['maxSizeError']).';}'.self::JS_EOL;
+            }
+            $mimeTypes = array('image/jpeg', 'image/png', 'image/gif');
+            $code .= 'if (function (v) {var a = '.json_encode($mimeTypes).';for(var i in a) {if(a[i] == v) return true;}return false;}(form["'.$this->prefix.$this->name.'_file"].files[0].type) == false) {errors["'.$idPrefix.$this->prefix.$this->name.'"] = '.json_encode($this->configuration['notImageError']).';}'.self::JS_EOL;
+            $code .= '}'.self::JS_EOL;
+        } else {
+            if ($this->configuration['required'] == true) {
+                $code .= 'if (((form["'.$this->prefix.$this->name.'[]"] === undefined) || (form["'.$this->prefix.$this->name.'[]"].length == 0)) && (form["'.$this->prefix.$this->name.'_file"].value == "")) {errors["'.$idPrefix.$this->prefix.$this->name.'"] = '.json_encode($this->configuration['requiredError']).';}'.self::JS_EOL;
+            }
+            $code .= 'if ((form["'.$this->prefix.$this->name.'_file"] != undefined) && (form["'.$this->prefix.$this->name.'_file"].files != undefined) && (form["'.$this->prefix.$this->name.'_file"].files[0] != undefined)) {'.self::JS_EOL;
+            if ($this->configuration['maxSize'] != null) {
+                $code .= 'if (form["'.$this->prefix.$this->name.'_file"].files[0].size > '.$this->configuration['maxSize'].') {errors["'.$idPrefix.$this->prefix.$this->name.'"] = '.json_encode($this->configuration['maxSizeError']).';}'.self::JS_EOL;
+            }
+            $mimeTypes = array('image/jpeg', 'image/png', 'image/gif');
+            $code .= 'if (function (v) {var a = '.json_encode($mimeTypes).';for(var i in a) {if(a[i] == v) return true;}return false;}(form["'.$this->prefix.$this->name.'_file"].files[0].type) == false) {errors["'.$idPrefix.$this->prefix.$this->name.'"] = '.json_encode($this->configuration['notImageError']).';}'.self::JS_EOL;
+            $code .= '}'.self::JS_EOL;
         }
-        $code .= 'if ((form["'.$this->prefix.$this->name.'_file"] != undefined) && (form["'.$this->prefix.$this->name.'_file"].files != undefined) && (form["'.$this->prefix.$this->name.'_file"].files[0] != undefined)) {'.self::JS_EOL;
-        if ($this->configuration['maxSize'] != null) {
-            $code .= 'if (form["'.$this->prefix.$this->name.'_file"].files[0].size > '.$this->configuration['maxSize'].') {errors["'.$idPrefix.$this->prefix.$this->name.'"] = '.json_encode($this->configuration['maxSizeError']).';}'.self::JS_EOL;
-        }
-        $mimeTypes = array('image/jpeg', 'image/png', 'image/gif');
-        $code .= 'if (function (v) {var a = '.json_encode($mimeTypes).';for(var i in a) {if(a[i] == v) return true;}return false;}(form["'.$this->prefix.$this->name.'_file"].files[0].type) == false) {errors["'.$idPrefix.$this->prefix.$this->name.'"] = '.json_encode($this->configuration['notImageError']).';}'.self::JS_EOL;
-        $code .= '}'.self::JS_EOL;
         return $code;
     }
     
@@ -196,10 +256,30 @@ class Image extends FormInput
     {
         $this->value = $value;
         if ($this->mappingObject !== null) {
-            if (($this->configuration['storeType'] == self::ST_FILE) && ($this->value != null)) {
-                $this->mappingProperty->setValue($this->mappingObject, $value->getId());
+            if ($this->configuration['multiply'] == false) {
+                if (($this->configuration['storeType'] == self::ST_FILE) && ($this->value != null)) {
+                    $this->mappingProperty->setValue($this->mappingObject, $value->getId());
+                } else {
+                    $this->mappingProperty->setValue($this->mappingObject, $value);
+                }
             } else {
-                $this->mappingProperty->setValue($this->mappingObject, $value);
+                if ($this->configuration['storeType'] == self::ST_FILE) {
+                    $collectionValue = array();
+                    foreach ($value as $file) {
+                        $collectionValue[] = $file->getId();
+                    }
+                    $this->mappingProperty->setValue($this->mappingObject, $collectionValue);
+                } else {
+                    $collectionValue = $this->mappingProperty->getValue($this->mappingObject);
+                    if (!$collectionValue instanceof \Doctrine\Common\Collections\ArrayCollection) {
+                        $collectionValue = new \Doctrine\Common\Collections\ArrayCollection();
+                    }
+                    $collectionValue->clear();
+                    foreach ($value as $file) {
+                        $collectionValue->add($file);
+                    }
+                    $this->mappingProperty->setValue($this->mappingObject, $collectionValue);
+                }
             }
         }
         return $this->validateValue();
@@ -222,34 +302,55 @@ class Image extends FormInput
         }
         
         if ($request->getMethod() == 'POST') {
+            $newValue = null;
             if ($request->files->has($prefix.$this->prefix.$this->name.'_file') && (($file = $request->files->get($prefix.$this->prefix.$this->name.'_file')) != null)) {
                 if ($this->configuration['storeType'] == self::ST_FILE) {
-                    $value = new \Sergsxm\UIBundle\Classes\Image();
+                    $newValue = new \Sergsxm\UIBundle\Classes\Image();
                 } elseif ($this->configuration['storeType'] == self::ST_DOCTRINE) {
-                    $value = new $this->configuration['storeDoctrineClass'];
+                    $newValue = new $this->configuration['storeDoctrineClass'];
                 }
-                $value->setFileName($file->getClientOriginalName());
-                $value->setMimeType($file->getMimeType());
-                $value->setUploadDate(new \DateTime('now'));
+                $newValue->setFileName($file->getClientOriginalName());
+                $newValue->setMimeType($file->getMimeType());
+                $newValue->setUploadDate(new \DateTime('now'));
                 do {
                     $randomBytes = pack('L', time()).random_bytes(20);
                     $newFileName = rtrim(strtr(base64_encode($randomBytes), '/+', '-_'), '=');
                 } while (file_exists($this->configuration['storeFolder'].DIRECTORY_SEPARATOR.$newFileName));
                 $file->move($this->configuration['storeFolder'], $newFileName);
-                $value->setContentFile($this->configuration['storeFolder'].DIRECTORY_SEPARATOR.$newFileName);
+                $newValue->setContentFile($this->configuration['storeFolder'].DIRECTORY_SEPARATOR.$newFileName);
                 if ($this->configuration['storeType'] == self::ST_FILE) {
-                    $value->storeInfo();
+                    $newValue->storeInfo();
                 } elseif ($this->configuration['storeType'] == self::ST_DOCTRINE) {
                     $em = $this->container->get('doctrine')->getManager();
-                    $em->persist($value);
-                    $em->flush($value);
+                    $em->persist($newValue);
+                    $em->flush($newValue);
+                }
+            }
+            if ($this->configuration['multiply'] == false) {
+                if ($newValue !== null) {
+                    $value = $newValue;
+                } else {
+                    $valueId = $request->get($prefix.$this->prefix.$this->name);
+                    if ($this->configuration['storeType'] == self::ST_FILE) {
+                        $value = $this->restoreFromFile($valueId);
+                    } elseif ($this->configuration['storeType'] == self::ST_DOCTRINE) {
+                        $value = $this->restoreFromDoctrine($valueId);
+                    }
                 }
             } else {
-                $valueId = $request->get($prefix.$this->prefix.$this->name);
-                if ($this->configuration['storeType'] == self::ST_FILE) {
-                    $value = $this->restoreFromFile($valueId);
-                } elseif ($this->configuration['storeType'] == self::ST_DOCTRINE) {
-                    $value = $this->restoreFromDoctrine($valueId);
+                $value = array();
+                $valueIds = $request->get($prefix.$this->prefix.$this->name);
+                if (is_array($valueIds)) {
+                    foreach ($valueIds as $valueId) {
+                        if ($this->configuration['storeType'] == self::ST_FILE) {
+                            $value[] = $this->restoreFromFile($valueId);
+                        } elseif ($this->configuration['storeType'] == self::ST_DOCTRINE) {
+                            $value[] = $this->restoreFromDoctrine($valueId);
+                        }
+                    }
+                }
+                if ($newValue !== null) {
+                    $value[] = $newValue;
                 }
             }
             return $this->setValue($value);
@@ -279,12 +380,26 @@ class Image extends FormInput
             'maxSizeError' => $this->configuration['maxSizeError'],
             'imageSizeError' => $this->configuration['imageSizeError'],
             'notImageError' => $this->configuration['notImageError'],
+            'multiply' => $this->configuration['multiply'],
         ));
-        $thumbnail = $this->container->get('router')->generate('sergsxm_ui_file_thumbnail', array(
-            'form_id' => $this->formBag->getFormId(), 
-            'input_name' => $this->prefix.$this->name.'_file',
-            'id' => ($this->value != null ? $this->value->getId() : null)
-        ));
+        $thumbnails = array();
+        if ($this->configuration['multiply'] == false) {
+            if ($this->value != null) {
+                $thumbnails[$this->value->getId()] = $this->container->get('router')->generate('sergsxm_ui_file_thumbnail', array(
+                    'form_id' => $this->formBag->getFormId(), 
+                    'input_name' => $this->prefix.$this->name.'_file',
+                    'id' => $this->value->getId()
+                ));
+            }
+        } else {
+            foreach ($this->value as $file) {
+                $thumbnails[$file->getId()] = $this->container->get('router')->generate('sergsxm_ui_file_thumbnail', array(
+                    'form_id' => $this->formBag->getFormId(), 
+                    'input_name' => $this->prefix.$this->name.'_file',
+                    'id' => $file->getId()
+                ));
+            }
+        }
         return array(
             'type' => $this->getType(),
             'defaultTemplate' => $this->getDefaultTemplate(),
@@ -294,11 +409,10 @@ class Image extends FormInput
             'inputId' => $idPrefix.$this->prefix.$this->name,
             'inputIdFile' => $idPrefix.$this->prefix.$this->name.'_file',
             'configuration' => $this->configuration,
-            'value' => ($this->value != null ? $this->value->getId() : null),
-            'image' => $this->value,
+            'value' => $this->value,
             'error' => $this->error,
             'disabled' => $this->disabled,
-            'thumbnail' => $thumbnail,
+            'thumbnails' => $thumbnails,
         );
     }
 

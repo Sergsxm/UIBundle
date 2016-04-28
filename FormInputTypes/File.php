@@ -230,7 +230,11 @@ class File extends FormInput
                 }
             } else {
                 if ($this->configuration['storeType'] == self::ST_FILE) {
-                    $this->mappingProperty->setValue($this->mappingObject, $value);
+                    $collectionValue = array();
+                    foreach ($value as $file) {
+                        $collectionValue[] = $file->getId();
+                    }
+                    $this->mappingProperty->setValue($this->mappingObject, $collectionValue);
                 } else {
                     $collectionValue = $this->mappingProperty->getValue($this->mappingObject);
                     if (!$collectionValue instanceof \Doctrine\Common\Collections\ArrayCollection) {
