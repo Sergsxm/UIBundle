@@ -1,0 +1,13 @@
+<div class="form-group {{inputId}}-container{% if error %} has-error{% endif %}">
+    <label for="{{inputId}}" class="col-sm-5">{{configuration['description']}}</label>
+    <div class="col-sm-7">
+        <input type="text" class="form-control" id="{{inputId}}" name="{{inputName}}" placeholder="{{configuration['description']}}" value="{{value}}" {% if disabled %}disabled="disabled"{% endif %} />
+        {% if configuration['mapEnabled'] == true %}
+            <input type="hidden" name="{{inputNameLatitude}}" id="{{inputIdLatitude}}" value="{{valueLatitude}}" />
+            <input type="hidden" name="{{inputNameLongitude}}" id="{{inputIdLongitude}}" value="{{valueLongitude}}" />
+            <div class="form-map" data-input-id="{{inputId}}" data-latitude-id="{{inputIdLatitude}}" data-longitude-id="{{inputIdLongitude}}" style="height: 150px;">
+            </div>
+        {% endif %}
+        <p class="form-error-text {{inputId}}-error">{{error}}</p>
+    </div>
+</div>

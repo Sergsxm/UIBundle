@@ -675,5 +675,74 @@ var sergsxmUIFunctions = {
             });
         });    
     },
+
+/**
+ * Init map fields
+ * Function used Yandex maps
+ * 
+ * @param {string} selector Textarea selector
+ */    
+    initMap : function (selector, zoom, center) {
+        if (($(selector).length) && (ymaps != undefined) && (typeof ymaps === 'object')) {
+            ymaps.ready(function () {
+                $(selector).each(function () {
+                    var inputId = '#'+$(this).data('input-id'), latitudeId = '#'+$(this).data('latitude-id'), longitudeId = '#'+$(this).data('longitude-id');
+                    if (center === undefined) {
+                        center = [$(latitudeId).val(), $(longitudeId).val()];
+                    }
+                    if (zoom === undefined) {
+                        zoom = 5;
+                    }
+                    var inputMap = new ymaps.Map(this, {center: center, zoom: zoom});                
+                    var inputPlacemark = new ymaps.Placemark([$(latitudeId).val(), $(longitudeId).val()]);
+                    inputMap.geoObjects.add(inputPlacemark);
+                    $(inputId).change(function () {
+                        /*$.ajax({
+                            url : 'https://geocode-maps.yandex.ru/1.x/',
+                            type : 'GET',
+                            data : {format: 'json', results: 1, geocode: $(this).val()},
+                            success: function (data) {
+                                var position = data.response.GeoObjectCollection.featureMember[0].GeoObject.Point.pos.toString().split(' ').reverse();
+                                if (position.length == 2) {
+                                    var bound = [];
+                                    bound[0] = data.response.GeoObjectCollection.featureMember[0].GeoObject.boundedBy.Envelope.lowerCorner.toString().split(' ').reverse();
+                                    bound[1] = data.response.GeoObjectCollection.featureMember[0].GeoObject.boundedBy.Envelope.upperCorner.toString().split(' ').reverse();
+                                    inputMap.setBounds(bound); // inputMap.setCenter(position);
+                                    inputPlacemark.geometry.setCoordinates(position);
+                                    $(latitudeId).val(position[0]);
+                                    $(longitudeId).val(position[1]);
+                                }
+                            }
+                        });*/
+                        ymaps.geocode($(this).val(), {
+                            results: 1
+                        }).then(function (res) {
+                            var firstGeoObject = res.geoObjects.get(0),
+                                coords = firstGeoObject.geometry.getCoordinates(),
+                                bounds = firstGeoObject.properties.get('boundedBy');
+                            inputMap.setBounds(bounds); // inputMap.setCenter(coords);
+                            inputPlacemark.geometry.setCoordinates(coords);
+                            $(latitudeId).val(coords[0]);
+                            $(longitudeId).val(coords[1]);
+                        });                        
+                    });
+                    inputMap.events.add('click', function (e) {
+                        ymaps.geocode(e.get('coords'), {
+                            results: 1
+                        }).then(function (res) {
+                            var firstGeoObject = res.geoObjects.get(0),
+                                coords = firstGeoObject.geometry.getCoordinates(),
+                                address = firstGeoObject.properties.get('text');
+                            inputPlacemark.geometry.setCoordinates(coords);
+                            $(latitudeId).val(coords[0]);
+                            $(longitudeId).val(coords[1]);
+                            $(inputId).val(address);
+                        });
+                    });
+                });
+            });
+        }
+    },
+
     
 };

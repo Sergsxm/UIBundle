@@ -108,6 +108,7 @@
                     $('.'+id+'-error').text(error);
                 }
             );
+            sergsxmUIFunctions.initMap('#{{formId}} .form-map');
 
             $('#{{formId}} input, #{{formId}} textarea, #{{formId}} select').change(function () {
                 formValidation_{{formId}}(this);

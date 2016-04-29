@@ -9,6 +9,7 @@ form_input_types:
     file: "Sergsxm\\UIBundle\\FormInputTypes\\File"
     number: "Sergsxm\\UIBundle\\FormInputTypes\\Number"
     image: "Sergsxm\\UIBundle\\FormInputTypes\\Image"
+    address: "Sergsxm\\UIBundle\\FormInputTypes\\Address"
 
 captcha_types:
     standart: "Sergsxm\\UIBundle\\CaptchaTypes\\Standart"

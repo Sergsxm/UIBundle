@@ -79,6 +79,8 @@ For the operation of the bundle following modules needed:
 
 [TinyMCE](https://www.tinymce.com/) (optionaly, used for html input type in forms)
 
+[Yandex.maps](https://tech.yandex.ru/maps/) (optionaly, used for address input type in forms)
+
 ## 2. Forms usage
 
 ### 2.1. Form creation
@@ -171,7 +173,7 @@ If you do not need this feature, you can specify in the configuration of the fie
 
 ### 2.3. Input types
 
-Supported input types: checkbox, text, textarea, timestamp, html, password, select, file, number, image.
+Supported input types: checkbox, text, textarea, timestamp, html, password, select, file, number, image, address.
 
 Type **checkbox** has following settings:
 
@@ -322,6 +324,17 @@ Type **image** has following settings:
 | storeDoctrineClass | Doctrine file entity class (must implements Sergsxm\UIBundle\Classes\ImageInterface) | ""                                |
 | multiply           | If true possible to upload multiply images in one field                             | false                              |
 | disabled           | Set field to disabled state                                                         | false                              |
+
+Type **address** has following settings:
+
+| Parameter                  | Parameter description                                                     | Default value                |
+| -------------------------- | ------------------------------------------------------------------------- | ---------------------------- |
+| description                | Field description, which will be displayed to the user as the field name  | such as field name           |
+| required                   | If true field is required                                                 | false                        |
+| requiredError              | Text for the "required" error                                             | "The field can not be empty" |
+| mapEnabled                 | If true map is enabled in field                                           | false                        |
+| mappingCoordinatesProperty | Property name to store coordinates from map                               | null                         |
+| disabled                   | Set field to disabled state                                               | false                        |
 
 *ValidateCallback* function must be callable. The function should return null (if field value is valid) or error text. 
 The first parameter passed to the function is the value of the field. 
