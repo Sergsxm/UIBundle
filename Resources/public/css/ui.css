@@ -39,3 +39,20 @@
     opacity: 1;
     color: #555;
 }
+
+.sergsxmui-label {
+    background: #777;
+    line-height: 2.3em;
+}
+
+.sergsxmui-label a {
+    color: #aaa;
+    position: relative;
+    top: 0.1em;    
+    text-decoration: none;
+}
+
+.sergsxmui-label a:hover {
+    color: #fff;
+    text-decoration: none;
+}

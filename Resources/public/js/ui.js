@@ -384,7 +384,7 @@ var sergsxmUIFunctions = {
  * @param {mixed} functionToCheck Function to check
  * @returns {Boolean} Parameter is a function
  */    
-    isFunction : function (functionToCheck) {
+    _isFunction : function (functionToCheck) {
         var getType = {};
         return functionToCheck && getType.toString.call(functionToCheck) === '[object Function]';
     },
@@ -405,7 +405,7 @@ var sergsxmUIFunctions = {
                 return false;
             }
             var inputId = ($(this).data('replace-input-id') ? $(this).data('replace-input-id') : $(this).prop('id'));
-            if (sergsxmUIFunctions.isFunction(validator)) {
+            if (sergsxmUIFunctions._isFunction(validator)) {
                 var errors = validator(this, true);
                 if (errors[inputId] !== undefined) {
                     return false;
@@ -444,7 +444,7 @@ var sergsxmUIFunctions = {
                 },
                 error: function (response) {
                     if (response.responseJSON.error) {
-                        if (sergsxmUIFunctions.isFunction(errorFunction)) {
+                        if (sergsxmUIFunctions._isFunction(errorFunction)) {
                             errorFunction(inputId, response.responseJSON.error);
                         } else {
                             alert(response.responseJSON.error);
@@ -475,7 +475,7 @@ var sergsxmUIFunctions = {
                 return false;
             }
             var inputId = ($(this).data('replace-input-id') ? $(this).data('replace-input-id') : $(this).prop('id'));
-            if (sergsxmUIFunctions.isFunction(validator)) {
+            if (sergsxmUIFunctions._isFunction(validator)) {
                 var errors = validator(this, true);
                 if (errors[inputId] !== undefined) {
                     return false;
@@ -514,7 +514,7 @@ var sergsxmUIFunctions = {
                 },
                 error: function (response) {
                     if (response.responseJSON.error) {
-                        if (sergsxmUIFunctions.isFunction(errorFunction)) {
+                        if (sergsxmUIFunctions._isFunction(errorFunction)) {
                             errorFunction(inputId, response.responseJSON.error);
                         } else {
                             alert(response.responseJSON.error);
@@ -556,7 +556,7 @@ var sergsxmUIFunctions = {
                 return false;
             }
             var inputId = ($(this).data('replace-input-id') ? $(this).data('replace-input-id') : $(this).prop('id'));
-            if (sergsxmUIFunctions.isFunction(validator)) {
+            if (sergsxmUIFunctions._isFunction(validator)) {
                 var errors = validator(this, true);
                 if (errors[inputName] != undefined) {
                     return false;
@@ -594,7 +594,7 @@ var sergsxmUIFunctions = {
                 },
                 error: function (response) {
                     if (response.responseJSON.error) {
-                        if (sergsxmUIFunctions.isFunction(errorFunction)) {
+                        if (sergsxmUIFunctions._isFunction(errorFunction)) {
                             errorFunction(inputId, response.responseJSON.error);
                         } else {
                             alert(response.responseJSON.error);
@@ -624,7 +624,7 @@ var sergsxmUIFunctions = {
                 return false;
             }
             var inputId = ($(this).data('replace-input-id') ? $(this).data('replace-input-id') : $(this).prop('id'));
-            if (sergsxmUIFunctions.isFunction(validator)) {
+            if (sergsxmUIFunctions._isFunction(validator)) {
                 var errors = validator(this, true);
                 if (errors[inputId] !== undefined) {
                     return false;
@@ -662,7 +662,7 @@ var sergsxmUIFunctions = {
                 },
                 error: function (response) {
                     if (response.responseJSON.error) {
-                        if (sergsxmUIFunctions.isFunction(errorFunction)) {
+                        if (sergsxmUIFunctions._isFunction(errorFunction)) {
                             errorFunction(inputId, response.responseJSON.error);
                         } else {
                             alert(response.responseJSON.error);
@@ -744,5 +744,43 @@ var sergsxmUIFunctions = {
         }
     },
 
+/**
+ * Convert text to HTML escaped string
+ * 
+ * @param {string} text Input string
+ * @returns {string} HTML escaped string
+ */
+    _htmlSpecialChars : function (text) {
+        return $('<span>').text(text).html();
+    },
+
+/**
+ * Init tags inputs
+ * 
+ * @param {string} selector Input selector
+ * @param {string} tagTemplate Tag template
+ */    
+    initTagInput : function (selector, tagTemplate) {
+        $(selector).on('keypress', function (e) {
+            if (e.charCode != 44) {
+                return true;
+            }
+            var inputId = ($(this).data('replace-input-id') ? $(this).data('replace-input-id') : $(this).prop('id')), 
+                $tagsContainer = $('#'+inputId+'-tags'), 
+                inputName = $tagsContainer.data('input-name'),
+                newTags = $(this).val().toString().split(',');
+            for (var i in newTags) {
+                var tag = newTags[i].trim();
+                if (!tag) {
+                    continue;
+                }
+                var escapeTag = sergsxmUIFunctions._htmlSpecialChars(tag);
+                var insertion = tagTemplate.replace('%tag%', escapeTag).replace('%input%', '<input type="hidden" name="'+inputName+'" value="'+escapeTag+'" />');
+                $tagsContainer.append(insertion);
+            }
+            $(this).val('');
+            return false;
+        });
+    },
     
 };

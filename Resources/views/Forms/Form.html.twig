@@ -117,6 +117,10 @@
                 }
             );
             sergsxmUIFunctions.initMap('#{{formId}} .form-map');
+            sergsxmUIFunctions.initTagInput(
+                '#{{formId}} .form-tag',
+                ' <span class="label sergsxmui-label">%input%%tag% <a href="#" onclick="$(this).closest(\'.label\').remove();return false;"><i class="glyphicon glyphicon-remove"></i></a></span> '
+            );
 
             $('#{{formId}} input, #{{formId}} textarea, #{{formId}} select').change(function () {
                 formValidation_{{formId}}(this);

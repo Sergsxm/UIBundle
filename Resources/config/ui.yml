@@ -10,6 +10,7 @@ form_input_types:
     number: "Sergsxm\\UIBundle\\FormInputTypes\\Number"
     image: "Sergsxm\\UIBundle\\FormInputTypes\\Image"
     address: "Sergsxm\\UIBundle\\FormInputTypes\\Address"
+    tag: "Sergsxm\\UIBundle\\FormInputTypes\\Tag"
 
 captcha_types:
     standart: "Sergsxm\\UIBundle\\CaptchaTypes\\Standart"

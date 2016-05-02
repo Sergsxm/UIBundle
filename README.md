@@ -173,7 +173,7 @@ If you do not need this feature, you can specify in the configuration of the fie
 
 ### 2.3. Input types
 
-Supported input types: checkbox, text, textarea, timestamp, html, password, select, file, number, image, address.
+Supported input types: checkbox, text, textarea, timestamp, html, password, select, file, number, image, address, tag.
 
 Type **checkbox** has following settings:
 
@@ -334,6 +334,17 @@ Type **address** has following settings:
 | requiredError              | Text for the "required" error                                             | "The field can not be empty" |
 | mapEnabled                 | If true map is enabled in field                                           | false                        |
 | mappingCoordinatesProperty | Property name to store coordinates from map                               | null                         |
+| disabled                   | Set field to disabled state                                               | false                        |
+
+Type **tag** has following settings:
+
+| Parameter                  | Parameter description                                                     | Default value                |
+| -------------------------- | ------------------------------------------------------------------------- | ---------------------------- |
+| description                | Field description, which will be displayed to the user as the field name  | such as field name           |
+| required                   | If true field is required                                                 | false                        |
+| requiredError              | Text for the "required" error                                             | "The field can not be empty" |
+| doctrineClass              | Doctrine tag entity class (must inplements Sergsxm\UIBundle\Classes\TagInterface) | null                 |
+| tagProperty                | Property name in entity class to find tags in database                    | 'tag'                        |
 | disabled                   | Set field to disabled state                                               | false                        |
 
 *ValidateCallback* function must be callable. The function should return null (if field value is valid) or error text. 
