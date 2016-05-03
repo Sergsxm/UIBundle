@@ -1,0 +1,34 @@
+{% extends "SergsxmUIBundle:Layout:Layout.html.twig" %}
+
+{% block content %}
+<form action="" enctype="{{encType}}" method="post" name="{{formId}}" id="{{formId}}">
+    <div class="row">
+        <div class="col-lg-6 col-md-6 col-sm-9 col-xs-9">
+            <h1>{{title | default('')}}</h1>
+            {% include "SergsxmUIBundle:TreeForm:TreeBlock.html.twig" %}
+        </div>
+        <div class="col-xs-offset-3 col-lg-3 col-md-3 hidden-sm hidden-xs">
+                <div>
+                    <div class="sergsxmui-tabs-navbar-buttons">
+                        {% if readOnly == false %}
+                            {% if backUrl is defined %}<button type="submit" class="btn btn-primary" name="back" value="true">{% trans from "sergsxmui" %}Save{% endtrans %}</button>{% endif %}
+                            <button type="submit" class="btn btn-default">{% trans from "sergsxmui" %}Apply{% endtrans %}</button>
+                        {% endif %}
+                        {% if backUrl is defined %}<a href="{{backUrl}}" class="btn btn-default">{% trans from "sergsxmui" %}Cancel{% endtrans %}</a>{% endif %}
+                    </div>
+                </div>
+        </div>
+        <div class="col-xs-offset-3 hidden-lg hidden-md col-sm-12 col-xs-12">
+            {% if readOnly == false %}
+                {% if backUrl is defined %}<button type="submit" class="btn btn-primary" name="back" value="true">{% trans from "sergsxmui" %}Save{% endtrans %}</button>{% endif %}
+                <button type="submit" class="btn btn-default">{% trans from "sergsxmui" %}Apply{% endtrans %}</button>
+            {% endif %}
+            {% if backUrl is defined %}<a href="{{backUrl}}" class="btn btn-default">{% trans from "sergsxmui" %}Cancel{% endtrans %}</a>{% endif %}
+        </div>
+    </div>
+</form>
+{% endblock %}            
+{% block javascripts %}
+    {{ parent() }}
+    {% include "SergsxmUIBundle:TreeForm:ScriptsBlock.html.twig" %}
+{% endblock %}

@@ -1,0 +1,23 @@
+<script>
+    $(function () {
+        var tree = new SergsxmUITree('#{{formId}}-items', {
+            removeButton: '.close',
+            inputName: 'tree'
+        });
+        {% if configuration['createEnabled'] == true %}
+        var newCounter = 1;
+        $('#{{formId}}-add-btn').click(function () {
+            var title = $('#{{formId}}-add-title').val();
+            if (title) {
+                var $input = $('<input type="hidden" name="tree[new'+newCounter+'][title] value="" />').val(title);
+                $input.appendTo('#{{formId}}-titles');
+                $('#{{formId}}-add-title').val('');
+                $('#{{formId}}-items').append('<div class="list-group-item" data-nesting="0" data-id="new'+newCounter+'"> <i class="glyphicon glyphicon-move"></i> '+title+' {% if configuration['removeEnabled'] == true %}<button type="button" class="close"><span>&times;</span></button>{% endif %} </div>')
+                newCounter++;
+                tree.updateElementsNesting(true);
+            }
+            return false;
+        });
+        {% endif %}
+    });
+</script>

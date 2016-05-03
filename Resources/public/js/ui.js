@@ -278,25 +278,26 @@ var SergsxmUIDraggableElement = (function () {
 })();
 
 /*
- * Class for ierarhy tree functions
+ * Class for tree form functions
  */
-var SergsxmUIIerarhy = (function () {
+var SergsxmUITree = (function () {
     /**
      * Constructor
      * 
-     * @param {string} container Ierarhy container
+     * @param {string} container Tree container
      * @param {object} configuration Configuration array
      */
-    function SergsxmUIIerarhy(container, configuration) {
+    function SergsxmUITree(container, configuration) {
         this.configuration = {
             nestingDataProperty: "nesting", // data property name to storage current nesting
             idDataProperty: "id",           // data property name where placed element ID
             maxNesting: false,              // max nesting or false to disable function
             nestingPadding: 50,             // element padding to one nesing level
-            moveButtonSelector: false,      // selector for move button or false for all element button
+            clickFilter: 'a, button, input',// filter of click elements
+            removeButton: false,             // close button selector
             
             formContainer: false,           // Container for form inputs
-            inputName: 'ierarhy',           // Input name
+            inputName: 'tree',              // Input name
         };
         $.extend(this.configuration, configuration);
         this.$container = $(container);
@@ -324,8 +325,13 @@ var SergsxmUIIerarhy = (function () {
         this.$container.children().css('position', 'relative');
         this.updateElementsNesting(true);
         var that = this;
-        this.$container.delegate((this.configuration.moveButtonSelector !== false ? '>* '+this.configuration.moveButtonSelector : '>*'), 'mousedown', function (e) {
-            if (that.start(e.currentTarget, e.pageX, e.pageY)) {
+        if (this.configuration.removeButton !== false) {
+            this.$container.delegate('>* '+this.configuration.removeButton, 'click', function (e) {
+                that.removeElement(e.currentTarget);
+            });
+        }
+        this.$container.delegate('>*', 'mousedown', function (e) {
+            if (that.start(e.currentTarget, e.target, e.pageX, e.pageY)) {
                 e.preventDefault();
                 return false;
             }
@@ -339,9 +345,9 @@ var SergsxmUIIerarhy = (function () {
                 return false;
             }
         });
-        this.$container.delegate((this.configuration.moveButtonSelector !== false ? '>* '+this.configuration.moveButtonSelector : '>*'), 'touchstart', function (e) {
+        this.$container.delegate('>*', 'touchstart', function (e) {
             var touch = e.originalEvent.changedTouches[0];
-            if (that.start(e.currentTarget, touch.pageX, touch.pageY)) {
+            if (that.start(e.currentTarget, e.target, touch.pageX, touch.pageY)) {
                 e.preventDefault();
                 e.originalEvent.preventDefault();
                 return false;
@@ -364,17 +370,27 @@ var SergsxmUIIerarhy = (function () {
     }
 
 /**
+ * Remove element from tree
+ * 
+ * @param {DOMElement} element Event element
+ */
+    SergsxmUITree.prototype.removeElement = function (element) {
+        $(element).closest(this.$container.children()).remove();
+        this.updateElementsNesting(true);
+    };
+
+/**
  * Update element nesting
  * Private method
  * 
- * @param {boolean|undefined} $updateForm If true inputs will be updated
+ * @param {boolean|undefined} updateForm If true inputs will be updated
  */
-    SergsxmUIIerarhy.prototype.updateElementsNesting = function ($updateForm) {
+    SergsxmUITree.prototype.updateElementsNesting = function (updateForm) {
         var that = this, $elements = this.$container.children(), ordering = 0;
         if (this.$shadowElement) {
             $elements = $elements.not(this.$shadowElement);
         }
-        if (($updateForm) && (that.configuration.formContainer)) {
+        if ((updateForm) && (that.configuration.formContainer)) {
             $(that.configuration.formContainer).find('input').remove();
         }
         $elements.each(function () {
@@ -382,7 +398,7 @@ var SergsxmUIIerarhy = (function () {
             nesting = that.checkRanges(nesting, ranges);
             $this.data(that.configuration.nestingDataProperty, nesting);
             $this.css({'left': nesting * that.configuration.nestingPadding, 'top': 0});
-            if ($updateForm) {
+            if (updateForm) {
                 var id = $this.data(that.configuration.idDataProperty),
                     inputs = '<input type="hidden" name="'+that.configuration.inputName+'['+id+'][nesting]" value="'+nesting+'" />'+
                              '<input type="hidden" name="'+that.configuration.inputName+'['+id+'][ordering]" value="'+ordering+'" />';
@@ -402,7 +418,7 @@ var SergsxmUIIerarhy = (function () {
  * 
  * @param {jQuery} $element Element
  */    
-    SergsxmUIIerarhy.prototype.createShadow = function ($element) {
+    SergsxmUITree.prototype.createShadow = function ($element) {
         if (this.$shadowElement) {
             this.destroyShadow();
         }
@@ -441,7 +457,7 @@ var SergsxmUIIerarhy = (function () {
  * 
  * @param {jQuery} $element Element
  */    
-    SergsxmUIIerarhy.prototype.moveShadow = function ($element) {
+    SergsxmUITree.prototype.moveShadow = function ($element) {
         if (!this.$shadowElement) {
             return false;
         }
@@ -461,7 +477,7 @@ var SergsxmUIIerarhy = (function () {
  * Private method
  * 
  */    
-    SergsxmUIIerarhy.prototype.destroyShadow = function () {
+    SergsxmUITree.prototype.destroyShadow = function () {
         if (this.$shadowElement) {
             this.$shadowElement.remove();
             this.$shadowElement = null;
@@ -476,7 +492,7 @@ var SergsxmUIIerarhy = (function () {
  * @param {int} y Position
  * @returns {Boolean} Result
  */    
-    SergsxmUIIerarhy.prototype.inHorizontalBox = function ($element, y) {
+    SergsxmUITree.prototype.inHorizontalBox = function ($element, y) {
         var offset = $element.offset(), height = $element.outerHeight(true);
         return ((y >= offset.top) && (y < (offset.top + height)));
     };
@@ -488,7 +504,7 @@ var SergsxmUIIerarhy = (function () {
  * @param {int} y Position
  * @returns {jQuery|null} Element
  */    
-    SergsxmUIIerarhy.prototype.checkAllInHorizontalBox = function (y) {
+    SergsxmUITree.prototype.checkAllInHorizontalBox = function (y) {
         for (var i = 0; i < this.$elements.length; i++) {
             var $el = $(this.$elements.get(i));
             if ($el.is(this.$moveElement)) {
@@ -507,7 +523,7 @@ var SergsxmUIIerarhy = (function () {
  * 
  * @param {jQuery} $el Element to swap
  */    
-    SergsxmUIIerarhy.prototype.swapWithElement = function ($el) {
+    SergsxmUITree.prototype.swapWithElement = function ($el) {
         var indexNew = this.$elements.index($el), indexOld = this.$elements.index(this.$moveElement);
         this.$moveElement.detach();
         if (indexNew > indexOld) {
@@ -529,7 +545,7 @@ var SergsxmUIIerarhy = (function () {
  * @param {jQuery} $elements Elements
  * @returns {object} Range object {min, max}
  */    
-    SergsxmUIIerarhy.prototype.getNestingRange = function ($element, $elements) {
+    SergsxmUITree.prototype.getNestingRange = function ($element, $elements) {
         var index = $elements.index($element), element = (index > 0 ? $elements.get(index - 1) : undefined), ret = {min: 0, max: 0};
         if (element !== undefined) {
             var nesting = $(element).data(this.configuration.nestingDataProperty);
@@ -549,7 +565,7 @@ var SergsxmUIIerarhy = (function () {
  * @param {object} ranges Range object
  * @returns {int} New value
  */    
-    SergsxmUIIerarhy.prototype.checkRanges = function (value, ranges) {
+    SergsxmUITree.prototype.checkRanges = function (value, ranges) {
         if (ranges === undefined) {
             return value;
         }
@@ -571,9 +587,12 @@ var SergsxmUIIerarhy = (function () {
  * @param {int} y Current cursor position
  * @returns {Boolean} Result
  */    
-    SergsxmUIIerarhy.prototype.start = function (element, x, y) {
+    SergsxmUITree.prototype.start = function (element, target, x, y) {
         if (this.$moveElement) {
             this.stop();
+        }
+        if (this.configuration.clickFilter.toString().toUpperCase().replace(' ', '').split(',').indexOf(target.tagName) >= 0) {
+            return false;
         }
         this.$elements = this.$container.children();
         this.$moveElement = $(element);
@@ -595,7 +614,7 @@ var SergsxmUIIerarhy = (function () {
  * 
  * @returns {Boolean} Result
  */    
-    SergsxmUIIerarhy.prototype.stop = function () {
+    SergsxmUITree.prototype.stop = function () {
         if (!this.$moveElement) {
             return false;
         }
@@ -615,7 +634,7 @@ var SergsxmUIIerarhy = (function () {
  * @param {int} y Current cursor position
  * @returns {Boolean} Result
  */    
-    SergsxmUIIerarhy.prototype.move = function (x, y) {
+    SergsxmUITree.prototype.move = function (x, y) {
         if (!this.$moveElement) {
             return false;
         }
@@ -637,7 +656,7 @@ var SergsxmUIIerarhy = (function () {
         return true;    
     };
 
-    return SergsxmUIIerarhy;
+    return SergsxmUITree;
 })();
 
 /**

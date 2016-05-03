@@ -146,6 +146,18 @@ class UIService implements CacheWarmerInterface
     }
     
 /**
+ * Create tree form
+ * 
+ * @param array $configuration Form configuration
+ * @param array $objects Tree objects
+ * @return \Sergsxm\UIBundle\TreeForm\TreeForm Form object
+ */    
+    public function createTreeForm($configuration = array(), $objects = array())
+    {
+        return new \Sergsxm\UIBundle\TreeForm\TreeForm($this->container, $configuration, $objects);
+    }
+    
+/**
  * Cahce warm up interface
  */    
     public function warmUp($cacheDir) 

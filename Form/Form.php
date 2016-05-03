@@ -108,14 +108,15 @@ class Form implements FormInterface
             $request = $this->container->get('request_stack')->getMasterRequest();
         }
         if (($request->getMethod() == 'POST') && ($request->get('form_id') == $this->getFormId())) {
+            if ($request->get('form_token') !== $this->getCsrfToken()) {
+                $this->result = false;
+                return false;
+            }
             $this->result = $this->rootGroup->bindRequest($request);
             if ($this->captcha != null) {
                 if ($this->captcha->bindRequest($request) == false) {
                     $this->result = false;
                 }
-            }
-            if ($request->get('form_token') !== $this->getCsrfToken()) {
-                $this->result = false;
             }
         } else {
             $this->result = false;
