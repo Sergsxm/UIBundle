@@ -9,13 +9,13 @@
  * @copyright  2015 SergSXM
  */
 
-namespace Sergsxm\UIBundle\Classes;
+namespace Sergsxm\UIBundle\Form;
 
-use Symfony\Component\DependencyInjection\Container;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
-use Sergsxm\UIBundle\Exceptions\FormException;
-use Sergsxm\UIBundle\Classes\FormBag;
+use Sergsxm\UIBundle\Form\FormException;
+use Sergsxm\UIBundle\Form\FormBag;
 
 abstract class Captcha
 {
@@ -30,11 +30,11 @@ abstract class Captcha
 /**
  * Constructor
  * 
- * @param Container $container Symfony2 container
+ * @param ContainerInterface $container Symfony2 container
  * @param FormBag $formBag Form`s parameters bag
  * @param array $configuration Captcha configuration
  */
-    public function __construct(Container $container, FormBag $formBag, $configuration = array())
+    public function __construct(ContainerInterface $container, FormBag $formBag, $configuration = array())
     {
         $this->container = $container;
         $this->formBag = $formBag;

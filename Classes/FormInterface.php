@@ -6,13 +6,10 @@
  *
  * @package    SergSXM UI
  * @author     SergSXM <sergsxm@embedded.by>
- * @copyright  2015 SergSXM
+ * @copyright  2016 SergSXM
  */
 
 namespace Sergsxm\UIBundle\Classes;
-
-use Symfony\Component\HttpFoundation\Request;
-use Sergsxm\UIBundle\Exceptions\FormException;
 
 interface FormInterface
 {
@@ -28,21 +25,6 @@ interface FormInterface
  */    
     public function addField($type, $name, $configuration = array(), $mappingObject = 'parent');
 
-/**
- * Bind form request
- * 
- * @param Request $request Symfony2 request object
- * @return boolean Values are accepted and there are no errors
- */
-    public function bindRequest(Request $request = null);
-
-/**
- * Get bind result
- * 
- * @return boolean Values are accepted and there are no errors
- */    
-    public function getResult();
-    
 /**
  * Open group
  * 
@@ -60,19 +42,4 @@ interface FormInterface
  */    
     public function closeGroup();
 
-/**
- * Get form value
- * 
- * @return array Form value
- */    
-    public function getValue();
-            
-/**
- * Set form value
- * 
- * @param array $value Form value
- * @return \Sergsxm\UIBundle\Classes\FormInterface Form object
- */    
-    public function setValue($value);
-            
 }

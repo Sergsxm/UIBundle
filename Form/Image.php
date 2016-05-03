@@ -8,7 +8,9 @@
  * @author     SergSXM <sergsxm@embedded.by>
  * @copyright  2016 SergSXM
  */
-namespace Sergsxm\UIBundle\Classes;
+namespace Sergsxm\UIBundle\Form;
+
+use Sergsxm\UIBundle\Classes\ImageInterface;
 
 class Image extends File implements ImageInterface
 {

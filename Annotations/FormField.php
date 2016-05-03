@@ -14,7 +14,7 @@ namespace Sergsxm\UIBundle\Annotations;
 /**
  * @Annotation
  */
-class Input
+class FormField
 {
     public $type;
     public $configuration;

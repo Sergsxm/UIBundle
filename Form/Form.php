@@ -6,15 +6,16 @@
  *
  * @package    SergSXM UI
  * @author     SergSXM <sergsxm@embedded.by>
- * @copyright  2015 SergSXM
+ * @copyright  2016 SergSXM
  */
 
-namespace Sergsxm\UIBundle\Forms;
+namespace Sergsxm\UIBundle\Form;
 
-use Sergsxm\UIBundle\Exceptions\FormException;
-use Sergsxm\UIBundle\Classes\FormBag;
+use Sergsxm\UIBundle\Form\FormException;
+use Sergsxm\UIBundle\Form\FormBag;
+use Sergsxm\UIBundle\Form\FormGroup;
 use Sergsxm\UIBundle\Classes\FormInterface;
-use Symfony\Component\DependencyInjection\Container;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -39,19 +40,19 @@ class Form implements FormInterface
 /**
  * Form constructor
  * 
- * @param Container $container Symfony2 container
+ * @param ContainerInterface $container Symfony2 container
  * @param object $mappingObject Object for input values mapping
  * @param string $action Action URL
- * @return \Sergsxm\UIBundle\Forms\Form Form object
+ * @return \Sergsxm\UIBundle\Form\Form Form object
  */    
-    public function __construct(Container $container, $mappingObject = null, $action = '')
+    public function __construct(ContainerInterface $container, $mappingObject = null, $action = '')
     {
         $this->container = $container;
         $this->mappingObject = $mappingObject;
         $this->action = $action;
         $this->readOnly = false;
         $this->formBag = new FormBag($this->container->get('request_stack')->getMasterRequest()->getSession());
-        $this->currentGroup = new \Sergsxm\UIBundle\Classes\FormGroup($container, $this->formBag);
+        $this->currentGroup = new FormGroup($container, $this->formBag);
         $this->rootGroup = $this->currentGroup;
     }
 
@@ -62,7 +63,7 @@ class Form implements FormInterface
  * @param string $name Input name
  * @param array $configuration Input configuration
  * @param object $mappingObject Object for input value mapping
- * @return \Sergsxm\UIBundle\Forms\Form Form object
+ * @return \Sergsxm\UIBundle\Form\Form Form object
  * @throws FormException
  */    
     public function addField($type, $name, $configuration = array(), $mappingObject = self::MO_PARENT)
@@ -70,7 +71,7 @@ class Form implements FormInterface
         if ($this->isFrozen == true) {
             throw new FormException(__CLASS__.': you can`t add fields after bindRequest() or getView() methods are called');
         }
-        if (!class_exists($type) || !is_subclass_of($type, '\Embedded\FormBundle\Classes\FormInput')) {
+        if (!class_exists($type) || !is_subclass_of($type, '\Embedded\FormBundle\Form\FormInput')) {
             $types = $this->container->get('sergsxm.ui')->getFormInputTypes();
             if (isset($types[$type])) {
                 $type = $types[$type]; 
@@ -122,6 +123,9 @@ class Form implements FormInterface
         return $this->result;
     }
 
+/**
+ * Clear form data
+ */    
     public function clear()
     {
         $this->formBag->clear();
@@ -175,7 +179,7 @@ class Form implements FormInterface
  * @param array $parameters Additional parameters
  * @return string View content
  */    
-    public function renderView($template = 'SergsxmUIBundle:Forms:Form.html.twig', $parameters = array())
+    public function renderView($template = 'SergsxmUIBundle:Form:Form.html.twig', $parameters = array())
     {
         return $this->container->get('templating')->render($template, array_merge($parameters, $this->getView()));
     }
@@ -187,7 +191,7 @@ class Form implements FormInterface
  * @param array $parameters Additional parameters
  * @return Response View response
  */    
-    public function render($template = 'SergsxmUIBundle:Forms:Form.html.twig', $parameters = array(), Response $response = null)
+    public function render($template = 'SergsxmUIBundle:Form:Form.html.twig', $parameters = array(), Response $response = null)
     {
         return $this->container->get('templating')->renderResponse($template, array_merge($parameters, $this->getView()), $response);
     }
@@ -222,7 +226,7 @@ class Form implements FormInterface
  * Set read only form flag
  * 
  * @param boolean $readOnly Read only flag
- * @return \Sergsxm\UIBundle\Forms\Form Form object
+ * @return \Sergsxm\UIBundle\Form\Form Form object
  */    
     public function setReadOnly($readOnly)
     {
@@ -235,7 +239,7 @@ class Form implements FormInterface
  * 
  * @param string $type Type of captcha (alias or class)
  * @param array $configuration Captcha configuration
- * @return \Sergsxm\UIBundle\Forms\Form Form object
+ * @return \Sergsxm\UIBundle\Form\Form Form object
  * @throws FormException
  */
     public function enableCaptcha($type, $configuration = array())
@@ -244,7 +248,7 @@ class Form implements FormInterface
             throw new FormException(__CLASS__.': you can`t enable captcha after bindRequest() or getView() methods are called');
         }
         
-        if (!class_exists($type) || !is_subclass_of($type, '\Sergsxm\UIBundle\Classes\Captcha')) {
+        if (!class_exists($type) || !is_subclass_of($type, '\Sergsxm\UIBundle\Form\Captcha')) {
             $types = $this->container->get('sergsxm.ui')->getCaptchaTypes();
             if (isset($types[$type])) {
                 $type = $types[$type]; 
@@ -260,7 +264,7 @@ class Form implements FormInterface
 /**
  * Disable captcha
  * 
- * @return \Sergsxm\UIBundle\Forms\Form Form object
+ * @return \Sergsxm\UIBundle\Form\Form Form object
  */    
     public function disableCaptcha()
     {
@@ -313,7 +317,7 @@ class Form implements FormInterface
  * Set unique form id
  * 
  * @param string $formId Form id
- * @return \Sergsxm\UIBundle\Forms\Form Form object
+ * @return \Sergsxm\UIBundle\Form\Form Form object
  */    
     public function setFormId($formId)
     {
@@ -332,7 +336,7 @@ class Form implements FormInterface
  * @param string $name Subgroup name
  * @param string $description Subgroup description
  * @param string $condition The condition under which the subgroup will be processed
- * @return \Sergsxm\UIBundle\Forms\Form Form object
+ * @return \Sergsxm\UIBundle\Form\Form Form object
  */    
     public function openGroup($name, $description = '', $condition = '')
     {
@@ -348,7 +352,7 @@ class Form implements FormInterface
 /**
  * Close current group and return to the parent group
  * 
- * @return \Sergsxm\UIBundle\Forms\Form Form object
+ * @return \Sergsxm\UIBundle\Form\Form Form object
  */    
     public function closeGroup()
     {
@@ -365,7 +369,7 @@ class Form implements FormInterface
  * Find input by name
  * 
  * @param string $name Input name with group prefix
- * @return \Sergsxm\UIBundle\Classes\FormInput|null Input object
+ * @return \Sergsxm\UIBundle\Form\FormInput|null Input object
  */    
     public function findInputByName($name)
     {
@@ -386,7 +390,7 @@ class Form implements FormInterface
  * Set form value
  * 
  * @param array $value Form value
- * @return \Sergsxm\UIBundle\Forms\Form Form object
+ * @return \Sergsxm\UIBundle\Form\Form Form object
  */    
     public function setValue($value)
     {
@@ -399,7 +403,7 @@ class Form implements FormInterface
  * 
  * @param string $tag Form tag
  * @param object $mappingObject Mapping object
- * @return \Sergsxm\UIBundle\Forms\Form Form object
+ * @return \Sergsxm\UIBundle\Form\Form Form object
  */    
     public function fromAnnotations($tag = null, $mappingObject = self::MO_PARENT)
     {
@@ -417,12 +421,12 @@ class Form implements FormInterface
         $object = new \ReflectionObject($mappingObject);
         foreach ($object->getProperties() as $property) {
             if ($tag != null) {
-                $tags = $reader->getPropertyAnnotation($property, '\Sergsxm\UIBundle\Annotations\Tags');
+                $tags = $reader->getPropertyAnnotation($property, '\Sergsxm\UIBundle\Annotations\FormTags');
                 if (empty($tags) || !is_array($tags->forms) || !in_array($tag, $tags->forms)) {
                     continue;
                 }
             }
-            $input = $reader->getPropertyAnnotation($property, '\Sergsxm\UIBundle\Annotations\Input');
+            $input = $reader->getPropertyAnnotation($property, '\Sergsxm\UIBundle\Annotations\FormField');
             if (!empty($input)) {
                 if (is_array($input->translate) && is_array($input->configuration)) {
                     foreach ($input->translate as $transKey) {

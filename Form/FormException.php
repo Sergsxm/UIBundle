@@ -9,7 +9,7 @@
  * @copyright  2015 SergSXM
  */
 
-namespace Sergsxm\UIBundle\Exceptions;
+namespace Sergsxm\UIBundle\Form;
 
 class FormException extends \Exception
 {

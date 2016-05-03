@@ -11,10 +11,10 @@
 
 namespace Sergsxm\UIBundle\FormInputTypes;
 
-use Sergsxm\UIBundle\Classes\FormInput;
+use Sergsxm\UIBundle\Form\FormInput;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\DependencyInjection\Container;
-use Sergsxm\UIBundle\Classes\FormBag;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Sergsxm\UIBundle\Form\FormBag;
 
 class TimeStamp extends FormInput
 {
@@ -96,14 +96,14 @@ class TimeStamp extends FormInput
 /**
  * Constructor
  * 
- * @param Container $container Symfony2 container
+ * @param ContainerInterface $container Symfony2 container
  * @param FormBag $formBag Form`s parameters bag
  * @param string $name Input name
  * @param array $configuration Input configuration
  * @param string $prefix Input prefix
  * @param object $mappingObject Object for input value mapping
  */
-    public function __construct(Container $container, FormBag $formBag, $name, $configuration = array(), $prefix = '', $mappingObject = null)
+    public function __construct(ContainerInterface $container, FormBag $formBag, $name, $configuration = array(), $prefix = '', $mappingObject = null)
     {
         parent::__construct($container, $formBag, $name, $configuration, $prefix, $mappingObject);
         if ($this->configuration['timeZone'] != null) {

@@ -9,13 +9,13 @@
  * @copyright  2016 SergSXM
  */
 
-namespace Sergsxm\UIBundle\Classes;
+namespace Sergsxm\UIBundle\TableList;
 
-use Symfony\Component\DependencyInjection\Container;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Sergsxm\UIBundle\Exceptions\TableListException;
-use Sergsxm\UIBundle\Classes\TableListTab;
+use Sergsxm\UIBundle\TableList\TableListException;
+use Sergsxm\UIBundle\TableList\TableListTab;
 
 class TableList
 {
@@ -29,10 +29,10 @@ class TableList
 /**
  * Table list constructor
  * 
- * @param Container $container Symfony2 container
+ * @param ContainerInterface $container Symfony2 container
  * @return TableList Table list object
  */    
-    public function __construct(Container $container)
+    public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
         $this->tabs = array();
@@ -199,7 +199,7 @@ class TableList
  * @param array $parameters Additional parameters for template
  * @return string Content
  */    
-    public function renderView($template = 'SergsxmUIBundle:TableLists:TableList.html.twig', $ajaxTemplate = 'SergsxmUIBundle:TableLists:TableListAjax.html.twig', $parameters = array())
+    public function renderView($template = 'SergsxmUIBundle:TableList:TableList.html.twig', $ajaxTemplate = 'SergsxmUIBundle:TableList:TableListAjax.html.twig', $parameters = array())
     {
         if ($this->ajaxMode == true) {
             return $this->container->get('templating')->render($ajaxTemplate, array_merge($parameters, $this->getView()));
@@ -215,7 +215,7 @@ class TableList
  * @param array $parameters Additional parameters for template
  * @return Response Symfony2 Response
  */    
-    public function render($template = 'SergsxmUIBundle:TableLists:TableList.html.twig', $ajaxTemplate = 'SergsxmUIBundle:TableLists:TableListAjax.html.twig', $parameters = array(), Response $response = null)
+    public function render($template = 'SergsxmUIBundle:TableList:TableList.html.twig', $ajaxTemplate = 'SergsxmUIBundle:TableList:TableListAjax.html.twig', $parameters = array(), Response $response = null)
     {
         if ($this->ajaxMode == true) {
             return $this->container->get('templating')->renderResponse($ajaxTemplate, array_merge($parameters, $this->getView()));

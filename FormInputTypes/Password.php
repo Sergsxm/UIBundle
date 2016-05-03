@@ -11,10 +11,10 @@
 
 namespace Sergsxm\UIBundle\FormInputTypes;
 
-use Sergsxm\UIBundle\Classes\FormInput;
-use Symfony\Component\DependencyInjection\Container;
+use Sergsxm\UIBundle\Form\FormInput;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Sergsxm\UIBundle\Classes\FormBag;
+use Sergsxm\UIBundle\Form\FormBag;
 
 class Password extends FormInput
 {
@@ -26,14 +26,14 @@ class Password extends FormInput
 /**
  * Constructor
  * 
- * @param Container $container Symfony2 container
+ * @param ContainerInterface $container Symfony2 container
  * @param FormBag $formBag Form`s parameters bag
  * @param string $name Input name
  * @param array $configuration Input configuration
  * @param string $prefix Input prefix
  * @param class $mappingObject Object for input value mapping
  */
-    public function __construct(Container $container, FormBag $formBag, $name, $configuration = array(), $prefix = '', $mappingObject = null)
+    public function __construct(ContainerInterface $container, FormBag $formBag, $name, $configuration = array(), $prefix = '', $mappingObject = null)
     {
         parent::__construct($container, $formBag, $name, $configuration, $prefix, $mappingObject);
         if (($this->mappingObject !== null) && ($this->configuration['mappingSaltProperty'] != '')) {

@@ -11,11 +11,11 @@
 
 namespace Sergsxm\UIBundle\FormInputTypes;
 
-use Sergsxm\UIBundle\Classes\FormInput;
-use Sergsxm\UIBundle\Exceptions\FormException;
-use Symfony\Component\DependencyInjection\Container;
+use Sergsxm\UIBundle\Form\FormInput;
+use Sergsxm\UIBundle\Form\FormException;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Sergsxm\UIBundle\Classes\FormBag;
+use Sergsxm\UIBundle\Form\FormBag;
 
 class Select extends FormInput
 {
@@ -23,14 +23,14 @@ class Select extends FormInput
 /**
  * Constructor
  * 
- * @param Container $container Symfony2 container
+ * @param ContainerInterface $container Symfony2 container
  * @param FormBag $formBag Form`s parameters bag
  * @param string $name Input name
  * @param array $configuration Input configuration
  * @param string $prefix Input prefix
  * @param class $mappingObject Object for input value mapping
  */
-    public function __construct(Container $container, FormBag $formBag, $name, $configuration = array(), $prefix = '', $mappingObject = null)
+    public function __construct(ContainerInterface $container, FormBag $formBag, $name, $configuration = array(), $prefix = '', $mappingObject = null)
     {
         $this->container = $container;
         $this->formBag = $formBag;

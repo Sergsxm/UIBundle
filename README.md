@@ -2,6 +2,8 @@
 
 It\`s bundle for Symfony2 framework, which provides functions for creating forms and table lists. This is useful when creating a site\`s backend.
 
+**The bundle being developed, be careful when using in projects.**
+
 Forms features:
 
 - The fields are combined into groups
@@ -93,7 +95,7 @@ $form = $this->get('sergsxm.ui')->createForm($object);
 
 $object is a object for properties mapping. Leave this parameter or set it to null if this functionality is not needed.
 
-Now you have Form (Sergsxm\UIBundle\Forms\Form) object. This object contains following methods:
+Now you have Form (Sergsxm\UIBundle\Form\Form) object. This object contains following methods:
 
 ```php
 public function addField($type, $name, $configuration = array(), $mappingObject = self::MO_PARENT);
@@ -108,8 +110,8 @@ public function bindRequest(Request $request = null);
 public function clear();
 public function getResult();
 public function getView();
-public function renderView($template = 'SergsxmUIBundle:Forms:Form.html.twig', $parameters = array());
-public function render($template = 'SergsxmUIBundle:Forms:Form.html.twig', $parameters = array(), Response $response = null);
+public function renderView($template = 'SergsxmUIBundle:Form:Form.html.twig', $parameters = array());
+public function render($template = 'SergsxmUIBundle:Form:Form.html.twig', $parameters = array(), Response $response = null);
 public function findInputByName($name);
 public function getValue();
 public function setValue($value);
@@ -160,7 +162,7 @@ if ($form->bindRequest()) {
     die;
 }
         
-return $form->render('SergsxmUIBundle:Forms:Form.html.twig', array('title' => 'New form', 'backUrl' => '/123'));
+return $form->render('SergsxmUIBundle:Form:Form.html.twig', array('title' => 'New form', 'backUrl' => '/123'));
 ```
 
 ### 2.2. Object\`s properties mapping
@@ -380,8 +382,8 @@ Type **standart** has following settings:
 
 ### 2.5. Advanced templating
 
-Default simple form\`s template are placed in **SergsxmUIBundle:Forms:Form.html.twig**.
-Field\`s and group\`s parameters are transferred to the group default template **SergsxmUIBundle:FormGroup:FormGroup.html.twig**.
+Default simple form\`s template are placed in **SergsxmUIBundle:Form:Form.html.twig**.
+Field\`s and group\`s parameters are transferred to the group default template **SergsxmUIBundle:Form:FormGroup.html.twig**.
 In this template, field\`s parameters are transferre to the field default templates, witch places into **SergsxmUIBundle:FormInputTypes:**.
 You can change the default templates, but you can describe the output of individual fields in the group template:
 
@@ -415,7 +417,7 @@ So you can create your own templates and put them when calling the render method
 You can create forms from the annotations of mapping object. 
 For this purpose use method `fromAnnotations($tag = null, $mappingObject = self::MO_PARENT)`.
 
-Annotation `Sergsxm\UIBundle\Annotations\Input` is used to create input fields.
+Annotation `Sergsxm\UIBundle\Annotations\FormField` is used to create input fields.
 Type and configuration parameters are directly passed to the method *addField*.
 
 Example:
@@ -424,7 +426,7 @@ Example:
     /**
      * @var string
      *
-     * @\Sergsxm\UIBundle\Annotations\Input(type="text", configuration={"description"="File name", "required"=true, "requiredError"="The field can not be empty"})
+     * @\Sergsxm\UIBundle\Annotations\FormField(type="text", configuration={"description"="File name", "required"=true, "requiredError"="The field can not be empty"})
      */
     private $fileName;
 ```
@@ -439,7 +441,7 @@ Example:
     /**
      * @var string
      *
-     * @\Sergsxm\UIBundle\Annotations\Input(
+     * @\Sergsxm\UIBundle\Annotations\FormField(
      *      type="text", 
      *      configuration={"description"="File name", "required"=true, "requiredError"="The field can not be empty"}, 
      *      translate={"description", "requiredError"}, 
@@ -448,7 +450,7 @@ Example:
     private $fileName;
 ```
 
-Annotation `Sergsxm\UIBundle\Annotations\Tags` is used to mark form input fields. 
+Annotation `Sergsxm\UIBundle\Annotations\FormTags` is used to mark form input fields. 
 When you call a method `fromAnnotations($tag)` with specified tag, the form will contain only the fields marked with this tag.
 This is useful to create forms for different user roles.
 
@@ -458,8 +460,8 @@ Example:
     /**
      * @var string
      *
-     * @\Sergsxm\UIBundle\Annotations\Tags(forms={"user", "administrator"})
-     * @\Sergsxm\UIBundle\Annotations\Input(type="text", configuration={"description"="File name", "required"=true, "requiredError"="The field can not be empty"})
+     * @\Sergsxm\UIBundle\Annotations\FormTags(forms={"user", "administrator"})
+     * @\Sergsxm\UIBundle\Annotations\FormField(type="text", configuration={"description"="File name", "required"=true, "requiredError"="The field can not be empty"})
      */
     private $fileName;
 ```
@@ -474,7 +476,7 @@ To create the table list use the service:
 $list = $this->get('sergsxm.ui')->createTableList();
 ```
 
-Now you have TableList (Sergsxm\UIBundle\Classes\TableList) object. This object contains following methods:
+Now you have TableList (Sergsxm\UIBundle\TableList\TableList) object. This object contains following methods:
 
 ```php
 
@@ -486,8 +488,8 @@ public function addUrlAction($name, $url, $configuration = array());
 public function addAjaxAction($name, $sql, $configuration = array());
 public function bindRequest(Request $request = null);
 public function getView();
-public function renderView($template = 'SergsxmUIBundle:TableLists:TableList.html.twig', $ajaxTemplate = 'SergsxmUIBundle:TableLists:TableListAjax.html.twig', $parameters = array());
-public function render($template = 'SergsxmUIBundle:TableLists:TableList.html.twig', $ajaxTemplate = 'SergsxmUIBundle:TableLists:TableListAjax.html.twig', $parameters = array(), Response $response = null);
+public function renderView($template = 'SergsxmUIBundle:TableList:TableList.html.twig', $ajaxTemplate = 'SergsxmUIBundle:TableList:TableListAjax.html.twig', $parameters = array());
+public function render($template = 'SergsxmUIBundle:TableList:TableList.html.twig', $ajaxTemplate = 'SergsxmUIBundle:TableList:TableListAjax.html.twig', $parameters = array(), Response $response = null);
 ```
 
 In a few words, when you create the tab, you specified Doctrine repository. 
@@ -522,7 +524,7 @@ $list
         
 $list->bindRequest();
         
-return $list->render('SergsxmUIBundle:TableLists:TableList.html.twig', 'SergsxmUIBundle:TableLists:TableListAjax.html.twig');
+return $list->render('SergsxmUIBundle:TableList:TableList.html.twig', 'SergsxmUIBundle:TableList:TableListAjax.html.twig');
 ```
 
 ### 3.2. Column types

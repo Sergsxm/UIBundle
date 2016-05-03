@@ -11,7 +11,7 @@
 
 namespace Sergsxm\UIBundle\FormInputTypes;
 
-use Sergsxm\UIBundle\Classes\FormInput;
+use Sergsxm\UIBundle\Form\FormInput;
 
 class Text extends FormInput
 {

@@ -9,7 +9,7 @@
  * @copyright  2016 SergSXM
  */
 
-namespace Sergsxm\UIBundle\Exceptions;
+namespace Sergsxm\UIBundle\TableList;
 
 class TableListException extends \Exception
 {

@@ -12,7 +12,7 @@
 namespace Sergsxm\UIBundle\FormInputTypes;
 
 use Symfony\Component\HttpFoundation\Request;
-use Sergsxm\UIBundle\Classes\FormInput;
+use Sergsxm\UIBundle\Form\FormInput;
 
 class Checkbox extends FormInput
 {

@@ -11,7 +11,7 @@
 
 namespace Sergsxm\UIBundle\CaptchaTypes;
 
-use Sergsxm\UIBundle\Classes\Captcha;
+use Sergsxm\UIBundle\Form\Captcha;
 
 class Standart extends Captcha
 {

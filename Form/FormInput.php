@@ -6,15 +6,15 @@
  *
  * @package    SergSXM UI
  * @author     SergSXM <sergsxm@embedded.by>
- * @copyright  2015 SergSXM
+ * @copyright  2016 SergSXM
  */
 
-namespace Sergsxm\UIBundle\Classes;
+namespace Sergsxm\UIBundle\Form;
 
-use Symfony\Component\DependencyInjection\Container;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Sergsxm\UIBundle\Exceptions\FormException;
-use Sergsxm\UIBundle\Classes\FormBag;
+use Sergsxm\UIBundle\Form\FormException;
+use Sergsxm\UIBundle\Form\FormBag;
 
 abstract class FormInput
 {
@@ -34,14 +34,14 @@ abstract class FormInput
 /**
  * Constructor
  * 
- * @param Container $container Symfony2 container
+ * @param ContainerInterface $container Symfony2 container
  * @param FormBag $formBag Form`s parameters bag
  * @param string $name Input name
  * @param array $configuration Input configuration
  * @param string $prefix Input prefix
  * @param object $mappingObject Object for input value mapping
  */
-    public function __construct(Container $container, FormBag $formBag, $name, $configuration = array(), $prefix = '', $mappingObject = null)
+    public function __construct(ContainerInterface $container, FormBag $formBag, $name, $configuration = array(), $prefix = '', $mappingObject = null)
     {
         $this->container = $container;
         $this->formBag = $formBag;

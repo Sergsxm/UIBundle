@@ -1,3 +1,6 @@
+{% extends "SergsxmUIBundle:Layout:Layout.html.twig" %}
+
+{% block content %}
 <div class="row">
     <div class="col-lg-12">
         <h1>{{title | default('')}}</h1>
@@ -13,10 +16,15 @@
     </div>
     <div class="col-lg-9">
         <div id="sergsxmui-tab-wrap-{{activeTab}}" class="sergsxmui-tab-wrap">
-        {% include 'SergsxmUIBundle:TableLists:TableListTab.html.twig' with tab only %}
+        {% include 'SergsxmUIBundle:TableList:TableListTab.html.twig' with tab only %}
         </div>
     </div>
 </div>        
+{% endblock %}                
+
+{% block javascripts %}
+    {{ parent() }}
+    
     <script>
         $(function () {
             function sergsxmuiTabUpdateVisibility(tabName) {
@@ -52,3 +60,4 @@
             sergsxmuiTabUpdateVisibility('{{activeTab}}');
         });
     </script>
+{% endblock %}

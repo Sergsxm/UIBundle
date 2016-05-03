@@ -11,8 +11,7 @@
 
 namespace Sergsxm\UIBundle\Services;
 
-use Sergsxm\UIBundle\Exceptions\FormException;
-use Symfony\Component\DependencyInjection\Container;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Yaml\Yaml as YamlParser;
 use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
 
@@ -23,7 +22,7 @@ class UIService implements CacheWarmerInterface
     private $cacheDir;
     private $debugTrigger;
     
-    public function __construct(Container $container) 
+    public function __construct(ContainerInterface $container) 
     {
         $this->container = $container;
         $this->cacheDir = $this->container->getParameter('kernel.cache_dir').DIRECTORY_SEPARATOR.'sergsxm';
@@ -129,21 +128,21 @@ class UIService implements CacheWarmerInterface
  * 
  * @param object $mappingObject Object for input values mapping
  * @param string $action Action URL
- * @return \Sergsxm\UIBundle\Forms\Form Form object
+ * @return \Sergsxm\UIBundle\Form\Form Form object
  */    
     public function createForm($mappingObject = null, $action = '')
     {
-        return new \Sergsxm\UIBundle\Forms\Form($this->container, $mappingObject, $action);
+        return new \Sergsxm\UIBundle\Form\Form($this->container, $mappingObject, $action);
     }
 
 /**
  * Create table list
  * 
- * @return \Sergsxm\UIBundle\Classes\TableList Table list object
+ * @return \Sergsxm\UIBundle\TableList\TableList Table list object
  */    
     public function createTableList()
     {
-        return new \Sergsxm\UIBundle\Classes\TableList($this->container);
+        return new \Sergsxm\UIBundle\TableList\TableList($this->container);
     }
     
 /**

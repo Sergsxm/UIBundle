@@ -277,6 +277,369 @@ var SergsxmUIDraggableElement = (function () {
     return SergsxmUIDraggableElement;
 })();
 
+/*
+ * Class for ierarhy tree functions
+ */
+var SergsxmUIIerarhy = (function () {
+    /**
+     * Constructor
+     * 
+     * @param {string} container Ierarhy container
+     * @param {object} configuration Configuration array
+     */
+    function SergsxmUIIerarhy(container, configuration) {
+        this.configuration = {
+            nestingDataProperty: "nesting", // data property name to storage current nesting
+            idDataProperty: "id",           // data property name where placed element ID
+            maxNesting: false,              // max nesting or false to disable function
+            nestingPadding: 50,             // element padding to one nesing level
+            moveButtonSelector: false,      // selector for move button or false for all element button
+            
+            formContainer: false,           // Container for form inputs
+            inputName: 'ierarhy',           // Input name
+        };
+        $.extend(this.configuration, configuration);
+        this.$container = $(container);
+        this.$moveElement = null;
+        this.moveOffsetX = null;
+        this.moveOffsetY = null;
+        this.moveCurrentX = null;
+        this.moveCurrentY = null;
+        this.$shadowElement = null;
+        this.$elements = null;
+        this.currentNesting = null;
+        this.currentNestingRanges = null;
+        if (this.$container.css('position') != 'absolute') {
+            this.$container.css('position', 'relative');
+        }
+        this.$container.css({
+            '-webkit-touch-callout': 'none', 
+            '-webkit-user-select': 'none', 
+            '-khtml-user-select': 'none',
+            '-moz-user-select': 'none',
+            '-ms-user-select': 'none',
+            '-o-user-select': 'none',
+            'user-select': 'none'
+        });
+        this.$container.children().css('position', 'relative');
+        this.updateElementsNesting(true);
+        var that = this;
+        this.$container.delegate((this.configuration.moveButtonSelector !== false ? '>* '+this.configuration.moveButtonSelector : '>*'), 'mousedown', function (e) {
+            if (that.start(e.currentTarget, e.pageX, e.pageY)) {
+                e.preventDefault();
+                return false;
+            }
+        });
+        $(document).mouseup(function (e) {
+            that.stop();
+        });
+        this.$container.mousemove(function (e) {
+            if (that.move(e.pageX, e.pageY)) {
+                e.preventDefault();
+                return false;
+            }
+        });
+        this.$container.delegate((this.configuration.moveButtonSelector !== false ? '>* '+this.configuration.moveButtonSelector : '>*'), 'touchstart', function (e) {
+            var touch = e.originalEvent.changedTouches[0];
+            if (that.start(e.currentTarget, touch.pageX, touch.pageY)) {
+                e.preventDefault();
+                e.originalEvent.preventDefault();
+                return false;
+            }
+        });
+        $(document).on('touchend', function (e) {
+            that.stop();
+        });
+        $(document).on('touchcancel', function (e) {
+            that.stop();
+        });
+        this.$container.on('touchmove', function (e) {
+            var touch = e.originalEvent.changedTouches[0];
+            if (that.move(touch.pageX, touch.pageY)) {
+                e.preventDefault();
+                e.originalEvent.preventDefault();
+                return false;
+            }
+        });
+    }
+
+/**
+ * Update element nesting
+ * Private method
+ * 
+ * @param {boolean|undefined} $updateForm If true inputs will be updated
+ */
+    SergsxmUIIerarhy.prototype.updateElementsNesting = function ($updateForm) {
+        var that = this, $elements = this.$container.children(), ordering = 0;
+        if (this.$shadowElement) {
+            $elements = $elements.not(this.$shadowElement);
+        }
+        if (($updateForm) && (that.configuration.formContainer)) {
+            $(that.configuration.formContainer).find('input').remove();
+        }
+        $elements.each(function () {
+            var $this = $(this), nesting = $this.data(that.configuration.nestingDataProperty), ranges = that.getNestingRange($this, $elements);
+            nesting = that.checkRanges(nesting, ranges);
+            $this.data(that.configuration.nestingDataProperty, nesting);
+            $this.css({'left': nesting * that.configuration.nestingPadding, 'top': 0});
+            if ($updateForm) {
+                var id = $this.data(that.configuration.idDataProperty),
+                    inputs = '<input type="hidden" name="'+that.configuration.inputName+'['+id+'][nesting]" value="'+nesting+'" />'+
+                             '<input type="hidden" name="'+that.configuration.inputName+'['+id+'][ordering]" value="'+ordering+'" />';
+                if (that.configuration.formContainer) {
+                    $(that.configuration.formContainer).append(inputs);
+                } else {
+                    $this.find('input').remove();
+                    $this.append(inputs);
+                }
+            }
+            ordering++;
+        });
+    }
+
+/**
+ * Create shadow for element
+ * 
+ * @param {jQuery} $element Element
+ */    
+    SergsxmUIIerarhy.prototype.createShadow = function ($element) {
+        if (this.$shadowElement) {
+            this.destroyShadow();
+        }
+        var offset = $element.position();
+        this.$shadowElement = $('<div></div>');
+        var css = $element.css([
+            'margin-left',
+            'margin-top',
+            'border-top-left-radius',
+            'border-top-right-radius',
+            'border-bottom-left-radius',
+            'border-bottom-right-radius',
+            'border-top-width',
+            'border-bottom-width',
+            'border-left-width',
+            'border-right-width',
+            'box-sizing',
+            'width',
+            'height',
+        ]);
+        css['position'] = 'absolute';
+        css['left'] = offset.left;
+        css['top'] = offset.top;
+        css['z-index'] = -1;
+        css['background'] = '#ccc';
+        css['border-color'] = '#ccc';
+        css['border-style'] = 'solid';
+        css['box-shadow'] = '0 0 3px #ccc';
+        this.$shadowElement.css(css);
+        this.$container.append(this.$shadowElement);
+    };
+
+/**
+ * Move shadow to element position
+ * Private method
+ * 
+ * @param {jQuery} $element Element
+ */    
+    SergsxmUIIerarhy.prototype.moveShadow = function ($element) {
+        if (!this.$shadowElement) {
+            return false;
+        }
+        if ($element !== undefined) {
+            var offset = $element.position();
+            this.$shadowElement.css({
+                top: offset.top,
+            });
+        }
+        this.$shadowElement.css({
+            left: this.currentNesting * this.configuration.nestingPadding,
+        });
+    };
+
+/**
+ * Destroy shadow
+ * Private method
+ * 
+ */    
+    SergsxmUIIerarhy.prototype.destroyShadow = function () {
+        if (this.$shadowElement) {
+            this.$shadowElement.remove();
+            this.$shadowElement = null;
+        }
+    };
+    
+/**
+ * Check if position in horizontal level of element
+ * Private method
+ * 
+ * @param {jQuery} $element Element to check
+ * @param {int} y Position
+ * @returns {Boolean} Result
+ */    
+    SergsxmUIIerarhy.prototype.inHorizontalBox = function ($element, y) {
+        var offset = $element.offset(), height = $element.outerHeight(true);
+        return ((y >= offset.top) && (y < (offset.top + height)));
+    };
+
+/**
+ * Find element in witch is position placed
+ * Private method
+ * 
+ * @param {int} y Position
+ * @returns {jQuery|null} Element
+ */    
+    SergsxmUIIerarhy.prototype.checkAllInHorizontalBox = function (y) {
+        for (var i = 0; i < this.$elements.length; i++) {
+            var $el = $(this.$elements.get(i));
+            if ($el.is(this.$moveElement)) {
+                continue;
+            }
+            if (this.inHorizontalBox($el, y)) {
+                return $el;
+            }
+        }
+        return null;
+    };
+
+/**
+ * Swap current move element with specified element
+ * Private method
+ * 
+ * @param {jQuery} $el Element to swap
+ */    
+    SergsxmUIIerarhy.prototype.swapWithElement = function ($el) {
+        var indexNew = this.$elements.index($el), indexOld = this.$elements.index(this.$moveElement);
+        this.$moveElement.detach();
+        if (indexNew > indexOld) {
+            $el.after(this.$moveElement);
+        } else {
+            $el.before(this.$moveElement);
+        }
+        this.$elements = this.$container.children();
+        if (this.$shadowElement) {
+            this.$elements = this.$elements.not(this.$shadowElement);
+        }
+    };
+
+/**
+ * Get nesting range 
+ * Private method
+ * 
+ * @param {jQuery} $element Element to find nesting
+ * @param {jQuery} $elements Elements
+ * @returns {object} Range object {min, max}
+ */    
+    SergsxmUIIerarhy.prototype.getNestingRange = function ($element, $elements) {
+        var index = $elements.index($element), element = (index > 0 ? $elements.get(index - 1) : undefined), ret = {min: 0, max: 0};
+        if (element !== undefined) {
+            var nesting = $(element).data(this.configuration.nestingDataProperty);
+            ret.max = nesting;
+            if ((this.configuration.maxNesting === false) || (ret.max < this.configuration.maxNesting)) {
+                ret.max++;
+            }
+        }
+        return ret;
+    };
+
+/**
+ * Check value for ranges
+ * Private method
+ * 
+ * @param {int} value Input value
+ * @param {object} ranges Range object
+ * @returns {int} New value
+ */    
+    SergsxmUIIerarhy.prototype.checkRanges = function (value, ranges) {
+        if (ranges === undefined) {
+            return value;
+        }
+        if ((ranges.min !== undefined) && (value < ranges.min)) {
+            value = ranges.min;
+        }
+        if ((ranges.max !== undefined) && (value > ranges.max)) {
+            value = ranges.max;
+        }
+        return value;
+    };
+
+/**
+ * Start element move
+ * Private method
+ * 
+ * @param {DOMElement} element Element to move
+ * @param {int} x Current cursor position
+ * @param {int} y Current cursor position
+ * @returns {Boolean} Result
+ */    
+    SergsxmUIIerarhy.prototype.start = function (element, x, y) {
+        if (this.$moveElement) {
+            this.stop();
+        }
+        this.$elements = this.$container.children();
+        this.$moveElement = $(element);
+        var offset = this.$moveElement.offset(), currentLeft = this.$moveElement.data(this.configuration.nestingDataProperty) * this.configuration.nestingPadding;
+        this.moveOffsetX = x - offset.left;
+        this.moveOffsetY = y - offset.top;
+        this.moveCurrentX = currentLeft;
+        this.moveCurrentY = 0;
+        this.currentNesting = this.$moveElement.data(this.configuration.nestingDataProperty);
+        this.currentNestingRanges = this.getNestingRange(this.$moveElement, this.$elements);
+        this.createShadow(this.$moveElement);
+        this.$moveElement.css({top: 0, left: currentLeft, 'z-index': 999});  
+        return true;
+    };
+
+/**
+ * Stop element move
+ * Private method
+ * 
+ * @returns {Boolean} Result
+ */    
+    SergsxmUIIerarhy.prototype.stop = function () {
+        if (!this.$moveElement) {
+            return false;
+        }
+        this.destroyShadow();
+        this.$moveElement.data(this.configuration.nestingDataProperty, this.currentNesting);
+        this.$moveElement.css({top: 0, left: this.currentNesting * this.configuration.nestingPadding, 'z-index': 0});
+        this.updateElementsNesting(true);
+        this.$moveElement = null;
+        return true;
+    };
+
+/**
+ * Move element to position
+ * Private method
+ * 
+ * @param {int} x Current cursor position
+ * @param {int} y Current cursor position
+ * @returns {Boolean} Result
+ */    
+    SergsxmUIIerarhy.prototype.move = function (x, y) {
+        if (!this.$moveElement) {
+            return false;
+        }
+        var $el = this.checkAllInHorizontalBox(y);
+        if ($el) {
+            this.moveShadow($el);
+            this.swapWithElement($el);
+            this.currentNestingRanges = this.getNestingRange(this.$moveElement, this.$elements);
+        }
+        var offset = this.$moveElement.offset();
+        var posX = x - this.moveOffsetX - offset.left + this.moveCurrentX;
+        var posY = y - this.moveOffsetY - offset.top + this.moveCurrentY;
+        this.$moveElement.css({top: posY, left: posX});
+        this.moveCurrentX = posX;
+        this.moveCurrentY = posY;
+        var nesting = Math.round(posX / this.configuration.nestingPadding);
+        this.currentNesting = this.checkRanges(nesting, this.currentNestingRanges);
+        this.moveShadow();
+        return true;    
+    };
+
+    return SergsxmUIIerarhy;
+})();
+
 /**
  * UI functions class
  */

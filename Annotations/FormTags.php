@@ -14,7 +14,7 @@ namespace Sergsxm\UIBundle\Annotations;
 /**
  * @Annotation
  */
-class Tags
+class FormTags
 {
     public $forms;
 }

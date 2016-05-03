@@ -6,16 +6,16 @@
  *
  * @package    SergSXM UI
  * @author     SergSXM <sergsxm@embedded.by>
- * @copyright  2015 SergSXM
+ * @copyright  2016 SergSXM
  */
 
-namespace Sergsxm\UIBundle\Classes;
+namespace Sergsxm\UIBundle\Form;
 
-use Symfony\Component\DependencyInjection\Container;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Sergsxm\UIBundle\Exceptions\FormException;
-use Sergsxm\UIBundle\Classes\FormGroup;
-use Sergsxm\UIBundle\Classes\FormBag;
+use Sergsxm\UIBundle\Form\FormException;
+use Sergsxm\UIBundle\Form\FormGroup;
+use Sergsxm\UIBundle\Form\FormBag;
 
 class FormGroup
 {
@@ -33,13 +33,13 @@ class FormGroup
 /**
  * Constructor
  * 
- * @param Container $container Symfony2 container
+ * @param ContainerInterface $container Symfony2 container
  * @param FormBag $formBag Form`s parameters bag
  * @param type $name Group name
  * @param type $description Group description
  * @param FormGroup $parent Group parent
  */    
-    public function __construct(Container $container, FormBag $formBag, $name = '', $description = '', FormGroup $parent = null)
+    public function __construct(ContainerInterface $container, FormBag $formBag, $name = '', $description = '', FormGroup $parent = null)
     {
         if (($parent !== null) && ($name == '')) {
             throw new FormException(__CLASS__.': group name cannot by null');
@@ -65,7 +65,7 @@ class FormGroup
  */
     public function getDefaultTemplate() 
     {
-        return 'SergsxmUIBundle:FormGroup:FormGroup.html.twig';
+        return 'SergsxmUIBundle:Form:FormGroup.html.twig';
     }
 
 /**
@@ -92,7 +92,7 @@ class FormGroup
             throw new FormException(__CLASS__.': form input or group named "'.$name.'" is already exist');
         }
         
-        if (!class_exists($type) || !is_subclass_of($type, '\Sergsxm\UIBundle\Classes\FormInput')) {
+        if (!class_exists($type) || !is_subclass_of($type, '\Sergsxm\UIBundle\Form\FormInput')) {
             throw new FormException(__CLASS__.': form input type "'.$type.'" is not exist');
         }
         
@@ -297,7 +297,7 @@ class FormGroup
  * Find input by name
  * 
  * @param string $name Input name with group prefix
- * @return \Sergsxm\UIBundle\Classes\FormInput|null Input object
+ * @return \Sergsxm\UIBundle\Form\FormInput|null Input object
  */    
     public function findInputByName($name)
     {

@@ -11,11 +11,12 @@
 
 namespace Sergsxm\UIBundle\FormInputTypes;
 
-use Sergsxm\UIBundle\Classes\FormInput;
+use Sergsxm\UIBundle\Form\FormInput;
 use Sergsxm\UIBundle\Classes\ImageInterface;
-use Sergsxm\UIBundle\Classes\FormBag;
-use Symfony\Component\DependencyInjection\Container;
+use Sergsxm\UIBundle\Form\FormBag;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Sergsxm\UIBundle\Form\FormException;
 
 class Image extends FormInput
 {
@@ -26,14 +27,14 @@ class Image extends FormInput
 /**
  * Constructor
  * 
- * @param Container $container Symfony2 container
+ * @param ContainerInterface $container Symfony2 container
  * @param FormBag $formBag Form`s parameters bag
  * @param string $name Input name
  * @param array $configuration Input configuration
  * @param string $prefix Input prefix
  * @param object $mappingObject Object for input value mapping
  */
-    public function __construct(Container $container, FormBag $formBag, $name, $configuration = array(), $prefix = '', $mappingObject = null)
+    public function __construct(ContainerInterface $container, FormBag $formBag, $name, $configuration = array(), $prefix = '', $mappingObject = null)
     {
         $this->container = $container;
         $this->formBag = $formBag;
@@ -305,7 +306,7 @@ class Image extends FormInput
             $newValue = null;
             if ($request->files->has($prefix.$this->prefix.$this->name.'_file') && (($file = $request->files->get($prefix.$this->prefix.$this->name.'_file')) != null)) {
                 if ($this->configuration['storeType'] == self::ST_FILE) {
-                    $newValue = new \Sergsxm\UIBundle\Classes\Image();
+                    $newValue = new \Sergsxm\UIBundle\Form\Image();
                 } elseif ($this->configuration['storeType'] == self::ST_DOCTRINE) {
                     $newValue = new $this->configuration['storeDoctrineClass'];
                 }
@@ -435,7 +436,7 @@ class Image extends FormInput
  */    
     private function restoreFromFile($id)
     {
-        return \Sergsxm\UIBundle\Classes\Image::restore($id);
+        return \Sergsxm\UIBundle\Form\Image::restore($id);
     }
     
 }

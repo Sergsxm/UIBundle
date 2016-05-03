@@ -1,0 +1,41 @@
+{% extends "SergsxmUIBundle:Layout:Layout.html.twig" %}
+
+{% block content %}
+<form action="{{action}}" enctype="{{encType}}" method="post" name="{{formId}}" id="{{formId}}">
+    <div class="row">
+        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+            <h1>{{title | default('')}}</h1>
+            {% include "SergsxmUIBundle:Form:FieldsBlock.html.twig" %}
+        </div>
+        <div class="col-lg-3 col-md-3 hidden-sm hidden-xs">
+                <div>
+                    <div class="sergsxmui-tabs-navbar-buttons">
+                        {% if readOnly == false %}
+                            {% if backUrl is defined %}<button type="submit" class="btn btn-primary" name="back" value="true">{% trans from "sergsxmui" %}Save{% endtrans %}</button>{% endif %}
+                            <button type="submit" class="btn btn-default">{% trans from "sergsxmui" %}Apply{% endtrans %}</button>
+                        {% endif %}
+                        {% if backUrl is defined %}<a href="{{backUrl}}" class="btn btn-default">{% trans from "sergsxmui" %}Cancel{% endtrans %}</a>{% endif %}
+                    </div>
+                    <ul class="nav nav-pills nav-stacked">
+                        {% for group in groups %}
+                            {% if group.description != '' %}
+                                <li><a href="#{{group.groupId}}">{{group.description}}</a></li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                </div>
+        </div>
+        <div class="hidden-lg hidden-md col-sm-12 col-xs-12">
+            {% if readOnly == false %}
+                {% if backUrl is defined %}<button type="submit" class="btn btn-primary" name="back" value="true">{% trans from "sergsxmui" %}Save{% endtrans %}</button>{% endif %}
+                <button type="submit" class="btn btn-default">{% trans from "sergsxmui" %}Apply{% endtrans %}</button>
+            {% endif %}
+            {% if backUrl is defined %}<a href="{{backUrl}}" class="btn btn-default">{% trans from "sergsxmui" %}Cancel{% endtrans %}</a>{% endif %}
+        </div>
+    </div>
+</form>
+{% endblock %}            
+{% block javascripts %}
+    {{ parent() }}
+    {% include "SergsxmUIBundle:Form:ScriptsBlock.html.twig" %}
+{% endblock %}

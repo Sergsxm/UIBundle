@@ -9,9 +9,9 @@
  * @copyright  2016 SergSXM
  */
 
-namespace Sergsxm\UIBundle\Classes;
+namespace Sergsxm\UIBundle\Form;
 
-use Sergsxm\UIBundle\Exceptions\FormException;
+use Sergsxm\UIBundle\Form\FormException;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class FormBag

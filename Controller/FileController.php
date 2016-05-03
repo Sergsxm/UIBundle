@@ -39,7 +39,7 @@ class FileController extends Controller
         if ($formId == null) {
             return new JsonResponse(array('error' => 'Unknown form ID'), 406);
         }
-        $formBag = new \Sergsxm\UIBundle\Classes\FormBag($request->getSession());
+        $formBag = new \Sergsxm\UIBundle\Form\FormBag($request->getSession());
         $formBag->setFormId($formId);
         $inputName = $request->get('input_name');
         $fieldParameters = $formBag->get($inputName);
@@ -57,13 +57,13 @@ class FileController extends Controller
             }
             if ($fieldParameters['type'] == 'file') {
                 if ($fieldParameters['storeType'] == FileInputType::ST_FILE) {
-                    $value = new \Sergsxm\UIBundle\Classes\File();
+                    $value = new \Sergsxm\UIBundle\Form\File();
                 } elseif ($fieldParameters['storeType'] == FileInputType::ST_DOCTRINE) {
                     $value = new $fieldParameters['storeDoctrineClass'];
                 }
             } elseif ($fieldParameters['type'] == 'image') {
                 if ($fieldParameters['storeType'] == ImageInputType::ST_FILE) {
-                    $value = new \Sergsxm\UIBundle\Classes\Image();
+                    $value = new \Sergsxm\UIBundle\Form\Image();
                 } elseif ($fieldParameters['storeType'] == ImageInputType::ST_DOCTRINE) {
                     $value = new $fieldParameters['storeDoctrineClass'];
                 }
@@ -158,7 +158,7 @@ class FileController extends Controller
         if ($formId == null) {
             return new Response('Unknown form ID', 406);
         }
-        $formBag = new \Sergsxm\UIBundle\Classes\FormBag($request->getSession());
+        $formBag = new \Sergsxm\UIBundle\Form\FormBag($request->getSession());
         $formBag->setFormId($formId);
         $fieldParameters = $formBag->get($request->get('input_name'));
         if (!is_array($fieldParameters) || ($fieldParameters['type'] != 'image')) {
@@ -166,7 +166,7 @@ class FileController extends Controller
         }
         $id = $request->get('id');
         if ($fieldParameters['storeType'] == ImageInputType::ST_FILE) {
-            $image = \Sergsxm\UIBundle\Classes\Image::restore($id);
+            $image = \Sergsxm\UIBundle\Form\Image::restore($id);
         } elseif ($fieldParameters['storeType'] == ImageInputType::ST_DOCTRINE) {
             $image = $this->container->get('doctrine')->getRepository($fieldParameters['storeDoctrineClass'])->find($id);
         }

@@ -1,0 +1,5 @@
+    {% include defaultTemplate %}
+    {% if captcha is defined %}
+        {% include captcha['defaultTemplate'] with captcha only %}
+    {% endif %}
+    {{rest | raw}}

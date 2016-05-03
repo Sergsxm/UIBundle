@@ -9,12 +9,12 @@
  * @copyright  2016 SergSXM
  */
 
-namespace Sergsxm\UIBundle\Classes;
+namespace Sergsxm\UIBundle\TableList;
 
-use Symfony\Component\DependencyInjection\Container;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Sergsxm\UIBundle\Exceptions\TableListException;
+use Sergsxm\UIBundle\TableList\TableListException;
 
 class TableListTab
 {
@@ -181,7 +181,7 @@ class TableListTab
     public function addUrlAction($name, $url, $configuration = array())
     {
         if (!preg_match('/^[A-Za-z0-9_\-]+$/ui', $name)) {
-            throw new FormException(__CLASS__.': action name must contain only letters and numbers');
+            throw new TableListException(__CLASS__.': action name must contain only letters and numbers');
         }
         if (strpos($url, '/') === false) {
             $url = $this->container->get('router')->generate($url);
@@ -215,7 +215,7 @@ class TableListTab
     public function addAjaxAction($name, $sql, $configuration = array())
     {
         if (!preg_match('/^[A-Za-z0-9_\-]+$/ui', $name)) {
-            throw new FormException(__CLASS__.': action name must contain only letters and numbers');
+            throw new TableListException(__CLASS__.': action name must contain only letters and numbers');
         }
         $configuration = array_merge(array (
                 'type' => 'ajax',
