@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Form input annotation
+ * Description field annotation
  * This file is part of SergSXM UI package
  *
  * @package    SergSXM UI
@@ -14,9 +14,9 @@ namespace Sergsxm\UIBundle\Annotations;
 /**
  * @Annotation
  */
-class FormField
+class Description
 {
-    public $type;
-    public $configuration;
-    public $translate;
+    
+    public $value;
+    
 }

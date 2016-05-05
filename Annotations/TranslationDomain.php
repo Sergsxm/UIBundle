@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Form tags annotation
+ * Translation domain annotation
  * This file is part of SergSXM UI package
  *
  * @package    SergSXM UI
@@ -14,7 +14,9 @@ namespace Sergsxm\UIBundle\Annotations;
 /**
  * @Annotation
  */
-class FormTags
+class TranslationDomain
 {
-    public $forms;
+    
+    public $value;
+    
 }

@@ -18,6 +18,8 @@ use Sergsxm\UIBundle\Classes\FormInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Translation\TranslatorInterface;
+use Doctrine\Common\Annotations\Reader as AnnotationReaderInterface;
 
 class Form implements FormInterface
 {
@@ -400,13 +402,76 @@ class Form implements FormInterface
     }
     
 /**
+ * Add field from annotation
+ * 
+ * @param AnnotationReaderInterface $reader
+ * @param TranslatorInterface $translator
+ * @param type $translatorDomain
+ * @param type $mappingObject
+ * @param \ReflectionProperty $property
+ */    
+    private function addFieldFromAnnotation(AnnotationReaderInterface $reader, TranslatorInterface $translator, $translatorDomain, $mappingObject, \ReflectionProperty $property)
+    {
+        $description = $reader->getPropertyAnnotation($property, '\Sergsxm\UIBundle\Annotations\Description');
+        $field = $reader->getPropertyAnnotation($property, '\Sergsxm\UIBundle\Annotations\FormField');
+        if (!empty($field)) {
+            if (!is_array($field->configuration)) {
+                $field->configuration = array();
+            }
+            if (!isset($field->configuration['description']) && !empty($description)) {
+                $field->configuration['description'] = $translator->trans($description->value, array(), $translatorDomain);
+            }
+            if (is_array($field->translate)) {
+                foreach ($field->translate as $transKey) {
+                    if (isset($field->configuration[$transKey])) {
+                            $field->configuration[$transKey] = $translator->trans($field->configuration[$transKey], array(), $translatorDomain);
+                    }
+                }
+            }
+            $this->addField($field->type, $property->getName(), $field->configuration, $mappingObject);
+        }
+    }
+    
+/**
+ * Add form tree from annotations
+ * 
+ * @param AnnotationReaderInterface $reader
+ * @param TranslatorInterface $translator
+ * @param type $translatorDomain
+ * @param type $mappingObject
+ * @param \ReflectionObject $reflectionObject
+ * @param type $groups
+ * @param type $tree
+ * @throws FormException
+ */    
+    private function addTreeFromAnnotation(AnnotationReaderInterface $reader, TranslatorInterface $translator, $translatorDomain, $mappingObject, \ReflectionObject $reflectionObject, $groups, $tree)
+    {
+        foreach ($tree as $itemKey => $itemVal) {
+            if (is_array($itemVal)) {
+                if (!isset($groups[$itemKey])) {
+                    throw new FormException(__CLASS__.": group $groups[$itemKey] not found in annotations");
+                }
+                $this->openGroup($itemKey, $groups[$itemKey]['description'], $groups[$itemKey]['condition']);
+                $this->addTreeFromAnnotation($reader, $translator, $translatorDomain, $mappingObject, $reflectionObject, $groups, $itemVal);
+                $this->closeGroup();
+            } else {
+                $property = $reflectionObject->getProperty($itemVal);
+                if (empty($property)) {
+                    throw new FormException(__CLASS__.": property $itemVal not found in annotations");
+                }
+                $this->addFieldFromAnnotation($reader, $translator, $translatorDomain, $mappingObject, $property);
+            }
+        }
+    }
+    
+/**
  * Load form from class annotations
  * 
- * @param string $tag Form tag
+ * @param string $formName Form name
  * @param object $mappingObject Mapping object
  * @return \Sergsxm\UIBundle\Form\Form Form object
  */    
-    public function fromAnnotations($tag = null, $mappingObject = self::MO_PARENT)
+    public function fromAnnotations($formName = null, $mappingObject = self::MO_PARENT)
     {
         if ($mappingObject == self::MO_PARENT) {
             $mappingObject = $this->mappingObject;
@@ -420,24 +485,30 @@ class Form implements FormInterface
             throw new FormException(__CLASS__.': you must specify mapping object for import from annotations');
         }
         $object = new \ReflectionObject($mappingObject);
-        foreach ($object->getProperties() as $property) {
-            if ($tag != null) {
-                $tags = $reader->getPropertyAnnotation($property, '\Sergsxm\UIBundle\Annotations\FormTags');
-                if (empty($tags) || !is_array($tags->forms) || !in_array($tag, $tags->forms)) {
-                    continue;
-                }
-            }
-            $input = $reader->getPropertyAnnotation($property, '\Sergsxm\UIBundle\Annotations\FormField');
-            if (!empty($input)) {
-                if (is_array($input->translate) && is_array($input->configuration)) {
-                    foreach ($input->translate as $transKey) {
-                        if (isset($input->configuration[$transKey])) {
-                            $input->configuration[$transKey] = $translator->trans($input->configuration[$transKey], array(), $input->translateDomain);
-                        }
+        
+        $translatorDomain = null;
+        $translatorAnnotation = $reader->getClassAnnotation($object, '\Sergsxm\UIBundle\Annotations\TranslationDomain');
+        if (!empty($translatorAnnotation)) {
+            $translatorDomain = $translatorAnnotation->value;
+        }
+        
+        if ($formName !== null) {
+            $formAnnotations = $reader->getClassAnnotations($object);
+            foreach ($formAnnotations as $formAnnotation) {
+                if (($formAnnotation instanceof \Sergsxm\UIBundle\Annotations\Form) && ($formAnnotation->name == $formName)) {
+                    $groups = $formAnnotation->getGroups($translator, $translatorDomain);
+                    if (!is_array($formAnnotation->fields)) {
+                        throw new FormException(__CLASS__.": form annotation $formName must have fields parameter (array with fields tree)");
                     }
+                    $this->addTreeFromAnnotation($reader, $translator, $translatorDomain, $mappingObject, $object, $groups, $formAnnotation->fields);
+                    return $this;
                 }
-                $this->addField($input->type, $property->getName(), $input->configuration, $mappingObject);
             }
+            throw new FormException(__CLASS__.": form named $formName not found in annotations");
+        }
+        
+        foreach ($object->getProperties() as $property) {
+            $this->addFieldFromAnnotation($reader, $translator, $translatorDomain, $mappingObject, $property);
         }
         return $this;
     }

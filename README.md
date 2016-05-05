@@ -436,7 +436,7 @@ So you can create your own templates and put them when calling the render method
 ### 2.6. Annotations
 
 You can create forms from the annotations of mapping object. 
-For this purpose use method `fromAnnotations($tag = null, $mappingObject = self::MO_PARENT)`.
+For this purpose use method `fromAnnotations($formName = null, $mappingObject = self::MO_PARENT)`.
 
 Annotation `Sergsxm\UIBundle\Annotations\FormField` is used to create input fields.
 Type and configuration parameters are directly passed to the method *addField*.
@@ -452,39 +452,79 @@ Example:
     private $fileName;
 ```
 
-To localize the phrases in annotation there are two options: translate and translateDomain. 
+To localize the phrases in annotation there is option: translate. 
 Option *translate* is an array that contains the keys of the configuration array that need to be localized.
-Option *translateDomain* is translation domain for tanslator service.
+Also you can specified translator domain by 'Sergsxm\UIBundle\Annotations\TranslationDomain' class annotation.
 
 Example:
 
 ```php
+/**
+ * @\Sergsxm\UIBundle\Annotations\TranslationDomain("sergsxmui")
+ */
+class FileEntity
+{
     /**
      * @var string
      *
+     * @\Sergsxm\UIBundle\Annotations\Description("File name field")
      * @\Sergsxm\UIBundle\Annotations\FormField(
      *      type="text", 
      *      configuration={"description"="File name", "required"=true, "requiredError"="The field can not be empty"}, 
-     *      translate={"description", "requiredError"}, 
-     *      translateDomain="sergsxmui")
+     *      translate={"description", "requiredError"})
      */
     private $fileName;
 ```
 
-Annotation `Sergsxm\UIBundle\Annotations\FormTags` is used to mark form input fields. 
-When you call a method `fromAnnotations($tag)` with specified tag, the form will contain only the fields marked with this tag.
-This is useful to create forms for different user roles.
+Annotation `Sergsxm\UIBundle\Annotations\Description` is used to set field description. This value will be translated.
+
+Class annotation `Sergsxm\UIBundle\Annotations\Form` is used to setup forms of object.
+There are three parameters: name, groups and fields.
+Parameter *name* contains form name. When you call a method `fromAnnotations($formName)` form with this name will be loaded.
+Parameter *groups* contains information about all groups.
+Parameter *fields* contains form structure.
 
 Example:
 
 ```php
+/**
+ * @\Sergsxm\UIBundle\Annotations\Form(
+ *      name="user",
+ *      groups={
+ *          {"name"="first", "description"="First group"},
+ *          {"name"="second", "description"="Second group"}
+ *      },
+ *      fields={"fileName", "first"={"contentFile"}, "second"={"mimeType"}}
+ * )
+ * @\Sergsxm\UIBundle\Annotations\TranslationDomain("sergsxmui")
+ */
+class FileEntity
+{
     /**
      * @var string
      *
-     * @\Sergsxm\UIBundle\Annotations\FormTags(forms={"user", "administrator"})
-     * @\Sergsxm\UIBundle\Annotations\FormField(type="text", configuration={"description"="File name", "required"=true, "requiredError"="The field can not be empty"})
+     * @\Sergsxm\UIBundle\Annotations\Description("File name")
+     * @\Sergsxm\UIBundle\Annotations\FormField(
+     *      type="text",
+     *      configuration={"required"=true, "requiredError"="Field required"}, 
+     *      translate={"requiredError"})
      */
     private $fileName;
+
+    /**
+     * @var string
+     *
+     * @\Sergsxm\UIBundle\Annotations\FormField(type="text", configuration={"description"="MIME", "required"=true, "requiredError"="Field required"})
+     */
+    private $mimeType;
+
+    /**
+     * @var string
+     *
+     * @\Sergsxm\UIBundle\Annotations\FormField(type="text", configuration={"description"="Content file"})
+     */
+    private $contentFile;
+
 ```
 
 ## 3. Table lists usage
