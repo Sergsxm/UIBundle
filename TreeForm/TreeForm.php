@@ -39,7 +39,11 @@ class TreeForm
         if (($this->configuration['createEnabled'] == true) && (!is_callable($this->configuration['createCallback']))) {
             throw new TreeFormException(__CLASS__.': createCallback must be specified in configuration');
         }
-        $this->objects = $objects;
+        if ($this->configuration['loadDoctrineRepository'] !== null) {
+            $this->objects = $this->container->get('doctrine')->getRepository($this->configuration['loadDoctrineRepository'])->findAll();
+        } else {
+            $this->objects = $objects;
+        }
         if (!is_array($this->objects)) {
             $this->objects = array();
         }
@@ -66,6 +70,7 @@ class TreeForm
             'removeEnabled' => false,
             'readOnly' => false,
             'mapIdToParentProperty' => false,
+            'loadDoctrineRepository' => null,
         );
     }
     

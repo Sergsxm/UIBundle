@@ -1,6 +1,6 @@
 # Sergsxm UIBundle
 
-It\`s bundle for Symfony2 framework, which provides functions for creating forms and table lists. This is useful when creating a site\`s backend.
+It\`s bundle for Symfony2 framework, which provides functions for creating forms, table lists and tree forms. This is useful when creating a site\`s backend.
 
 **The bundle being developed, be careful when using in projects.**
 
@@ -20,6 +20,12 @@ Table lists features:
 - Text search function 
 - Ajax actions 
 - Saving the sorting settings, search settings, current page etc. in session
+
+Tree forms features:
+
+- Use Doctrine
+- Easy tree setup by JavaScript
+- Supports mouse and touchscreen
 
 ## 1. Installation
 
@@ -649,11 +655,93 @@ Also, it has the ability to perform join statments. To do this, as variable $nam
     ->addColumn('image', 'file.contentFile', array('description' => 'Image', 'join' => 'JOIN item.fooFile file'))
 ```
 
-## 4. Notes
+## 4. Tree forms usage
+
+### 4.1. Tree form creation
+
+To create the tree form use the service:
+
+```php
+$list = $this->get('sergsxm.ui')->createTreeForm($configuration, $treeItems);
+```
+
+First parameter is a configuration array. Second parameter is array of tree items (you may also load all Doctrine repository by specified *loadDoctrineRepository* configuration parameter).
+
+Now you have TreeForm (Sergsxm\UIBundle\TreeForm\TreeForm) object. This object contains following methods:
+
+```php
+public function getView();
+public function renderView($template = 'SergsxmUIBundle:TreeForm:TreeForm.html.twig', $parameters = array());
+public function render($template = 'SergsxmUIBundle:TreeForm:TreeForm.html.twig', $parameters = array(), Response $response = null);
+public function setReadOnly($readOnly);
+public function getResult();
+public function bindRequest(Request $request = null);
+public function clear();
+public function getFormId();
+public function setFormId($formId);
+```
+
+Below is a simple example of using tree forms:
+
+```php
+$treeForm = $this->get('sergsxm.ui')->createTreeForm(array(
+    'createEnabled' => true,
+    'createCallback' => array($this, 'createTree'),
+    'removeEnabled' => true,
+), $this->getDoctrine()->getRepository('\TestBundle\Entity\TreeEntity')->findAll());
+        
+if ($treeForm->bindRequest()) {
+    $treeForm->clear();
+    echo 'Data saved!';
+}        
+        
+return $treeForm->render();
+```
+
+### 4.2. Tree item entity
+
+Tree item entity must implements \Sergsxm\UIBundle\Classes\TreeInterface. 
+
+Each entity has a parent field and the ordering field. Value of the parent field can be a parent entity or integer ID (set by configuration). Value of the ordering field is an integer.
+
+### 4.3. Configuration parameters
+
+| Parameter              | Parameter description                                                                      | Default value               |
+| ---------------------- | ------------------------------------------------------------------------------------------ | --------------------------- |
+| createCallback         | Parameter required when createEnabled is true. Function witch called for tree item creation (see below) | null           |
+| changeCallback         | Function witch called after tree item is changed (see below)                               | null                        |
+| removeCallback         | Function witch called after tree item is removed (see below)                               | null                        |
+| url                    | Link to any page, for example edit page of the tree item (format describes below)          | null                        |
+| createEnabled          | If true create function is enabled                                                         | false                       |
+| removeEnabled          | If true remove function is enabled                                                         | false                       |
+| readOnly               | If true tree form is locked for editing                                                    | false                       |
+| mapIdToParentProperty  | If true value of the parent field is integer ID, if false - entity                         | false                       |
+| loadDoctrineRepository | Allow to load tree items from Doctrine repository (otherwise, you must specify tree items when you create a form) | null |
+
+Parameter *createCallback* must contains callback function with three parameters: $title, $parent, $ordering. 
+$title is a title of new tree item. 
+$parent is parent entity or null. 
+$ordering is order of tree item in tree (integer).
+
+Parameter *changeCallback* must contains callback function with three parameters: $item, $parent, $ordering.
+$item is tree item entity.
+$parent is parent entity or null. 
+$ordering is order of tree item in tree (integer).
+This function call after changing parent and ordering fields of entity.
+
+Parameter *removeCallback* must contains callback function woth one parameter: $item.
+$item is tree item entity to remove.
+This function call after call of remove method of entity manager.
+
+Parameter *url* can be two formats. 
+One of formats is string with custom URL (detecting by "/" symbol). In this string statment "{{id}}" will be replaced by row item ID.
+Second format is string with Symfony route. This string will by processed by Symfony routing service (with route parameter "id").
+
+## 5. Notes
 
 This bundle is just my own view of how should be organized in forms and lists. 
 The code is few tested and may contain some bugs.
 
-## 5. License
+## 6. License
 
 This bundle is under MIT license
