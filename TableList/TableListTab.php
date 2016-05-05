@@ -35,13 +35,13 @@ class TableListTab
 /**
  * Table list tab constructor
  * 
- * @param Container $container Symfony2 container
+ * @param ContainerInterface $container Symfony2 container
  * @param string $repository Doctrine main repository for list
  * @param string $name Tab name
  * @param string $description Tab description
  * @return TableListTab Tab object
  */    
-    public function __construct(Container $container, $repository, $name, $description = null)
+    public function __construct(ContainerInterface $container, $repository, $name, $description = null)
     {
         if (!preg_match('/^[A-Za-z0-9_\-]+$/ui', $name)) {
             throw new FormException(__CLASS__.': tab name must contain only letters and numbers');

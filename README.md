@@ -181,7 +181,7 @@ If you do not need this feature, you can specify in the configuration of the fie
 
 ### 2.3. Input types
 
-Supported input types: checkbox, text, textarea, timestamp, html, password, select, file, number, image, address, tag.
+Supported input types: checkbox, text, textarea, timestamp, html, password, select, file, number, image, address, tag, category.
 
 Type **checkbox** has following settings:
 
@@ -354,6 +354,21 @@ Type **tag** has following settings:
 | doctrineClass              | Doctrine tag entity class (must inplements Sergsxm\UIBundle\Classes\TagInterface) | null                 |
 | tagProperty                | Property name in entity class to find tags in database                    | 'tag'                        |
 | disabled                   | Set field to disabled state                                               | false                        |
+
+Type **category** has following settings:
+
+| Parameter        | Parameter description                                                                        | Default value                 |
+| ---------------- | -------------------------------------------------------------------------------------------- | ----------------------------- |
+| description      | Field description, which will be displayed to the user as the field name                     | such as field name            |
+| required         | If true field is required                                                                    | false                         |
+| requiredError    | Text for the "required" error                                                                | "The field can not be empty"  |
+| categories       | An array of categories (each element must implements Sergsxm\UIBundle\Classes\TreeInterface) | array()                       |
+| categoriesError  | Text for the error when value do not find in *categories* array                              | "The field contain bad value" |
+| multiply         | If true possible to select multiple categories                                               | false                         |
+| expanded         | If true *select* will show extended (radio buttons, checkboxes)                              | false                         |
+| mapIdToValue     | If true only category ID will be placed as value of mapping property                         | false                         |
+| loadDoctrineRepository | Allow to load categories from Doctrine repository (otherwise - by *categories* parameter) | null                       |
+| disabled         | Set field to disabled state                                                                  | false                         |
 
 *ValidateCallback* function must be callable. The function should return null (if field value is valid) or error text. 
 The first parameter passed to the function is the value of the field. 

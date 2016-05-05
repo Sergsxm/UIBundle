@@ -108,11 +108,11 @@ class TreeForm
  * @param object $parent Parent to search childs
  * @param int $nesting Current nesting
  */    
-    private function sortTree($objects, &$items, $parent = null, $nesting = 0)
+    private function sortTreeCategory($objects, &$items, $parent = null, $nesting = 0)
     {
         foreach ($objects as $object) {
             $currentParent = $object->getParent();
-            if ($currentParent instanceof \Sergsxm\UIBundle\Classes\CategoryInterface) {
+            if ($currentParent instanceof \Sergsxm\UIBundle\Classes\TreeInterface) {
                 $currentParent = $currentParent->getId();
             }
             if ($currentParent == $parent) {
@@ -130,9 +130,41 @@ class TreeForm
                     'nesting' => $nesting,
                     'url' => $url,
                 );
-                $this->sortTree($objects, $items, $object->getId(), $nesting + 1);
+                $this->sortTreeCategory($objects, $items, $object->getId(), $nesting + 1);
             }
         }
+    }
+
+/**
+ * Sort tree categories by ordering field
+ * 
+ * @param type $a
+ * @param type $b
+ * @return int
+ */    
+    private function sortTreeOrdering($a, $b)
+    {
+        if ($a->getOrdering() < $b->getOrdering()) {
+            return -1;
+        } elseif ($a->getOrdering() > $b->getOrdering()) {
+            return 1;
+        }
+        return 0;
+        
+    }
+
+/**
+ * Sort tree function
+ * 
+ * @param array $objects Categories
+ * @return array Output array
+ */    
+    private function sortTree($objects)
+    {
+        $items = array();
+        usort($objects, array($this, 'sortTreeOrdering'));
+        $this->sortTreeCategory($objects, $items);
+        return $items;
     }
     
 /**
@@ -142,8 +174,7 @@ class TreeForm
  */    
     public function getView()
     {
-        $items = array();
-        $this->sortTree($this->objects, $items);
+        $items = $this->sortTree($this->objects);
         $this->isFrozen = true;
         $formId = $this->getFormId();
         return array(

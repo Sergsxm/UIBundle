@@ -115,7 +115,7 @@ class FileController extends Controller
                 } elseif ($fieldParameters['storeType'] == FileInputType::ST_DOCTRINE) {
                     $em = $this->getDoctrine()->getManager();
                     $em->persist($value);
-                    $em->flush();
+                    $em->flush($value);
                 }
             } elseif ($fieldParameters['type'] == 'image') {
                 if ($fieldParameters['storeType'] == ImageInputType::ST_FILE) {
@@ -123,7 +123,7 @@ class FileController extends Controller
                 } elseif ($fieldParameters['storeType'] == ImageInputType::ST_DOCTRINE) {
                     $em = $this->getDoctrine()->getManager();
                     $em->persist($value);
-                    $em->flush();
+                    $em->flush($value);
                 }
                 $thumbnail = $this->container->get('router')->generate('sergsxm_ui_file_thumbnail', array(
                     'form_id' => $formId, 
