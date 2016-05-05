@@ -4,6 +4,20 @@
             removeButton: '.close',
             inputName: 'tree'
         });
+        $('#{{formId}} .list-group-item a').click(function () {
+            if (tree.getChangedStatus() == false) {
+                return true;
+            }
+            var url = $(this).attr('href');
+            sergsxmUIFunctions.confirm(
+                '{% trans from "sergsxmui" %}The form has been changed. If you leave the page, the changes will be lost. Are you sure you want to leave the page?{% endtrans %}', 
+                '{% trans from "sergsxmui" %}Confirm leave the page{% endtrans %}', 
+                '{% trans from "sergsxmui" %}Yes{% endtrans %}', 
+                '{% trans from "sergsxmui" %}Cancel{% endtrans %}', 
+                function () {location.href = url;}
+            );
+            return false;
+        });
         {% if configuration['createEnabled'] == true %}
         var newCounter = 1;
         $('#{{formId}}-add-btn').click(function () {

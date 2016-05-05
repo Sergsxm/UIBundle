@@ -298,9 +298,11 @@ var SergsxmUITree = (function () {
             
             formContainer: false,           // Container for form inputs
             inputName: 'tree',              // Input name
+            
         };
         $.extend(this.configuration, configuration);
         this.$container = $(container);
+        this.changed = false;
         this.$moveElement = null;
         this.moveOffsetX = null;
         this.moveOffsetY = null;
@@ -375,6 +377,7 @@ var SergsxmUITree = (function () {
  * @param {DOMElement} element Event element
  */
     SergsxmUITree.prototype.removeElement = function (element) {
+        this.changed = true;
         $(element).closest(this.$container.children()).remove();
         this.updateElementsNesting(true);
     };
@@ -638,6 +641,7 @@ var SergsxmUITree = (function () {
         if (!this.$moveElement) {
             return false;
         }
+        this.changed = true;
         var $el = this.checkAllInHorizontalBox(y);
         if ($el) {
             this.moveShadow($el);
@@ -654,6 +658,15 @@ var SergsxmUITree = (function () {
         this.currentNesting = this.checkRanges(nesting, this.currentNestingRanges);
         this.moveShadow();
         return true;    
+    };
+
+/**
+ * Get changed status
+ * 
+ * @returns {Boolean} True if form changed
+ */
+    SergsxmUITree.prototype.getChangedStatus = function () {
+        return this.changed;
     };
 
     return SergsxmUITree;
