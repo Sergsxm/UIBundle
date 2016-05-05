@@ -6,91 +6,46 @@
  *
  * @package    SergSXM UI
  * @author     SergSXM <sergsxm@embedded.by>
- * @copyright  2015 SergSXM
+ * @copyright  2016 SergSXM
  */
 
 namespace Sergsxm\UIBundle\Services;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\Yaml\Yaml as YamlParser;
-use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
+use Sergsxm\UIBundle\Classes\UIExtensionInterface;
 
-class UIService implements CacheWarmerInterface
+class UIService
 {
     
     private $container;
-    private $cacheDir;
-    private $debugTrigger;
-    
-    public function __construct(ContainerInterface $container) 
+    private $formInputTypes;
+    private $captchaTypes;
+
+/**
+ * Constructor
+ * 
+ * @param ContainerInterface $container Symfony container
+ * @param array $formInputTypes Basic form input types
+ * @param array $captchaTypes Basic captcha types
+ */    
+    public function __construct(ContainerInterface $container, $formInputTypes, $captchaTypes) 
     {
         $this->container = $container;
-        $this->cacheDir = $this->container->getParameter('kernel.cache_dir').DIRECTORY_SEPARATOR.'sergsxm';
-        $this->debugTrigger = $this->container->getParameter('kernel.debug');
+        $this->formInputTypes = $formInputTypes;
+        $this->captchaTypes = $captchaTypes;
     }
 
 /**
- * Update cache file with list of input types
+ * Add extension to UIBundle
  * 
- * @return boolean Is result successfull
+ * @param UIExtensionInterface $extension Extension
  */
-    private function updateCache($cacheDir = null) 
+    public function addExtension(UIExtensionInterface $extension)
     {
-        if ($cacheDir == null) {
-            $cacheDir = $this->cacheDir;
-        }
-        
-        $formInputTypes = array();
-        $captchaTypes = array();
-        
-        foreach ($this->container->get('kernel')->getBundles() as $bundle) {
-            if (file_exists($bundle->getPath().DIRECTORY_SEPARATOR.'Resources'.DIRECTORY_SEPARATOR.'config'.DIRECTORY_SEPARATOR.'ui.yml')) {
-                $parameters = YamlParser::parse(file_get_contents($bundle->getPath().DIRECTORY_SEPARATOR.'Resources'.DIRECTORY_SEPARATOR.'config'.DIRECTORY_SEPARATOR.'ui.yml'));
-                
-                if (isset($parameters['form_input_types']) && is_array($parameters['form_input_types'])) {
-                    foreach ($parameters['form_input_types'] as $typeName => $typeClass) {
-                        if (is_string($typeClass)) {
-                            $formInputTypes[$typeName] = $typeClass;
-                        }
-                    }
-                }
-                if (isset($parameters['captcha_types']) && is_array($parameters['captcha_types'])) {
-                    foreach ($parameters['captcha_types'] as $typeName => $typeClass) {
-                        if (is_string($typeClass)) {
-                            $captchaTypes[$typeName] = $typeClass;
-                        }
-                    }
-                }
-            }
-        }
-        
-        if (!is_dir($cacheDir)) {
-            mkdir($cacheDir);
-        }
-        
-        $f = fopen($cacheDir.DIRECTORY_SEPARATOR.'formInputTypes.php', "w");
-        fwrite($f, "<?php\r\n");
-        fwrite($f, "return array(\r\n");
-        foreach ($formInputTypes as $typeName => $typeClass) {
-            fwrite($f, "\t\t'$typeName' => '$typeClass',\r\n");
-        }
-        fwrite($f, "\t);\r\n");
-        fclose($f);
-        
-        unset($formInputTypes);
-        
-        $f = fopen($cacheDir.DIRECTORY_SEPARATOR.'captchaTypes.php', "w");
-        fwrite($f, "<?php\r\n");
-        fwrite($f, "return array(\r\n");
-        foreach ($captchaTypes as $typeName => $typeClass) {
-            fwrite($f, "\t\t'$typeName' => '$typeClass',\r\n");
-        }
-        fwrite($f, "\t);\r\n");
-        fclose($f);
-        
-        unset($captchaTypes);
+        $this->formInputTypes = array_merge($this->formInputTypes, $extension->getFormInputTypes());
+        $this->captchaTypes = array_merge($this->captchaTypes, $extension->getCaptchaTypes());
     }
-
+    
 /**
  * Get list of form input type classes
  * 
@@ -98,13 +53,7 @@ class UIService implements CacheWarmerInterface
  */    
     public function getFormInputTypes()
     {
-        if (($this->debugTrigger == true) || (!file_exists($this->cacheDir.DIRECTORY_SEPARATOR.'formInputTypes.php'))) {
-            $this->updateCache();
-            $this->debugTrigger = false;
-        }
-        
-        $types = include($this->cacheDir.DIRECTORY_SEPARATOR.'formInputTypes.php');
-        return $types;
+        return $this->formInputTypes;
     }
 
 /**
@@ -114,13 +63,7 @@ class UIService implements CacheWarmerInterface
  */    
     public function getCaptchaTypes()
     {
-        if (($this->debugTrigger == true) || (!file_exists($this->cacheDir.DIRECTORY_SEPARATOR.'captchaTypes.php'))) {
-            $this->updateCache();
-            $this->debugTrigger = false;
-        }
-        
-        $types = include($this->cacheDir.DIRECTORY_SEPARATOR.'captchaTypes.php');
-        return $types;
+        return $this->captchaTypes;
     }
     
 /**
@@ -155,19 +98,6 @@ class UIService implements CacheWarmerInterface
     public function createTreeForm($configuration = array(), $objects = array())
     {
         return new \Sergsxm\UIBundle\TreeForm\TreeForm($this->container, $configuration, $objects);
-    }
-    
-/**
- * Cahce warm up interface
- */    
-    public function warmUp($cacheDir) 
-    {
-        $this->updateCache($cacheDir.DIRECTORY_SEPARATOR.'sergsxm');
-    }
-
-    public function isOptional()
-    {
-        return false;
     }
     
 }

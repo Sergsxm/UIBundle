@@ -1,6 +1,23 @@
+parameters:
+    form_input_types:
+        text: "Sergsxm\\UIBundle\\FormInputTypes\\Text"
+        textarea: "Sergsxm\\UIBundle\\FormInputTypes\\TextArea"
+        html: "Sergsxm\\UIBundle\\FormInputTypes\\Html"
+        password: "Sergsxm\\UIBundle\\FormInputTypes\\Password"
+        checkbox: "Sergsxm\\UIBundle\\FormInputTypes\\Checkbox"
+        select: "Sergsxm\\UIBundle\\FormInputTypes\\Select"
+        timestamp: "Sergsxm\\UIBundle\\FormInputTypes\\TimeStamp"
+        file: "Sergsxm\\UIBundle\\FormInputTypes\\File"
+        number: "Sergsxm\\UIBundle\\FormInputTypes\\Number"
+        image: "Sergsxm\\UIBundle\\FormInputTypes\\Image"
+        address: "Sergsxm\\UIBundle\\FormInputTypes\\Address"
+        tag: "Sergsxm\\UIBundle\\FormInputTypes\\Tag"
+        category: "Sergsxm\\UIBundle\\FormInputTypes\\Category"
+
+    captcha_types:
+        standart: "Sergsxm\\UIBundle\\CaptchaTypes\\Standart"
+
 services:
     sergsxm.ui:
         class: Sergsxm\UIBundle\Services\UIService
-        arguments: ["@service_container"]
-        tags:
-            - {name: kernel.cache_warmer}
+        arguments: ["@service_container", "%form_input_types%", "%captcha_types%"]
