@@ -2,7 +2,8 @@
     $(function () {
         var tree = new SergsxmUITree('#{{formId}}-items', {
             removeButton: '.close',
-            inputName: 'tree'
+            inputName: 'tree',
+            readOnly: {{readOnly ? 'true' : 'false'}}
         });
         $('#{{formId}} .list-group-item a').click(function () {
             if (tree.getChangedStatus() == false) {
@@ -18,7 +19,7 @@
             );
             return false;
         });
-        {% if configuration['createEnabled'] == true %}
+        {% if (configuration['createEnabled'] == true) and (readOnly == false) %}
         var newCounter = 1;
         $('#{{formId}}-add-btn').click(function () {
             var title = $('#{{formId}}-add-title').val();

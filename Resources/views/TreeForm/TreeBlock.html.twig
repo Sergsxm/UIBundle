@@ -3,13 +3,13 @@
         <div class="list-group-item" data-nesting="{{item['nesting']}}" data-id="{{item['id']}}">
             <i class="glyphicon glyphicon-move"></i>
             {% if item['url'] != null %}<a href="{{item['url']}}">{{item['title']}}</a>{% else %}{{item['title']}}{% endif %}
-            {% if configuration['removeEnabled'] == true %}
+            {% if (configuration['removeEnabled'] == true) and (readOnly == false) %}
             <button type="button" class="close"><span>&times;</span></button>    
             {% endif %}
         </div>
     {% endfor %}
 </div>
-{% if configuration['createEnabled'] == true %}
+{% if (configuration['createEnabled'] == true) and (readOnly == false) %}
     <div class="form-inline">
         <div class="form-group">
             <input type="text" class="form-control" id="{{formId}}-add-title" placeholder="">

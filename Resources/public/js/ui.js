@@ -299,6 +299,7 @@ var SergsxmUITree = (function () {
             formContainer: false,           // Container for form inputs
             inputName: 'tree',              // Input name
             
+            readOnly: false,
         };
         $.extend(this.configuration, configuration);
         this.$container = $(container);
@@ -326,6 +327,12 @@ var SergsxmUITree = (function () {
         });
         this.$container.children().css('position', 'relative');
         this.updateElementsNesting(true);
+        if (this.configuration.readOnly == true) {
+            if (this.configuration.removeButton !== false) {
+                this.$container.find('>* '+this.configuration.removeButton).remove();
+            }
+            return false;
+        }
         var that = this;
         if (this.configuration.removeButton !== false) {
             this.$container.delegate('>* '+this.configuration.removeButton, 'click', function (e) {
