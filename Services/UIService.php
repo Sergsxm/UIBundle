@@ -99,5 +99,17 @@ class UIService
     {
         return new \Sergsxm\UIBundle\TreeForm\TreeForm($this->container, $configuration, $objects);
     }
+
+/**
+ * Create order form
+ * 
+ * @param array $configuration Form configuration
+ * @param array $objects Order form objects
+ * @return \Sergsxm\UIBundle\OrderForm\OrderForm Form object
+ */    
+    public function createOrderForm($configuration = array(), $objects = array())
+    {
+        return new \Sergsxm\UIBundle\OrderForm\OrderForm($this->container, $configuration, $objects);
+    }
     
 }

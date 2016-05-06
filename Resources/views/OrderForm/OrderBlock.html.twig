@@ -1,0 +1,22 @@
+<div class="list-group" id="{{formId}}-items">
+    {% for item in items %}
+        <div class="list-group-item" data-nesting="0" data-id="{{item['id']}}">
+            <i class="glyphicon glyphicon-resize-vertical"></i>
+            {% if item['url'] != null %}<a href="{{item['url']}}">{{item['title']}}</a>{% else %}{{item['title']}}{% endif %}
+            {% if (configuration['removeEnabled'] == true) and (readOnly == false) %}
+            <button type="button" class="close"><span>&times;</span></button>    
+            {% endif %}
+        </div>
+    {% endfor %}
+</div>
+{% if (configuration['createEnabled'] == true) and (readOnly == false) %}
+    <div class="form-inline">
+        <div class="form-group">
+            <input type="text" class="form-control" id="{{formId}}-add-title" placeholder="">
+        </div>
+        <button class="btn btn-default" id="{{formId}}-add-btn">{% trans from "sergsxmui" %}Add item{% endtrans %}</button>
+    </div>
+    <div id="{{formId}}-titles">
+    </div>
+{% endif %}
+{{rest | raw}}

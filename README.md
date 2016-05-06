@@ -1,6 +1,6 @@
 # Sergsxm UIBundle
 
-It\`s bundle for Symfony2 framework, which provides functions for creating forms, table lists and tree forms. This is useful when creating a site\`s backend.
+It\`s bundle for Symfony2 framework, which provides functions for creating forms, table lists and tree (order) forms. This is useful when creating a site\`s backend.
 
 **The bundle being developed, be careful when using in projects.**
 
@@ -21,10 +21,10 @@ Table lists features:
 - Ajax actions 
 - Saving the sorting settings, search settings, current page etc. in session
 
-Tree forms features:
+Tree (order) forms features:
 
 - Use Doctrine
-- Easy tree setup by JavaScript
+- Easy tree or order setup by JavaScript
 - Supports mouse and touchscreen
 
 ## 1. Installation
@@ -710,9 +710,9 @@ Also, it has the ability to perform join statments. To do this, as variable $nam
     ->addColumn('image', 'file.contentFile', array('description' => 'Image', 'join' => 'JOIN item.fooFile file'))
 ```
 
-## 4. Tree forms usage
+## 4. Tree and order forms usage
 
-### 4.1. Tree form creation
+### 4.1. Tree and order form creation
 
 To create the tree form use the service:
 
@@ -720,14 +720,36 @@ To create the tree form use the service:
 $list = $this->get('sergsxm.ui')->createTreeForm($configuration, $treeItems);
 ```
 
-First parameter is a configuration array. Second parameter is array of tree items (you may also load all Doctrine repository by specified *loadDoctrineRepository* configuration parameter).
+To create the order form use the service:
 
-Now you have TreeForm (Sergsxm\UIBundle\TreeForm\TreeForm) object. This object contains following methods:
+```php
+$list = $this->get('sergsxm.ui')->createOrderForm($configuration, $orderListItems);
+```
+
+First parameter is a configuration array. Second parameter is array of list items (you may also load all Doctrine repository by specified *loadDoctrineRepository* configuration parameter).
+
+Now you have TreeForm (Sergsxm\UIBundle\TreeForm\TreeForm) or OrderForm (Sergsxm\UIBundle\OrderForm\OrderForm) object. 
+
+TreeForm object contains following methods:
 
 ```php
 public function getView();
 public function renderView($template = 'SergsxmUIBundle:TreeForm:TreeForm.html.twig', $parameters = array());
 public function render($template = 'SergsxmUIBundle:TreeForm:TreeForm.html.twig', $parameters = array(), Response $response = null);
+public function setReadOnly($readOnly);
+public function getResult();
+public function bindRequest(Request $request = null);
+public function clear();
+public function getFormId();
+public function setFormId($formId);
+```
+
+OrderForm object contains following methods:
+
+```php
+public function getView();
+public function renderView($template = 'SergsxmUIBundle:OrderForm:OrderForm.html.twig', $parameters = array());
+public function render($template = 'SergsxmUIBundle:OrderForm:OrderForm.html.twig', $parameters = array(), Response $response = null);
 public function setReadOnly($readOnly);
 public function getResult();
 public function bindRequest(Request $request = null);
@@ -753,13 +775,19 @@ if ($treeForm->bindRequest()) {
 return $treeForm->render();
 ```
 
-### 4.2. Tree item entity
+### 4.2. Tree and order item entity
 
-Tree item entity must implements \Sergsxm\UIBundle\Classes\TreeInterface. 
+Item entity for TreeForm must implements \Sergsxm\UIBundle\Classes\TreeInterface.  
 
-Each entity has a parent field and the order field. Value of the parent field can be a parent entity or integer ID (set by configuration). Value of the order field is an integer.
+Each tree entity has a parent field and the order field. Value of the parent field can be a parent entity or integer ID (set by configuration). Value of the order field is an integer.
+
+Item entity for OrderForm must implements \Sergsxm\UIBundle\Classes\OrderInterface.
+
+Each order list entity has a order filed.
 
 ### 4.3. Configuration parameters
+
+TreeForm has following configuration parameters:
 
 | Parameter              | Parameter description                                                                      | Default value               |
 | ---------------------- | ------------------------------------------------------------------------------------------ | --------------------------- |
@@ -791,6 +819,32 @@ This function call after call of remove method of entity manager.
 Parameter *url* can be two formats. 
 One of formats is string with custom URL (detecting by "/" symbol). In this string statment "{{id}}" will be replaced by row item ID.
 Second format is string with Symfony route. This string will by processed by Symfony routing service (with route parameter "id").
+
+OrderForm has following configuration parameters:
+
+| Parameter              | Parameter description                                                                      | Default value               |
+| ---------------------- | ------------------------------------------------------------------------------------------ | --------------------------- |
+| createCallback         | Parameter required when createEnabled is true. Function witch called for tree item creation (see below) | null           |
+| changeCallback         | Function witch called after tree item is changed (see below)                               | null                        |
+| removeCallback         | Function witch called after tree item is removed (see below)                               | null                        |
+| url                    | Link to any page, for example edit page of the tree item (format describes above)          | null                        |
+| createEnabled          | If true create function is enabled                                                         | false                       |
+| removeEnabled          | If true remove function is enabled                                                         | false                       |
+| readOnly               | If true tree form is locked for editing                                                    | false                       |
+| loadDoctrineRepository | Allow to load list items from Doctrine repository (otherwise, you must specify list items when you create a form) | null |
+
+Parameter *createCallback* must contains callback function with two parameters: $title, $order. 
+$title is a title of new item. 
+$order is order of item in order list (integer).
+
+Parameter *changeCallback* must contains callback function with two parameters: $item, $order.
+$item is order list item entity.
+$order is order of item in order list (integer).
+This function call after changing parent and order fields of entity.
+
+Parameter *removeCallback* must contains callback function woth one parameter: $item.
+$item is order list item entity to remove.
+This function call after call of remove method of entity manager.
 
 ## 5. Notes
 

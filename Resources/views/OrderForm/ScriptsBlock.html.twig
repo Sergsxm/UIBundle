@@ -2,7 +2,8 @@
     $(function () {
         var tree = new SergsxmUITree('#{{formId}}-items', {
             removeButton: '.close',
-            inputName: 'tree',
+            inputName: 'orderlist',
+            maxNesting: 0,
             readOnly: {{readOnly ? 'true' : 'false'}}
         });
         $('#{{formId}} .list-group-item a').click(function () {
@@ -24,10 +25,10 @@
         $('#{{formId}}-add-btn').click(function () {
             var title = $('#{{formId}}-add-title').val();
             if (title) {
-                var $input = $('<input type="hidden" name="tree[new'+newCounter+'][title]" value="" />').val(title);
+                var $input = $('<input type="hidden" name="orderlist[new'+newCounter+'][title]" value="" />').val(title);
                 $input.appendTo('#{{formId}}-titles');
                 $('#{{formId}}-add-title').val('');
-                $('#{{formId}}-items').append('<div class="list-group-item" data-nesting="0" data-id="new'+newCounter+'"> <i class="glyphicon glyphicon-move"></i> '+title+' {% if configuration['removeEnabled'] == true %}<button type="button" class="close"><span>&times;</span></button>{% endif %} </div>')
+                $('#{{formId}}-items').append('<div class="list-group-item" data-nesting="0" data-id="new'+newCounter+'"> <i class="glyphicon glyphicon-resize-vertical"></i> '+title+' {% if configuration['removeEnabled'] == true %}<button type="button" class="close"><span>&times;</span></button>{% endif %} </div>')
                 newCounter++;
                 tree.updateElementsNesting(true);
             }
