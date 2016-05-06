@@ -18,12 +18,14 @@ interface TreeInterface
     
     public function getTitle();
     
+    public function getAddEnabled();
+    
     public function getParent();
     
     public function setParent($parent);
     
-    public function getOrdering();
+    public function getOrder();
     
-    public function setOrdering($ordering);
+    public function setOrder($order);
     
 }

@@ -136,17 +136,17 @@ class TreeForm
     }
 
 /**
- * Sort tree categories by ordering field
+ * Sort tree categories by order field
  * 
  * @param type $a
  * @param type $b
  * @return int
  */    
-    private function sortTreeOrdering($a, $b)
+    private function sortTreeOrder($a, $b)
     {
-        if ($a->getOrdering() < $b->getOrdering()) {
+        if ($a->getOrder() < $b->getOrder()) {
             return -1;
-        } elseif ($a->getOrdering() > $b->getOrdering()) {
+        } elseif ($a->getOrder() > $b->getOrder()) {
             return 1;
         }
         return 0;
@@ -162,7 +162,7 @@ class TreeForm
     private function sortTree($objects)
     {
         $items = array();
-        usort($objects, array($this, 'sortTreeOrdering'));
+        usort($objects, array($this, 'sortTreeOrder'));
         $this->sortTreeCategory($objects, $items);
         return $items;
     }
@@ -239,10 +239,10 @@ class TreeForm
  * 
  * @param string $title Title
  * @param object|null $parent Parent
- * @param int $ordering Ordering
+ * @param int $order Order
  * @return object Created item object
  */    
-    private function createItem($title, $parent, $ordering)
+    private function createItem($title, $parent, $order)
     {
         if ($this->configuration['createEnabled'] == false) {
             throw new TreeFormException(__CLASS__.': somthing wrong, item create is disabled but create function is called');
@@ -250,7 +250,7 @@ class TreeForm
         if (($this->configuration['mapIdToParentProperty'] == true) && ($parent !== null)) {
             $parent = $parent->getId();
         }
-        return call_user_func($this->configuration['createCallback'], $title, $parent, $ordering);
+        return call_user_func($this->configuration['createCallback'], $title, $parent, $order);
     }
 
 /**
@@ -258,17 +258,17 @@ class TreeForm
  * 
  * @param object $item Item object
  * @param object|null $parent Parent
- * @param int $ordering Ordering
+ * @param int $order Order
  */    
-    private function changeItem($item, $parent, $ordering)
+    private function changeItem($item, $parent, $order)
     {
         if (($this->configuration['mapIdToParentProperty'] == true) && ($parent !== null)) {
             $parent = $parent->getId();
         }
         $item->setParent($parent);
-        $item->setOrdering($ordering);
+        $item->setOrder($order);
         if (is_callable($this->configuration['changeCallback'])) {
-            call_user_func($this->configuration['changeCallback'], $item, $parent, $ordering);
+            call_user_func($this->configuration['changeCallback'], $item, $parent, $order);
         }
     }
 
@@ -313,9 +313,9 @@ class TreeForm
  */    
     private function sortPostTree($a, $b)
     {
-        if ($a['ordering'] < $b['ordering']) {
+        if ($a['order'] < $b['order']) {
             return -1;
-        } elseif ($a['ordering'] > $b['ordering']) {
+        } elseif ($a['order'] > $b['order']) {
             return 1;
         }
         return 0;
@@ -329,7 +329,7 @@ class TreeForm
  */    
     private function filterPostTree($a)
     {
-        if (is_array($a) && isset($a['ordering']) && isset($a['nesting'])) {
+        if (is_array($a) && isset($a['order']) && isset($a['nesting'])) {
             return true;
         }
         return false;
@@ -367,9 +367,9 @@ class TreeForm
                     $currentParent = (isset($curentParents[$treeParameters['nesting'] - 1]) ? $curentParents[$treeParameters['nesting'] - 1] : null);
                     $item = $this->findItem($treeId);
                     if ($item == null) {
-                        $item = $this->createItem((isset($treeParameters['title']) ? $treeParameters['title'] : ''), $currentParent, $treeParameters['ordering']);
+                        $item = $this->createItem((isset($treeParameters['title']) ? $treeParameters['title'] : ''), $currentParent, $treeParameters['order']);
                     } else {
-                        $this->changeItem($item, $currentParent, $treeParameters['ordering']);
+                        $this->changeItem($item, $currentParent, $treeParameters['order']);
                     }
                     $foundedIds[] = $item->getId();
                     $curentParents[$treeParameters['nesting']] = $item;

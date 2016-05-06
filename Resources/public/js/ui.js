@@ -396,7 +396,7 @@ var SergsxmUITree = (function () {
  * @param {boolean|undefined} updateForm If true inputs will be updated
  */
     SergsxmUITree.prototype.updateElementsNesting = function (updateForm) {
-        var that = this, $elements = this.$container.children(), ordering = 0;
+        var that = this, $elements = this.$container.children(), order = 0;
         if (this.$shadowElement) {
             $elements = $elements.not(this.$shadowElement);
         }
@@ -411,7 +411,7 @@ var SergsxmUITree = (function () {
             if (updateForm) {
                 var id = $this.data(that.configuration.idDataProperty),
                     inputs = '<input type="hidden" name="'+that.configuration.inputName+'['+id+'][nesting]" value="'+nesting+'" />'+
-                             '<input type="hidden" name="'+that.configuration.inputName+'['+id+'][ordering]" value="'+ordering+'" />';
+                             '<input type="hidden" name="'+that.configuration.inputName+'['+id+'][order]" value="'+order+'" />';
                 if (that.configuration.formContainer) {
                     $(that.configuration.formContainer).append(inputs);
                 } else {
@@ -419,7 +419,7 @@ var SergsxmUITree = (function () {
                     $this.append(inputs);
                 }
             }
-            ordering++;
+            order++;
         });
     }
 

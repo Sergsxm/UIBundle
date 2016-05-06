@@ -757,7 +757,7 @@ return $treeForm->render();
 
 Tree item entity must implements \Sergsxm\UIBundle\Classes\TreeInterface. 
 
-Each entity has a parent field and the ordering field. Value of the parent field can be a parent entity or integer ID (set by configuration). Value of the ordering field is an integer.
+Each entity has a parent field and the order field. Value of the parent field can be a parent entity or integer ID (set by configuration). Value of the order field is an integer.
 
 ### 4.3. Configuration parameters
 
@@ -773,16 +773,16 @@ Each entity has a parent field and the ordering field. Value of the parent field
 | mapIdToParentProperty  | If true value of the parent field is integer ID, if false - entity                         | false                       |
 | loadDoctrineRepository | Allow to load tree items from Doctrine repository (otherwise, you must specify tree items when you create a form) | null |
 
-Parameter *createCallback* must contains callback function with three parameters: $title, $parent, $ordering. 
+Parameter *createCallback* must contains callback function with three parameters: $title, $parent, $order. 
 $title is a title of new tree item. 
 $parent is parent entity or null. 
-$ordering is order of tree item in tree (integer).
+$order is order of tree item in tree (integer).
 
-Parameter *changeCallback* must contains callback function with three parameters: $item, $parent, $ordering.
+Parameter *changeCallback* must contains callback function with three parameters: $item, $parent, $order.
 $item is tree item entity.
 $parent is parent entity or null. 
-$ordering is order of tree item in tree (integer).
-This function call after changing parent and ordering fields of entity.
+$order is order of tree item in tree (integer).
+This function call after changing parent and order fields of entity.
 
 Parameter *removeCallback* must contains callback function woth one parameter: $item.
 $item is tree item entity to remove.

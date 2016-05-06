@@ -255,6 +255,7 @@ class Category extends FormInput
                 $items[] = array(
                     'id' => $object->getId(),
                     'title' => $object->getTitle(),
+                    'enabled' => $object->getAddEnabled(),
                     'nesting' => $nesting,
                 );
                 $this->sortTreeCategory($objects, $items, $object->getId(), $nesting + 1);
@@ -263,17 +264,17 @@ class Category extends FormInput
     }
 
 /**
- * Sort tree categories by ordering field
+ * Sort tree categories by order field
  * 
  * @param type $a
  * @param type $b
  * @return int
  */    
-    private function sortTreeOrdering($a, $b)
+    private function sortTreeOrder($a, $b)
     {
-        if ($a->getOrdering() < $b->getOrdering()) {
+        if ($a->getOrder() < $b->getOrder()) {
             return -1;
-        } elseif ($a->getOrdering() > $b->getOrdering()) {
+        } elseif ($a->getOrder() > $b->getOrder()) {
             return 1;
         }
         return 0;
@@ -289,7 +290,7 @@ class Category extends FormInput
     private function sortTree($objects)
     {
         $items = array();
-        usort($objects, array($this, 'sortTreeOrdering'));
+        usort($objects, array($this, 'sortTreeOrder'));
         $this->sortTreeCategory($objects, $items);
         return $items;
     }
