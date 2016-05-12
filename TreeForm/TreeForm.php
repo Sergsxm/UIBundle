@@ -71,6 +71,7 @@ class TreeForm
             'readOnly' => false,
             'mapIdToParentProperty' => false,
             'loadDoctrineRepository' => null,
+            'nestedSetFirstIndex' => 1,
         );
     }
     
@@ -393,7 +394,7 @@ class TreeForm
                     $currentParentIds[$treeParameters['nesting']] = $treeId;
                 }
                 // преобразуем входные данные в сущности категорий
-                $nsIndex = 0;
+                $nsIndex = $this->configuration['nestedSetFirstIndex'] - 1;
                 $nsNestingOld = -1;
                 foreach ($tree as $treeId=>$treeParameters) {
                     $currentParent = (isset($curentParents[$treeParameters['nesting'] - 1]) ? $curentParents[$treeParameters['nesting'] - 1] : null);

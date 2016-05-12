@@ -803,6 +803,7 @@ TreeForm has following configuration parameters:
 | readOnly               | If true tree form is locked for editing                                                    | false                       |
 | mapIdToParentProperty  | If true value of the parent field is integer ID, if false - entity                         | false                       |
 | loadDoctrineRepository | Allow to load tree items from Doctrine repository (otherwise, you must specify tree items when you create a form) | null |
+| nestedSetFirstIndex    | First index value for nested set keys                                                      | 1                           |
 
 Parameter *createCallback* must contains callback function with three parameters: $title, $parent, $order. 
 $title is a title of new tree item. 
