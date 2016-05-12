@@ -273,6 +273,24 @@ class TreeForm
     }
 
 /**
+ * Change item nested set parameters
+ * 
+ * @param \Sergsxm\UIBundle\Classes\TreeNSInterface $item Item object
+ * @param int $left Left key
+ * @param int $right Right key
+ * @param int $level Level value
+ */    
+    private function changeItemNestedSet($item, $left, $right, $level)
+    {
+        if (!$item instanceof \Sergsxm\UIBundle\Classes\TreeNSInterface) {
+            return;
+        }
+        $item->setLeftKey($left);
+        $item->setRightKey($right);
+        $item->setLevel($level);
+    }
+    
+/**
  * Remove tree item
  * 
  * @param object $item Item object
@@ -363,6 +381,20 @@ class TreeForm
             if (is_array($tree)) {
                 $tree = array_filter($tree, array($this, 'filterPostTree'));
                 uasort($tree, array($this, 'sortPostTree'));
+                // подсчитываем количество потомков для каждой категории
+                $currentParentIds = array();
+                foreach ($tree as $treeId=>$treeParameters) {
+                    $tree[$treeId]['childrens'] = 0;
+                    if ($treeParameters['nesting'] > 0) {
+                        for ($i = 0; $i < $treeParameters['nesting']; $i++) {
+                            $tree[$currentParentIds[$i]]['childrens']++;
+                        }
+                    }
+                    $currentParentIds[$treeParameters['nesting']] = $treeId;
+                }
+                // преобразуем входные данные в сущности категорий
+                $nsIndex = 0;
+                $nsNestingOld = -1;
                 foreach ($tree as $treeId=>$treeParameters) {
                     $currentParent = (isset($curentParents[$treeParameters['nesting'] - 1]) ? $curentParents[$treeParameters['nesting'] - 1] : null);
                     $item = $this->findItem($treeId);
@@ -374,6 +406,9 @@ class TreeForm
                     $foundedIds[] = $item->getId();
                     $curentParents[$treeParameters['nesting']] = $item;
                     $newObjects[] = $item;
+                    $nsIndex += 2 - ($treeParameters['nesting'] - $nsNestingOld);
+                    $this->changeItemNestedSet($item, $nsIndex, $nsIndex + $treeParameters['childrens'] * 2 + 1, $treeParameters['nesting']);
+                    $nsNestingOld = $treeParameters['nesting'];
                 }
             }
             foreach ($this->objects as $object) {

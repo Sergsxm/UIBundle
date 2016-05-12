@@ -781,6 +781,9 @@ Item entity for TreeForm must implements \Sergsxm\UIBundle\Classes\TreeInterface
 
 Each tree entity has a parent field and the order field. Value of the parent field can be a parent entity or integer ID (set by configuration). Value of the order field is an integer.
 
+There is also nested set interface \Sergsxm\UIBundle\Classes\TreeNSInterface that extends TreeInterface. 
+This interface has additionaly methods to set level, left and right keys for nested set algorithms.
+
 Item entity for OrderForm must implements \Sergsxm\UIBundle\Classes\OrderInterface.
 
 Each order list entity has a order filed.
