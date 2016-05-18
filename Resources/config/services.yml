@@ -17,7 +17,16 @@ parameters:
     captcha_types:
         standart: "Sergsxm\\UIBundle\\CaptchaTypes\\Standart"
 
+    table_list_columns:
+        text: "Sergsxm\\UIBundle\\TableListColumns\\Text"
+        checkbox: "Sergsxm\\UIBundle\\TableListColumns\\Checkbox"
+        select: "Sergsxm\\UIBundle\\TableListColumns\\Select"
+        timestamp: "Sergsxm\\UIBundle\\TableListColumns\\TimeStamp"
+#       file:        
+        number: "Sergsxm\\UIBundle\\TableListColumns\\Number"
+
+        
 services:
     sergsxm.ui:
         class: Sergsxm\UIBundle\Services\UIService
-        arguments: ["@service_container", "%form_input_types%", "%captcha_types%"]
+        arguments: ["@service_container", "%form_input_types%", "%captcha_types%", "%table_list_columns%"]

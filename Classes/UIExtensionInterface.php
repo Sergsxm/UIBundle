@@ -18,4 +18,6 @@ interface UIExtensionInterface
     
     public function getCaptchaTypes();
     
+    public function getTableListColumns();
+    
 }

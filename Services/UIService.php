@@ -20,6 +20,7 @@ class UIService
     private $container;
     private $formInputTypes;
     private $captchaTypes;
+    private $tableListColumns;
 
 /**
  * Constructor
@@ -28,11 +29,12 @@ class UIService
  * @param array $formInputTypes Basic form input types
  * @param array $captchaTypes Basic captcha types
  */    
-    public function __construct(ContainerInterface $container, $formInputTypes, $captchaTypes) 
+    public function __construct(ContainerInterface $container, $formInputTypes, $captchaTypes, $tableListColumns) 
     {
         $this->container = $container;
         $this->formInputTypes = $formInputTypes;
         $this->captchaTypes = $captchaTypes;
+        $this->tableListColumns = $tableListColumns;
     }
 
 /**
@@ -44,6 +46,7 @@ class UIService
     {
         $this->formInputTypes = array_merge($this->formInputTypes, $extension->getFormInputTypes());
         $this->captchaTypes = array_merge($this->captchaTypes, $extension->getCaptchaTypes());
+        $this->tableListColumns = array_merge($this->tableListColumns, $extension->getTableListColumns());
     }
     
 /**
@@ -64,6 +67,16 @@ class UIService
     public function getCaptchaTypes()
     {
         return $this->captchaTypes;
+    }
+   
+/**
+ * Get list of table list column types
+ * 
+ * @return array List of table list column types
+ */    
+    public function getTableListColumns()
+    {
+        return $this->tableListColumns;
     }
     
 /**

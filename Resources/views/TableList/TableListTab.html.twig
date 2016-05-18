@@ -118,17 +118,17 @@
                     <th>
                         <input type="checkbox" class="sergsxmui-tab-checkbox-all sergsxmui-tab-checkbox-all-{{name}}" data-tab-name="{{name}}" />
                     </th>
-                {% for colkey, col in columns %}
-                    {% if col['configuration']['hidden'] == false %}
+                {% for key, column in columns %}
+                    {% if column['hidden'] == false %}
                         <th>
-                            {% if col['configuration']['sort'] == true %}
-                                {% if colkey == orderColumn %}
-                                    <a href="?tab={{name}}&ordercolumn={{colkey}}&orderdirection={{(orderDirection == 0 ? 'desc' : 'asc')}}">{{col['configuration']['description']}} {{(orderDirection == 0 ? '<i class="glyphicon glyphicon-arrow-up"></i>' : '<i class="glyphicon glyphicon-arrow-down"></i>') | raw}}</a>
+                            {% if column['orderEnabled'] == true %}
+                                {% if key == orderColumn %}
+                                    <a href="?tab={{name}}&ordercolumn={{key}}&orderdirection={{(orderDirection == 0 ? 'desc' : 'asc')}}">{{column['description']}} {{(orderDirection == 0 ? '<i class="glyphicon glyphicon-arrow-up"></i>' : '<i class="glyphicon glyphicon-arrow-down"></i>') | raw}}</a>
                                 {% else %}
-                                    <a href="?tab={{name}}&ordercolumn={{colkey}}&orderdirection=asc">{{col['configuration']['description']}}</a>
+                                    <a href="?tab={{name}}&ordercolumn={{key}}&orderdirection=asc">{{column['description']}}</a>
                                 {% endif %}
                             {% else %}
-                                {{col['configuration']['description']}}
+                                {{column['description']}}
                             {% endif %}
                         </th>
                     {% endif %}
@@ -139,10 +139,10 @@
             {% for item in items %}
                 <tr>
                         <td><input type="checkbox" class="sergsxmui-tab-checkbox sergsxmui-tab-checkbox-{{name}}" data-tab-name="{{name}}" name="id[]" value="{{item['id']}}" /></td>
-                    {% for colkey, col in columns %}
-                        {% if col['configuration']['hidden'] == false %}
+                    {% for key, column in columns %}
+                        {% if column['hidden'] == false %}
                             <td>
-                                {{item['col'~colkey] | raw}}
+                                {{item['col'~key] | raw}}
                                 {% if (loop.first) and (actionErrors[item['id']] is defined) %}
                                     <p class="sergsxmui-list-error">{{actionErrors[item['id']]}}</p>
                                 {% endif %}

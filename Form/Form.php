@@ -73,7 +73,7 @@ class Form implements FormInterface
         if ($this->isFrozen == true) {
             throw new FormException(__CLASS__.': you can`t add fields after bindRequest() or getView() methods are called');
         }
-        if (!class_exists($type) || !is_subclass_of($type, '\Embedded\FormBundle\Form\FormInput')) {
+        if (!class_exists($type) || !is_subclass_of($type, '\Sergsxm\UIBundle\Form\FormInput')) {
             $types = $this->container->get('sergsxm.ui')->getFormInputTypes();
             if (isset($types[$type])) {
                 $type = $types[$type]; 

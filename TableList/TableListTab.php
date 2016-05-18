@@ -20,17 +20,18 @@ class TableListTab
 {
     
     private $container;
-    private $repository;
-    private $cols;
+    private $columns = array();
     private $name;
     private $description;
-    private $orderColumn;
-    private $orderDirection;
-    private $itemsInPage;
-    private $page;
-    private $search;
-    private $actions;
-    private $actionErrors;
+    private $orderColumn = 0;
+    private $orderDirection = 0;
+    private $itemsInPage = 20;
+    private $page = 0;
+    private $search = '';
+    private $actions = array();
+    private $actionErrors = array();
+    private $itemsInPageValues = array(10, 20, 50, 100);
+    private $query;
 
 /**
  * Table list tab constructor
@@ -44,19 +45,12 @@ class TableListTab
     public function __construct(ContainerInterface $container, $repository, $name, $description = null)
     {
         if (!preg_match('/^[A-Za-z0-9_\-]+$/ui', $name)) {
-            throw new FormException(__CLASS__.': tab name must contain only letters and numbers');
+            throw new TableListException(__CLASS__.': tab name must contain only letters and numbers');
         }
         $this->container = $container;
-        $this->repository = $repository;
-        $this->cols = array();
         $this->name = $name;
         $this->description = ($description != null ? $description : $name);
-        $this->orderColumn = 0;
-        $this->orderDirection = 0;
-        $this->itemsInPage = 20;
-        $this->page = 0;
-        $this->search = '';
-        $this->actionErrors = array();
+        $this->query = new TableListQuery($this->container->get('doctrine')->getManager(), $repository);
         
         return $this;
     }
@@ -71,6 +65,17 @@ class TableListTab
  */    
     public function addColumn($type, $name, $configuration = array())
     {
+        if (!class_exists($type) || !is_subclass_of($type, '\Sergsxm\UIBundle\TableList\TableListColumn')) {
+            $types = $this->container->get('sergsxm.ui')->getTableListColumns();
+            if (isset($types[$type])) {
+                $type = $types[$type]; 
+            } else {
+                throw new TableListException(__CLASS__.': column type "'.$type.'" is not exist');
+            }
+        }
+        $this->columns[] = new $type($this->container, $this->query, $name, $configuration);
+        
+        /*
         if (preg_match('/^[a-zA-Z]+$/ui', $name)) {
             $name = 'item.'.$name;
         }
@@ -166,7 +171,7 @@ class TableListTab
             'name' => $name,
             'configuration' => $configuration,
         );
-        
+        */
         return $this;
     }
 
@@ -319,6 +324,7 @@ class TableListTab
  */    
     public function getView()
     {
+        /*
         $searchEnabled = false;
         $selectSql = 'item.id as id';
         $fromSql = $this->repository.' item';
@@ -369,13 +375,22 @@ class TableListTab
                 }
             }
         }
+        */
+        if (!isset($this->columns[$this->orderColumn])) {
+            $this->orderColumn = 0;
+        }
+        foreach ($this->columns as $columnKey=>$column) {
+            $column->modifyQuery(($this->orderColumn == $columnKey ? $this->orderDirection : null), ($this->search != '' ? '%'.$this->search.'%' : ''));
+        }
         
-        if (!in_array($this->itemsInPage, array(10, 20, 50, 100))) {
+        if (!in_array($this->itemsInPage, $this->itemsInPageValues)) {
             $this->itemsInPage = 20;
         }
-
+/*
         $itemsCount = $this->container->get('doctrine')->getManager()->createQuery('SELECT count(item.id) FROM '.$fromSql.($whereSql != '' ? ' WHERE '.$whereSql : ' '))->setParameters($parametersSql)->getSingleScalarResult();
-
+*/
+        $itemsCount = $this->query->getCount();
+        
         $pageCount = ceil($itemsCount / $this->itemsInPage);
         if ($pageCount < 1) {
             $pageCount = 1;
@@ -386,6 +401,7 @@ class TableListTab
         if ($this->page >= $pageCount) {
             $this->page = $pageCount - 1;
         }
+        /*
         $items = $this->container->get('doctrine')->getManager()->createQuery('SELECT '.$selectSql.' FROM '.$fromSql.($whereSql != '' ? ' WHERE '.$whereSql : ' ').' ORDER BY '.$orderSql)->setParameters($parametersSql)->setFirstResult($this->page * $this->itemsInPage)->setMaxResults($this->itemsInPage)->getResult();
         if (!is_array($items)) {
             $items = array();
@@ -439,23 +455,47 @@ class TableListTab
             }
         }
         unset($item);
+         */
+
+        $items = $this->query->getResult($this->page * $this->itemsInPage, $this->itemsInPage);
+        $result = array();
+        foreach ($items as $item) {
+            $resultItem = array(
+                'id' => $item['id']
+            );
+            foreach ($this->columns as $columnKey=>$column) {
+                $resultItem['col'.$columnKey] = $column->convertValue($item);
+            }
+            $result[] = $resultItem;
+        }
+        
+        $columns = array();
+        $searchEnabled = false;
+        foreach ($this->columns as $column) {
+            $columnView = $column->getView();
+            if ($columnView['searchEnabled'] == true) {
+                $searchEnabled = true;
+            }
+            $columns[] = $columnView;
+        }
+        
         
         return array(
             'name' => $this->name,
             'description' => $this->description,
-            'columns' => $this->cols,
+            'columns' => $columns,
             'orderColumn' => $this->orderColumn,
             'orderDirection' => $this->orderDirection,
             'itemsInPage' => $this->itemsInPage,
             'page' => $this->page,
             'pageCount' => $pageCount,
             'itemsCount' => $itemsCount,
-            'items' => $items,
+            'items' => $result,
             'searchEnabled' => $searchEnabled,
             'search' => $this->search,
             'actions' => $this->actions,
             'actionErrors' => $this->actionErrors,
-            'itemsInPageChoices' => array(10, 20, 50, 100),
+            'itemsInPageChoices' => $this->itemsInPageValues,
             'csrfToken' => $this->generateCsrfToken(),
         );
     }

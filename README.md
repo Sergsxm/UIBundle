@@ -570,17 +570,17 @@ $list = $this->get('sergsxm.ui')->createTableList();
 
 $list
     ->addTab('TestBundle:FileEntity', 'files', 'Files')
-    ->addColumn('text', 'fileName', array('description' => 'File name', 'search' => true))
+    ->addColumn('text', 'fileName', array('description' => 'File name', 'searchEnabled' => true))
     ->addColumn('text', 'mimeType', array('description' => 'MIME type'))
-    ->addColumn('datetime', 'uploadDate', array('description' => 'Upload date'))
+    ->addColumn('timestamp', 'uploadDate', array('description' => 'Upload date'))
     ->addAjaxAction('delete', 'DELETE FROM TestBundle:FileEntity f WHERE f.id IN (:ids)', array('confirmed' => true))
     ->addAjaxAction('set_jpeg', 'UPDATE TestBundle:FileEntity f SET f.mimeType = \'image/jpeg\' WHERE f.id IN (:ids)')
     ->addAjaxAction('set_png', 'UPDATE TestBundle:FileEntity f SET f.mimeType = \'image/png\' WHERE f.id IN (:ids)')
     ->addUrlAction('new', '/admin/edit')
     ->addTab('TestBundle:FileEntity', 'files2', 'Files 2')
-    ->addColumn('text', 'fileName', array('description' => 'File name', 'search' => true))
+    ->addColumn('text', 'fileName', array('description' => 'File name', 'searchEnabled' => true))
     ->addColumn('text', 'mimeType', array('description' => 'MIME type'))
-    ->addColumn('datetime', 'uploadDate', array('description' => 'Upload date'))
+    ->addColumn('timestamp', 'uploadDate', array('description' => 'Upload date'))
     ->addAjaxAction('delete', 'DELETE FROM TestBundle:FileEntity f WHERE f.id IN (:ids)', array('confirmed' => true))
     ->addAjaxAction('set_jpeg', 'UPDATE TestBundle:FileEntity f SET f.mimeType = \'image/jpeg\' WHERE f.id IN (:ids)')
     ->addAjaxAction('set_png', 'UPDATE TestBundle:FileEntity f SET f.mimeType = \'image/png\' WHERE f.id IN (:ids)')
@@ -594,55 +594,61 @@ return $list->render('SergsxmUIBundle:TableList:TableList.html.twig', 'SergsxmUI
 
 ### 3.2. Column types
 
-Supported column types: text, number, datetime, image, boolean, case.
+Supported column types: text, checkbox, select, timestamp, number.
 
 All column types has following settings:
 
 | Parameter      | Parameter description                                                                | Default value               |
 | -------------- | ------------------------------------------------------------------------------------ | --------------------------- |
 | description    | Column description, which will be displayed at the table head                        | such as column name         |
-| url            | Link to any page, for example edit page of the row item (format describes below)     | ""                          |
-| join           | SQL join section (for advanced queries)                                              | ""                          |
-| sort           | Enables ordering for column                                                          | true                        |
-| search         | Enables search for column                                                            | false                       |
+| url            | Link to any page, for example edit page of the row item (format describes below)     | null                        |
 | hidden         | Off column display                                                                   | false                       |
 
 Type **text** has following personal settings:
 
 | Parameter      | Parameter description                                                                | Default value               |
 | -------------- | ------------------------------------------------------------------------------------ | --------------------------- |
+| orderEnabled   | Enables ordering for column                                                          | true                        |
+| searchEnabled  | Enables search for column                                                            | false                       |
 | pattern        | Text pattern. In this string statment "{{text}}" will be replaced by cell value      | "{{text}}"                  |
+
+Type **checkbox** has following personal settings:
+
+| Parameter        | Parameter description                                                                | Default value               |
+| ---------------- | ------------------------------------------------------------------------------------ | --------------------------- |
+| uncheckedValue   | Value for unchecked condition                                                        | false                       |
+| checkedValue     | Value for checked condition                                                          | true                        |
+| orderEnabled     | Enables ordering for column                                                          | true                        |
+| uncheckedPattern | Text pattern for unchecked value                                                   | "<i class="fa fa-times"></i>" |
+| checkedPattern   | Text pattern for checked value                                                     | "<i class="fa fa-check"></i>" |
+
+Type **select** has following personal settings:
+
+| Parameter         | Parameter description                                                          | Default value                 |
+| ----------------- | ------------------------------------------------------------------------------ | ----------------------------- |
+| choices           | An array of possible values                                                    | array()                       |
+| multiply          | If true possible to select multiple values                                     | false                         |
+| explodeValue      | Only for multiply select: if true value exploded to string (if false - array)  | false                         |
+| explodeSeparator  | Explode separator (when *explodeValue* is true)                                | ","                           |
+| orderEnabled      | Enables ordering for column                                                    | true                          |
+| implodeSeparator  | Implode separator for output value                                             | ","                           |
+
+Type **timestamp** has following personal settings:
+
+| Parameter      | Parameter description                                                                      | Default value               |
+| -------------- | ------------------------------------------------------------------------------------------ | --------------------------- |
+| dateTimeFormat | Timestamp format accepted by [date()](http://php.net/manual/en/function.date.php) function | "Y-m-d\TH:i:s"              |
+| timeZone       | Timezone (string or \DateTimeZone or null)                                                 | null                        |
+| orderEnabled   | Enables ordering for column                                                                | true                        |
 
 Type **number** has following personal settings:
 
-| Parameter         | Parameter description                                 | Default value               |
-| ----------------- | ----------------------------------------------------- | --------------------------- |
-| decimals          | Sets the number of decimal points                     | 0                           |
-| thousandSeparator | Sets the thousands separator                          | " "                         |
-| decimalPoint      | Sets the separator for the decimal point              | ","                         |
-
-Type **datetime** has following personal settings:
-
-| Parameter      | Parameter description                                                                      | Default value               |
-| -------------- | ------------------------------------------------------------------------------------------ | --------------------------- |
-| format         | Timestamp format accepted by [date()](http://php.net/manual/en/function.date.php) function | "Y-m-d H:i"                 |
-| timeZone       | Timezone (string or \DateTimeZone or null)                                                 | null                        |
-
-Type **case** has following personal settings:
-
-| Parameter      | Parameter description                                                                      | Default value               |
-| -------------- | ------------------------------------------------------------------------------------------ | --------------------------- |
-| choices        | Array of possible values (format: value=>description)                                      | array()                     |
-
-Type **array** has following personal settings:
-
-| Parameter      | Parameter description                                                                      | Default value               |
-| -------------- | ------------------------------------------------------------------------------------------ | --------------------------- |
-| callback       | Function to convert array to string (if null string will contain count of array items)     | null                        |
-
-Type **image** is **text** type, default value of parameter *pattern* is "\<img src="{{text}}" />".
-
-Type **boolean** is **case** type, default value of parameter *choices* is `array('false' => '<i class="fa fa-times"></i>', 'true' => '<i class="fa fa-check"></i>')`.
+| Parameter         | Parameter description                                                     | Default value                |
+| ----------------- | ------------------------------------------------------------------------- | ---------------------------- |
+| decimalPoint      | Sets the separator for the decimal point                                  | "."                          |
+| thousandSeparator | Sets the thousands separator                                              | ""                           |
+| decimals          | Sets the number of decimal points (or null for disable option)            | null                         |
+| orderEnabled      | Enables ordering for column                                               | true                         |
 
 Parameter *url* can be two formats. 
 One of formats is string with custom URL (detecting by "/" symbol). In this string statment "{{id}}" will be replaced by row item ID.
@@ -708,10 +714,10 @@ It has the ability to perform subqueries. To do this, as variable $name write a 
     ->addColumn('number', 'SELECT COUNT(m.id) FROM TestBundle:TestEntity m WHERE m.fooFile = item.id', array('description' => 'Use count'))
 ```
 
-Also, it has the ability to perform join statments. To do this, as variable $name write a select part and add 'join' parameter to the $configuration array:
+Also, it has the ability to perform join statments. To do this, as variable $name write a select part and add 'join' parameter:
 
 ```
-    ->addColumn('image', 'file.contentFile', array('description' => 'Image', 'join' => 'JOIN item.fooFile file'))
+    ->addColumn('image', 'file.contentFile JOIN item.fooFile file', array('description' => 'Image'))
 ```
 
 ## 4. Tree and order forms usage
