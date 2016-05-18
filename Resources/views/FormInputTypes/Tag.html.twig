@@ -6,7 +6,7 @@
                 <span class="label sergsxmui-label"><input type="hidden" name="{{inputName}}[]" value="{{item.getTag()}}" />{{item.getTag()}} <a href="#" onclick="$(this).closest('.label').remove();return false;"><i class="glyphicon glyphicon-remove"></i></a></span>
             {% endfor %}
         </p>
-        <input type="text" class="form-control form-tag" id="{{inputId}}" name="{{inputNameNew}}" placeholder="{{configuration['description']}}" value="" {% if disabled %}disabled="disabled"{% endif %} />
+        <input type="text" class="form-control form-tag" id="{{inputId}}" name="{{inputNameNew}}" placeholder="{{(configuration['placeholder'] is defined ? configuration['placeholder'] : configuration['description'])}}" value="" {% if disabled %}disabled="disabled"{% endif %} />
         <p class="form-error-text {{inputId}}-error">{{error}}</p>
     </div>
 </div>

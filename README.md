@@ -385,6 +385,8 @@ File information is stored in a database in entity *storeDoctrineClass*.
 This entity will be used as value for the mapping property.
 *Note: storeFolder must be protected from external access for security.*
 
+You can also specify a placeholder for the fields and the captcha through *placeholder* configuration parameter.
+
 ### 2.4. Captcha types
 
 Supported captcha types: standart.
@@ -432,6 +434,8 @@ You can change the default templates, but you can describe the output of individ
 ```
 
 So you can create your own templates and put them when calling the render methods of form object.
+
+You can also specify a template for the fields and the captcha through *template* configuration parameter.
 
 ### 2.6. Annotations
 

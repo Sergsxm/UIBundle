@@ -1,7 +1,7 @@
 <div class="form-group {{inputId}}-container{% if error %} has-error{% endif %}">
     <label for="{{inputId}}" class="col-sm-5">{{configuration['description']}}</label>
     <div class="col-sm-7">
-        <textarea class="form-control" id="{{inputId}}" name="{{inputName}}" placeholder="{{configuration['description']}}" {% if disabled %}disabled="disabled"{% endif %}>{{value}}</textarea>
+        <textarea class="form-control" id="{{inputId}}" name="{{inputName}}" placeholder="{{(configuration['placeholder'] is defined ? configuration['placeholder'] : configuration['description'])}}" {% if disabled %}disabled="disabled"{% endif %}>{{value}}</textarea>
         <p class="form-error-text {{inputId}}-error">{{error}}</p>
     </div>
 </div>

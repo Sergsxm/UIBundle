@@ -5,7 +5,11 @@
         {% endif %}
 {% endif %}
         {% for field in fields %}
-            {% include field['defaultTemplate'] with field only %}
+            {% if field['configuration']['template'] is defined %}
+                {% include field['configuration']['template'] with field only %}
+            {% else %}
+                {% include field['defaultTemplate'] with field only %}
+            {% endif %}
         {% endfor %}
         {% for group in groups %}
             {% include group['defaultTemplate'] with group only %}
