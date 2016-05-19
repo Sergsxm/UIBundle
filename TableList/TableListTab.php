@@ -15,6 +15,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Sergsxm\UIBundle\TableList\TableListException;
+use Sergsxm\UIBundle\TableList\TableListQuery;
 
 class TableListTab
 {
@@ -50,7 +51,7 @@ class TableListTab
         $this->container = $container;
         $this->name = $name;
         $this->description = ($description != null ? $description : $name);
-        $this->query = new TableListQuery($this->container->get('doctrine')->getManager(), $repository);
+        $this->query = new TableListQuery($this->container->get('doctrine')->getManager(), $repository, TableListQuery::WT_OR);
         
         return $this;
     }
@@ -74,104 +75,6 @@ class TableListTab
             }
         }
         $this->columns[] = new $type($this->container, $this->query, $name, $configuration);
-        
-        /*
-        if (preg_match('/^[a-zA-Z]+$/ui', $name)) {
-            $name = 'item.'.$name;
-        }
-        if ($type == 'text') {
-            $configuration = array_merge(array (
-                'url' => '',
-                'join' => '',
-                'description' => $name,
-                'sort' => true,
-                'search' => false,
-                'hidden' => false,
-                'pattern' => '{{text}}',
-            ), $configuration);
-        } elseif ($type == 'number') {
-            $configuration = array_merge(array (
-                'url' => '',
-                'join' => '',
-                'description' => $name,
-                'sort' => true,
-                'search' => false,
-                'hidden' => false,
-                'decimals' => 0,
-                'thousandSeparator' => ' ',
-                'deciamlPoint' => ',',
-            ), $configuration);
-        } elseif ($type == 'datetime') {
-            $configuration = array_merge(array (
-                'url' => '',
-                'join' => '',
-                'description' => $name,
-                'sort' => true,
-                'search' => false,
-                'hidden' => false,
-                'format' => 'Y-m-d H:i',
-                'timeZone' => null,
-            ), $configuration);
-            if ($configuration['timeZone'] != null) {
-                if ($configuration['timeZone'] == 'default') {
-                    $configuration['timeZone'] = date_default_timezone_get();
-                }
-                if (!$configuration['timeZone'] instanceof \DateTimeZone) {
-                    $configuration['timeZone'] = new \DateTimeZone($configuration['timeZone']);
-                }
-            }
-        } elseif ($type == 'image') {
-            $type = 'text';
-            $configuration = array_merge(array (
-                'url' => '',
-                'join' => '',
-                'description' => $name,
-                'sort' => true,
-                'search' => false,
-                'hidden' => false,
-                'pattern' => '<img src="{{text}}" />',
-            ), $configuration);
-        } elseif ($type == 'boolean') {
-            $type = 'case';
-            $configuration = array_merge(array (
-                'url' => '',
-                'join' => '',
-                'description' => $name,
-                'sort' => true,
-                'search' => false,
-                'hidden' => false,
-                'choices' => array('false' => '<i class="fa fa-times"></i>', 'true' => '<i class="fa fa-check"></i>'),
-            ), $configuration);
-        } elseif ($type == 'case') {
-            $configuration = array_merge(array (
-                'url' => '',
-                'join' => '',
-                'description' => $name,
-                'sort' => true,
-                'search' => false,
-                'hidden' => false,
-                'choices' => array(),
-            ), $configuration);
-        } elseif ($type == 'array') {
-            $configuration = array_merge(array (
-                'url' => '',
-                'join' => '',
-                'description' => $name,
-                'sort' => false,
-                'search' => false,
-                'hidden' => false,
-                'callback' => null,
-            ), $configuration);
-        } else {
-            throw new TableListException(__CLASS__.': unknown col type "'.$type.'"');
-        }
-        
-        $this->cols[] = array(
-            'type'  => $type,
-            'name' => $name,
-            'configuration' => $configuration,
-        );
-        */
         return $this;
     }
 
@@ -324,58 +227,6 @@ class TableListTab
  */    
     public function getView()
     {
-        /*
-        $searchEnabled = false;
-        $selectSql = 'item.id as id';
-        $fromSql = $this->repository.' item';
-        $whereSql = '';
-        $orderSql = '';
-        $parametersSql = array();
-        foreach ($this->cols as $colkey => $colitem) {
-            if (($colitem['configuration']['join'] != '') && (strpos($fromSql, $colitem['configuration']['join']) === false)) {
-                $fromSql .= ' '.$colitem['configuration']['join'];
-            }
-            if (strpos(strtolower($colitem['name']), 'select ') !== false) {
-                $colitem['name'] = '('.$colitem['name'].')';
-            }
-            $selectSql .= ','.$colitem['name'].' AS col'.$colkey;
-            if (($colitem['configuration']['sort'] == true) && ($this->orderColumn == $colkey)) {
-                if (strpos(strtolower($colitem['name']), 'select ') !== false) {
-                    $orderSql = 'col'.$colkey.' '.($this->orderDirection == 0 ? 'ASC' : 'DESC');
-                } else {
-                    $orderSql = $colitem['name'].' '.($this->orderDirection == 0 ? 'ASC' : 'DESC');
-                }
-            }
-            if ($colitem['configuration']['search'] == true) {
-                $searchEnabled = true;
-                if ($this->search != '') {
-                    $parametersSql['search'] = '%'.$this->search.'%';
-                    if ($whereSql != '') {
-                        $whereSql .= ' OR ';
-                    }
-                    if (strpos(strtolower($colitem['name']), 'select ') !== false) {
-                        $whereSql = 'col'.$colkey.' LIKE :search';
-                    } else {
-                        $whereSql = $colitem['name'].' LIKE :search';
-                    }
-                }
-            }
-        }
-        if ($orderSql == '') {
-            foreach ($this->cols as $colkey => $colitem) {
-                if ($colitem['configuration']['sort'] == true) {
-                    if (strpos(strtolower($colitem['name']), 'select ') !== false) {
-                        $orderSql = 'col'.$colkey.' ASC';
-                    } else {
-                        $orderSql = $colitem['name'].' ASC';
-                    }
-                    $this->orderDirection = 0;
-                    $this->orderColumn = $colkey;
-                    break;
-                }
-            }
-        }
-        */
         if (!isset($this->columns[$this->orderColumn])) {
             $this->orderColumn = 0;
         }
@@ -386,9 +237,6 @@ class TableListTab
         if (!in_array($this->itemsInPage, $this->itemsInPageValues)) {
             $this->itemsInPage = 20;
         }
-/*
-        $itemsCount = $this->container->get('doctrine')->getManager()->createQuery('SELECT count(item.id) FROM '.$fromSql.($whereSql != '' ? ' WHERE '.$whereSql : ' '))->setParameters($parametersSql)->getSingleScalarResult();
-*/
         $itemsCount = $this->query->getCount();
         
         $pageCount = ceil($itemsCount / $this->itemsInPage);
@@ -401,63 +249,12 @@ class TableListTab
         if ($this->page >= $pageCount) {
             $this->page = $pageCount - 1;
         }
-        /*
-        $items = $this->container->get('doctrine')->getManager()->createQuery('SELECT '.$selectSql.' FROM '.$fromSql.($whereSql != '' ? ' WHERE '.$whereSql : ' ').' ORDER BY '.$orderSql)->setParameters($parametersSql)->setFirstResult($this->page * $this->itemsInPage)->setMaxResults($this->itemsInPage)->getResult();
-        if (!is_array($items)) {
-            $items = array();
-        }
-        foreach ($items as &$item) {
-            foreach ($this->cols as $colkey => $colitem) {
-                if (!isset($item['col'.$colkey])) {
-                    $item['col'.$colkey] = '';
-                }
-                
-                if ($colitem['type'] == 'text') {
-                    if ($item['col'.$colkey] instanceof \Sergsxm\UIBundle\Classes\FileInterface) {
-                        $item['col'.$colkey] = $item['col'.$colkey]->getContentFile();
-                    }
-                    $item['col'.$colkey] = str_replace('{{text}}', htmlentities($item['col'.$colkey]), $colitem['configuration']['pattern']);
-                } elseif ($colitem['type'] == 'number') {
-                    $item['col'.$colkey] = number_format($item['col'.$colkey], $colitem['configuration']['decimals'], $colitem['configuration']['deciamlPoint'], $colitem['configuration']['thousandSeparator']);
-                } elseif ($colitem['type'] == 'datetime') {
-                    if (($item['col'.$colkey] instanceof \DateTime) && ($colitem['configuration']['timeZone'] != null)) {
-                        $item['col'.$colkey]->setTimezone($colitem['configuration']['timeZone']);
-                    }
-                    $item['col'.$colkey] = ($item['col'.$colkey] instanceof \DateTime ? $item['col'.$colkey]->format($colitem['configuration']['format']) : '');
-                } elseif ($colitem['type'] == 'case') {
-                    if ($item['col'.$colkey] === false) {
-                        $item['col'.$colkey] = 'false';
-                    }
-                    if ($item['col'.$colkey] === true) {
-                        $item['col'.$colkey] = 'true';
-                    }
-                    $item['col'.$colkey] = ((($item['col'.$colkey] !== null) && isset($colitem['configuration']['choices'][$item['col'.$colkey]])) ? $colitem['configuration']['choices'][$item['col'.$colkey]] : '');
-                } elseif ($colitem['type'] == 'array') {
-                    if ($colitem['configuration']['callback'] === null) {
-                        $item['col'.$colkey] = (is_array($item['col'.$colkey]) ? count($item['col'.$colkey]) : '');
-                    } else {
-                        if (is_array($item['col'.$colkey])) {
-                            $item['col'.$colkey] = call_user_func($colitem['configuration']['callback'], $item['col'.$colkey]);
-                        } else {
-                            $item['col'.$colkey] = '';
-                        }
-                    }
-                }
-                
-                if ($colitem['configuration']['url'] != '') {
-                    if (strpos($colitem['configuration']['url'], '/') === false) {
-                        $actionUrl = $this->container->get('router')->generate($colitem['configuration']['url'], array('id' => $item['id']));
-                    } else {
-                        $actionUrl = str_replace('{{id}}', $item['id'], $colitem['configuration']['url']);
-                    }
-                    $item['col'.$colkey] = '<a href="'.$actionUrl.'">'.$item['col'.$colkey].'</a>';
-                }
-            }
-        }
-        unset($item);
-         */
 
         $items = $this->query->getResult($this->page * $this->itemsInPage, $this->itemsInPage);
+        foreach ($this->columns as $column) {
+            $column->postQuery($items);
+        }
+        
         $result = array();
         foreach ($items as $item) {
             $resultItem = array(

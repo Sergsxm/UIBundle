@@ -25,7 +25,15 @@ abstract class TableListColumn
     protected $query;
     protected $configuration;
     protected $columnIndex = null;
-    
+
+/**
+ * Constructor
+ * 
+ * @param ContainerInterface $container Symfony container
+ * @param TableListQuery $query Table list query object
+ * @param string $dql DQL string of column
+ * @param array $configuration Column configuration
+ */    
     public function __construct(ContainerInterface $container, TableListQuery $query, $dql, $configuration = array())
     {
         $this->container = $container;
@@ -35,8 +43,17 @@ abstract class TableListColumn
         $this->configuration = array_merge($this->configuration, $configuration);
     }
 
+/**
+ * Set configuration to defaults
+ */    
     abstract protected function setDefaults();
-    
+
+/**
+ * Modify table list query 
+ * 
+ * @param int|null $orderDirection Order direction (null - none, 0 - asc, 1 -desc)
+ * @param string $searchString Search string for text fields
+ */    
     public function modifyQuery($orderDirection = null, $searchString = '')
     {
         if ($this->columnIndex !== null) {
@@ -47,13 +64,33 @@ abstract class TableListColumn
             $this->query->order($this->columnIndex, $orderDirection);
         }
     }
+
+/**
+ * Process post queries
+ * 
+ * @param array $items All selected rows from database
+ */    
+    public function postQuery($items)
+    {
+    }
     
+/**
+ * Convert value from database to output HTML
+ * 
+ * @param array $item Row from database
+ * @return string Output HTML
+ */    
     public function convertValue($item)
     {
         $columnName = $this->query->getColumnName($this->columnIndex);
         return (isset($item[$columnName]) ? $item[$columnName] : null);
     }
-    
+
+/**
+ * Get view of column
+ * 
+ * @return array View array
+ */    
     public function getView()
     {
         return array(
@@ -65,7 +102,14 @@ abstract class TableListColumn
             'searchEnabled' => (isset($this->configuration['searchEnabled']) ? $this->configuration['searchEnabled'] : false),
         );
     }
-    
+
+/**
+ * Wrap string with url
+ * 
+ * @param midex $value Value
+ * @param int $id ID
+ * @return string Output value
+ */    
     protected function wrapWithUrl($value, $id)
     {
         if (!isset($this->configuration['url']) || ($this->configuration['url'] == '')) {
@@ -78,6 +122,5 @@ abstract class TableListColumn
         }
         return '<a href="'.$actionUrl.'">'.$value.'</a>';
     }
-    
     
 }

@@ -594,7 +594,7 @@ return $list->render('SergsxmUIBundle:TableList:TableList.html.twig', 'SergsxmUI
 
 ### 3.2. Column types
 
-Supported column types: text, checkbox, select, timestamp, number.
+Supported column types: text, checkbox, select, timestamp, file, number, image, tag, category.
 
 All column types has following settings:
 
@@ -641,6 +641,15 @@ Type **timestamp** has following personal settings:
 | timeZone       | Timezone (string or \DateTimeZone or null)                                                 | null                        |
 | orderEnabled   | Enables ordering for column                                                                | true                        |
 
+Type **file** has following personal settings:
+
+| Parameter         | Parameter description                                                                      | Default value               |
+| ----------------- | ------------------------------------------------------------------------------------------ | --------------------------- |
+| storeType         | Type of file store (see file form field description)                                       | ST_FILE                     |
+| multiply          | If true possible to upload multiply files in one field                                     | false                       |
+| implodeSeparator  | Implode separator for output value                                                         | ","                         |
+| fileUrl           | Link to any file page, for example edit or download file (format like for url parameter)   | null                        |
+
 Type **number** has following personal settings:
 
 | Parameter         | Parameter description                                                     | Default value                |
@@ -649,6 +658,33 @@ Type **number** has following personal settings:
 | thousandSeparator | Sets the thousands separator                                              | ""                           |
 | decimals          | Sets the number of decimal points (or null for disable option)            | null                         |
 | orderEnabled      | Enables ordering for column                                               | true                         |
+
+Type **image** has following personal settings:
+
+| Parameter         | Parameter description                                                                      | Default value               |
+| ----------------- | ------------------------------------------------------------------------------------------ | --------------------------- |
+| storeType         | Type of image store (see image form field description)                                     | ST_FILE                     |
+| multiply          | If true possible to upload multiply files in one field                                     | false                       |
+| implodeSeparator  | Implode separator for output value                                                         | ","                         |
+| imageUrl          | Link to download image page (format like for url parameter)                                | null                        |
+
+Type **tag** has following personal settings:
+
+| Parameter         | Parameter description                                                                      | Default value               |
+| ----------------- | ------------------------------------------------------------------------------------------ | --------------------------- |
+| implodeSeparator  | Implode separator for output value                                                         | " "                         |
+| pattern           | Pattern for one tag (string statment {{tag}} will be replaced by tag name) | "<span class="label sergsxmui-label">{{tag}}</span>" |
+
+Type **category** has following personal settings:
+
+| Parameter         | Parameter description                                                                      | Default value               |
+| ----------------- | ------------------------------------------------------------------------------------------ | --------------------------- |
+| categories      | An array of categories (each element must implements Sergsxm\UIBundle\Classes\TreeInterface) | array()                     |
+| multiply          | If true possible to contain multiple categories                                            | false                       |
+| mapIdToValue      | If true only category ID placed as value of mapping property                               | false                       |
+| loadDoctrineRepository | Allow to load categories from Doctrine repository (otherwise - by *categories* parameter) | null                    |
+| implodeSeparator  | Implode separator for output value                                                         | ","                         |
+| categoryUrl       | Link to any category page, for example view or edit category (format like for url parameter) | null                      |
 
 Parameter *url* can be two formats. 
 One of formats is string with custom URL (detecting by "/" symbol). In this string statment "{{id}}" will be replaced by row item ID.

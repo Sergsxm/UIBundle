@@ -16,6 +16,9 @@ use Sergsxm\UIBundle\TableList\TableListColumn;
 class Checkbox extends TableListColumn
 {
     
+/**
+ * Set configuration to defaults
+ */    
     protected function setDefaults()
     {
         $this->configuration = array(
@@ -28,6 +31,12 @@ class Checkbox extends TableListColumn
         );
     }
     
+/**
+ * Modify table list query 
+ * 
+ * @param int|null $orderDirection Order direction (null - none, 0 - asc, 1 -desc)
+ * @param string $searchString Search string for text fields
+ */    
     public function modifyQuery($orderDirection = null, $searchString = '')
     {
         if ($this->columnIndex !== null) {
@@ -39,6 +48,12 @@ class Checkbox extends TableListColumn
         }
     }
     
+/**
+ * Convert value from database to output HTML
+ * 
+ * @param array $item Row from database
+ * @return string Output HTML
+ */    
     public function convertValue($item)
     {
         $columnName = $this->query->getColumnName($this->columnIndex);

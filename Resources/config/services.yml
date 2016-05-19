@@ -22,9 +22,11 @@ parameters:
         checkbox: "Sergsxm\\UIBundle\\TableListColumns\\Checkbox"
         select: "Sergsxm\\UIBundle\\TableListColumns\\Select"
         timestamp: "Sergsxm\\UIBundle\\TableListColumns\\TimeStamp"
-#       file:        
+        file: "Sergsxm\\UIBundle\\TableListColumns\\File"
         number: "Sergsxm\\UIBundle\\TableListColumns\\Number"
-
+        image: "Sergsxm\\UIBundle\\TableListColumns\\Image"
+        tag: "Sergsxm\\UIBundle\\TableListColumns\\Tag"
+        category: "Sergsxm\\UIBundle\\TableListColumns\\Category"
         
 services:
     sergsxm.ui:
