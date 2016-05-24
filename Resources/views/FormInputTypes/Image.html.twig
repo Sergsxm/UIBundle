@@ -2,7 +2,7 @@
     <label for="{{inputId}}" class="col-sm-5">{{configuration['description']}}</label>
     <div class="col-sm-7">
         {% if configuration['multiply'] == false %}
-            <div id="{{inputId}}-images" data-input-name="{{inputName}}">
+            <div id="{{inputId}}-images" data-input-name="{{inputName}}" class="clearfix">
                 <input type="hidden" name="{{inputName}}" value="{{(value != null ? value.getId() : '')}}" />
                 <div class="thumbnail sergsxmui-form-thumbnail"><img src="{{value != null ? thumbnails[value.getId()] : asset('bundles/sergsxmui/img/foo.png')}}" title="{% if value != null %}{% trans with {'%name%': value.getFileName(), '%size%': value.getSize()} from "sergsxmui" %}%name% (%size% bytes){% endtrans %}{% else %}{% trans from "sergsxmui" %}Image not selected{% endtrans %}{% endif %}" /></div>
             </div>

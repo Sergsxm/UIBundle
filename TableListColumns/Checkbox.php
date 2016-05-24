@@ -26,8 +26,8 @@ class Checkbox extends TableListColumn
             'uncheckedValue' => false,
             'checkedValue' => true,
             'orderEnabled' => true,
-            'uncheckedPattern' => '<i class="fa fa-times"></i>',
-            'checkedPattern' => '<i class="fa fa-check"></i>',
+            'uncheckedPattern' => '<i class="glyphicon glyphicon-remove"></i>',
+            'checkedPattern' => '<i class="glyphicon glyphicon-ok"></i>',
         );
     }
     

@@ -619,8 +619,8 @@ Type **checkbox** has following personal settings:
 | uncheckedValue   | Value for unchecked condition                                                        | false                       |
 | checkedValue     | Value for checked condition                                                          | true                        |
 | orderEnabled     | Enables ordering for column                                                          | true                        |
-| uncheckedPattern | Text pattern for unchecked value                                                   | "<i class="fa fa-times"></i>" |
-| checkedPattern   | Text pattern for checked value                                                     | "<i class="fa fa-check"></i>" |
+| uncheckedPattern | Text pattern for unchecked value                                                   | "<i class="glyphicon glyphicon-remove"></i>" |
+| checkedPattern   | Text pattern for checked value                                                     | "<i class="glyphicon glyphicon-ok"></i>" |
 
 Type **select** has following personal settings:
 
