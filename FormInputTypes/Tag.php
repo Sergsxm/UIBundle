@@ -63,7 +63,7 @@ class Tag extends FormInput
             $value = $this->mappingProperty->getValue($mappingObject);
             if ($value instanceof \Doctrine\Common\Collections\Collection) {
                 foreach ($value->toArray() as $tag) {
-                    if ($file instanceof TagInterface) {
+                    if ($tag instanceof TagInterface) {
                         $this->value[] = $tag;
                     }
                 }
