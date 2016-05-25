@@ -141,7 +141,7 @@ class Category extends TableListColumn
                 }
                 $value = $this->wrapCategoryWithUrl($rawValue->getTitle(), $rawValue->getId());
             } else {
-                if (!$rawValue instanceof \Doctrine\Common\Collections\ArrayCollection) {
+                if (!$rawValue instanceof \Doctrine\Common\Collections\Collection) {
                     return null;
                 }
                 $value = array();

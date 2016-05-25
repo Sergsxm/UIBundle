@@ -75,7 +75,7 @@ class Image extends FormInput
                     foreach ($value as $file) {
                         $this->value[] = $this->restoreFromFile($file);
                     }
-                } elseif (($this->configuration['storeType'] == self::ST_DOCTRINE) && ($value instanceof \Doctrine\Common\Collections\ArrayCollection)) {
+                } elseif (($this->configuration['storeType'] == self::ST_DOCTRINE) && ($value instanceof \Doctrine\Common\Collections\Collection)) {
                     foreach ($value->toArray() as $file) {
                         if ($file instanceof ImageInterface) {
                             $this->value[] = $file;
@@ -272,7 +272,7 @@ class Image extends FormInput
                     $this->mappingProperty->setValue($this->mappingObject, $collectionValue);
                 } else {
                     $collectionValue = $this->mappingProperty->getValue($this->mappingObject);
-                    if (!$collectionValue instanceof \Doctrine\Common\Collections\ArrayCollection) {
+                    if (!$collectionValue instanceof \Doctrine\Common\Collections\Collection) {
                         $collectionValue = new \Doctrine\Common\Collections\ArrayCollection();
                     }
                     $collectionValue->clear();

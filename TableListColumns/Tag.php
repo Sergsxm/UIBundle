@@ -79,7 +79,7 @@ class Tag extends TableListColumn
         $property = $reflector->getProperty($this->dql);
         $property->setAccessible(true);
         $rawValue = $property->getValue($itemTag);
-        if (!$rawValue instanceof \Doctrine\Common\Collections\ArrayCollection) {
+        if (!$rawValue instanceof \Doctrine\Common\Collections\Collection) {
             return null;
         }
         $value = array();

@@ -60,7 +60,7 @@ class Category extends FormInput
             if ($this->configuration['multiply'] == true) {
                 if (($this->configuration['mapIdToValue'] == false) && is_array($value)) {
                     $this->value = $value;
-                } elseif (($this->configuration['mapIdToValue'] == false) && ($value instanceof \Doctrine\Common\Collections\ArrayCollection)) {
+                } elseif (($this->configuration['mapIdToValue'] == false) && ($value instanceof \Doctrine\Common\Collections\Collection)) {
                     $this->value = array();
                     foreach ($value->toArray() as $item) {
                         if ($item instanceof \Sergsxm\UIBundle\Classes\TreeInterface) {
@@ -218,7 +218,7 @@ class Category extends FormInput
             } else {
                 if ($this->configuration['mapIdToValue'] == false) {
                     $realValue = $this->mappingProperty->getValue($this->mappingObject);
-                    if (!$realValue instanceof \Doctrine\Common\Collections\ArrayCollection) {
+                    if (!$realValue instanceof \Doctrine\Common\Collections\Collection) {
                         $realValue = new \Doctrine\Common\Collections\ArrayCollection();
                     }
                     $realValue->clear();

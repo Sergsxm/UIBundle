@@ -121,7 +121,7 @@ class File extends TableListColumn
                 }
                 $value = $this->wrapFileWithUrl($rawValue->getFileName(), $rawValue->getId());
             } else {
-                if (!$rawValue instanceof \Doctrine\Common\Collections\ArrayCollection) {
+                if (!$rawValue instanceof \Doctrine\Common\Collections\Collection) {
                     return null;
                 }
                 $value = array();

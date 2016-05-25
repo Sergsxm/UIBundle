@@ -61,7 +61,7 @@ class Tag extends FormInput
             $this->mappingProperty = $reflector->getProperty($name);
             $this->mappingProperty->setAccessible(true);
             $value = $this->mappingProperty->getValue($mappingObject);
-            if ($value instanceof \Doctrine\Common\Collections\ArrayCollection) {
+            if ($value instanceof \Doctrine\Common\Collections\Collection) {
                 foreach ($value->toArray() as $tag) {
                     if ($file instanceof TagInterface) {
                         $this->value[] = $tag;
@@ -156,7 +156,7 @@ class Tag extends FormInput
         $this->value = $value;
         if ($this->mappingObject !== null) {
             $collectionValue = $this->mappingProperty->getValue($this->mappingObject);
-            if (!$collectionValue instanceof \Doctrine\Common\Collections\ArrayCollection) {
+            if (!$collectionValue instanceof \Doctrine\Common\Collections\Collection) {
                 $collectionValue = new \Doctrine\Common\Collections\ArrayCollection();
             }
             $collectionValue->clear();
