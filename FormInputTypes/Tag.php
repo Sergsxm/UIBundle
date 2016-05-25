@@ -72,6 +72,9 @@ class Tag extends FormInput
         if (isset($configuration['disabled'])) {
             $this->disabled = $configuration['disabled'];
         }
+        if (($this->configuration['createCallback'] != null) && !is_callable($this->configuration['createCallback'])) {
+            throw new FormException(__CLASS__.': createCallback parameter must be callable');
+        }
     }
     
 /**
@@ -105,6 +108,7 @@ class Tag extends FormInput
             'requiredError' => 'The field can not be empty',
             'doctrineClass' => null,
             'tagProperty' => 'tag',
+            'createCallback' => null,
         );
     }
 
@@ -197,6 +201,9 @@ class Tag extends FormInput
                 if (empty($tagEntity)) {
                     $tagEntity = new $this->configuration['doctrineClass'];
                     $tagEntity->setTag($valueTag);
+                    if ($this->configuration['createCallback'] != null) {
+                        call_user_func($this->configuration['createCallback'], $tagEntity);
+                    }
                     $em->persist($tagEntity);
                     $em->flush($tagEntity);
                 }

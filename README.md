@@ -353,6 +353,7 @@ Type **tag** has following settings:
 | requiredError              | Text for the "required" error                                             | "The field can not be empty" |
 | doctrineClass              | Doctrine tag entity class (must inplements Sergsxm\UIBundle\Classes\TagInterface) | null                 |
 | tagProperty                | Property name in entity class to find tags in database                    | 'tag'                        |
+| createCallback             | Function that call when tag entity create (after set tag and before persist) | null                      |
 | disabled                   | Set field to disabled state                                               | false                        |
 
 Type **category** has following settings:
