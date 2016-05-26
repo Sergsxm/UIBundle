@@ -12,6 +12,8 @@
 namespace Sergsxm\UIBundle\TableListColumns;
 
 use Sergsxm\UIBundle\TableList\TableListColumn;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Sergsxm\UIBundle\TableList\TableListQuery;
 
 class Category extends TableListColumn
 {

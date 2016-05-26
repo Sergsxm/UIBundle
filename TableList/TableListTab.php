@@ -24,8 +24,10 @@ class TableListTab
     private $columns = array();
     private $name;
     private $description;
-    private $orderColumn = 0;
+    private $orderColumn = null;
     private $orderDirection = 0;
+    private $defaultOrderColumn = 0;
+    private $defaultOrderDirection = 0;
     private $itemsInPage = 20;
     private $page = 0;
     private $search = '';
@@ -41,9 +43,10 @@ class TableListTab
  * @param string $repository Doctrine main repository for list
  * @param string $name Tab name
  * @param string $description Tab description
+ * @param int $whereType Where type 
  * @return TableListTab Tab object
  */    
-    public function __construct(ContainerInterface $container, $repository, $name, $description = null)
+    public function __construct(ContainerInterface $container, $repository, $name, $description = null, $whereType = TableListQuery::WT_OR)
     {
         if (!preg_match('/^[A-Za-z0-9_\-]+$/ui', $name)) {
             throw new TableListException(__CLASS__.': tab name must contain only letters and numbers');
@@ -51,11 +54,61 @@ class TableListTab
         $this->container = $container;
         $this->name = $name;
         $this->description = ($description != null ? $description : $name);
-        $this->query = new TableListQuery($this->container->get('doctrine')->getManager(), $repository, TableListQuery::WT_OR);
+        $this->query = new TableListQuery($this->container->get('doctrine')->getManager(), $repository, $whereType);
         
         return $this;
     }
 
+/**
+ * Add where condition
+ * 
+ * @param string $dql Name of entity field (or sql)
+ * @param string $condition Condition (like "!= :test")
+ * @param mixed $parameter Condition parameter
+ * @return \Sergsxm\UIBundle\TableList\TableListTab
+ */    
+    public function addWhereCondition($dql, $condition, $parameter = null)
+    {
+        $i = $this->query->addColumn($dql);
+        $this->query->where($i, $condition, $parameter);
+        return $this;
+    }
+
+/**
+ * Open where group
+ * 
+ * @param int $whereType Where type
+ * @return \Sergsxm\UIBundle\TableList\TableListTab
+ */    
+    public function openWhereGroup($whereType)
+    {
+        $this->query->openWhereGroup($whereType);
+        return $this;
+    }
+
+/**
+ * Close where group
+ * 
+ * @return \Sergsxm\UIBundle\TableList\TableListTab
+ */    
+    public function closeWhereGroup()
+    {
+        $this->query->closeWhereGroup();
+        return $this;
+    }
+
+/**
+ * Set group by statment
+ * 
+ * @param string $dql Name of entity field
+ */
+    public function groupBy($dql)
+    {
+        $i = $this->query->addColumn($dql);
+        $this->query->group($i);
+        return $this;
+    }
+    
 /**
  * Add column to table list
  * 
@@ -75,6 +128,10 @@ class TableListTab
             }
         }
         $this->columns[] = new $type($this->container, $this->query, $name, $configuration);
+        if (isset($configuration['defaultOrderDirection'])) {
+            $this->defaultOrderColumn = count($this->columns) - 1;
+            $this->defaultOrderDirection = $configuration['defaultOrderDirection'];
+        }
         return $this;
     }
 
@@ -227,8 +284,9 @@ class TableListTab
  */    
     public function getView()
     {
-        if (!isset($this->columns[$this->orderColumn])) {
-            $this->orderColumn = 0;
+        if (($this->orderColumn === null) || !isset($this->columns[$this->orderColumn])) {
+            $this->orderColumn = $this->defaultOrderColumn;
+            $this->orderDirection = $this->defaultOrderDirection;
         }
         foreach ($this->columns as $columnKey=>$column) {
             $column->modifyQuery(($this->orderColumn == $columnKey ? $this->orderDirection : null), ($this->search != '' ? '%'.$this->search.'%' : ''));

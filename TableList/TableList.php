@@ -22,7 +22,6 @@ class TableList
     
     private $container;
     private $tabs;
-    private $currentTab = null;
     private $activeTab = null;
     private $ajaxMode = false;
 
@@ -46,17 +45,17 @@ class TableList
  * @param string $repository Doctrine main repository for list
  * @param string $name Tab name
  * @param string $description Tab description
+ * @param int $whereType Where type 
  * @return TableList Table list object
  */    
-    public function addTab($repository, $name, $description = null)
+    public function addTab($repository, $name, $description = null, $whereType = TableListQuery::WT_OR)
     {
         if (isset($this->tabs[$name])) {
             throw new TableListException(__CLASS__.': tab "'.$name.'" already exist');
         }
         
-        $this->tabs[$name] = new TableListTab($this->container, $repository, $name, $description);
-        $this->currentTab = $this->tabs[$name];
-        return $this;
+        $this->tabs[$name] = new TableListTab($this->container, $repository, $name, $description, $whereType);
+        return $this->tabs[$name];
     }
 
 /**
@@ -72,73 +71,7 @@ class TableList
         }
         return null;
     }
-
-/**
- * Select tab as current by name
- * 
- * @param string $name Tab name
- * @return TableList Table list object
- */    
-    public function selectTab($name)
-    {
-        if (!isset($this->tabs[$name])) {
-            throw new TableListException(__CLASS__.': tab "'.$name.'" not exist');
-        }
-        $this->currentTab = $this->tabs[$name];
-        return $this;
-    }
-    
-/**
- * Add column to table list
- * 
- * @param string $type Type of column
- * @param string $name Name of entity field (or sql)
- * @param array $configuration Additional configuration
- * @return TableList Table list object
- */    
-    public function addColumn($type, $name, $configuration = array())
-    {
-        if ($this->currentTab == null) {
-            throw new TableListException(__CLASS__.': select tab before add column');
-        }
-        $this->currentTab->addColumn($type, $name, $configuration);
-        return $this;
-    }   
-    
-/**
- * Add url button into action panel of tab 
- * 
- * @param string $name Action name
- * @param string $url Url
- * @param array $configuration Additional configuration
- * @return TableList Table list object
- */    
-    public function addUrlAction($name, $url, $configuration = array())
-    {
-        if ($this->currentTab == null) {
-            throw new TableListException(__CLASS__.': select tab before add URL action');
-        }
-        $this->currentTab->addUrlAction($name, $url, $configuration);
-        return $this;
-    }
-
-/**
- * Add ajax action button into action panel of tab
- * 
- * @param string $name Action name
- * @param string $sql SQL
- * @param array $configuration Additional configuration
- * @return TableList Table list object
- */    
-    public function addAjaxAction($name, $sql, $configuration = array())
-    {
-        if ($this->currentTab == null) {
-            throw new TableListException(__CLASS__.': select tab before add ajax action');
-        }
-        $this->currentTab->addAjaxAction($name, $sql, $configuration);
-        return $this;
-    }
-    
+ 
 /**
  * Bind request
  * 

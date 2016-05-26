@@ -546,16 +546,26 @@ Now you have TableList (Sergsxm\UIBundle\TableList\TableList) object. This objec
 
 ```php
 
-public function addTab($repository, $name, $description = null);
+public function addTab($repository, $name, $description = null, $whereType = TableListQuery::WT_OR);
 public function getTab($name);
-public function selectTab($name);
-public function addColumn($type, $name, $configuration = array());
-public function addUrlAction($name, $url, $configuration = array());
-public function addAjaxAction($name, $sql, $configuration = array());
 public function bindRequest(Request $request = null);
 public function getView();
 public function renderView($template = 'SergsxmUIBundle:TableList:TableList.html.twig', $ajaxTemplate = 'SergsxmUIBundle:TableList:TableListAjax.html.twig', $parameters = array());
 public function render($template = 'SergsxmUIBundle:TableList:TableList.html.twig', $ajaxTemplate = 'SergsxmUIBundle:TableList:TableListAjax.html.twig', $parameters = array(), Response $response = null);
+```
+
+Methods addTab adn getTab returns TableListTab (Sergsxm\UIBundle\TableList\TableListTab) object. This object contains following external methods:
+
+```php
+
+public function addWhereCondition($dql, $condition, $parameter);
+public function openWhereGroup($whereType);
+public function closeWhereGroup();
+public function groupBy($dql);
+public function addColumn($type, $name, $configuration = array());
+public function addUrlAction($name, $url, $configuration = array());
+public function addAjaxAction($name, $sql, $configuration = array());
+public function getDescription();
 ```
 
 In a few words, when you create the tab, you specified Doctrine repository. 
@@ -577,7 +587,8 @@ $list
     ->addAjaxAction('delete', 'DELETE FROM TestBundle:FileEntity f WHERE f.id IN (:ids)', array('confirmed' => true))
     ->addAjaxAction('set_jpeg', 'UPDATE TestBundle:FileEntity f SET f.mimeType = \'image/jpeg\' WHERE f.id IN (:ids)')
     ->addAjaxAction('set_png', 'UPDATE TestBundle:FileEntity f SET f.mimeType = \'image/png\' WHERE f.id IN (:ids)')
-    ->addUrlAction('new', '/admin/edit')
+    ->addUrlAction('new', '/admin/edit');
+$list
     ->addTab('TestBundle:FileEntity', 'files2', 'Files 2')
     ->addColumn('text', 'fileName', array('description' => 'File name', 'searchEnabled' => true))
     ->addColumn('text', 'mimeType', array('description' => 'MIME type'))
@@ -604,6 +615,7 @@ All column types has following settings:
 | description    | Column description, which will be displayed at the table head                        | such as column name         |
 | url            | Link to any page, for example edit page of the row item (format describes below)     | null                        |
 | hidden         | Off column display                                                                   | false                       |
+| defaultOrderDirection | Sets column as default order column and specified direction (0 - ASC, 1 - DESC) | unset                     |
 
 Type **text** has following personal settings:
 
@@ -756,6 +768,10 @@ Also, it has the ability to perform join statments. To do this, as variable $nam
 ```
     ->addColumn('image', 'file.contentFile JOIN item.fooFile file', array('description' => 'Image'))
 ```
+
+With methods addWhereCondition, openWhereGroup, closeWhereGroup of TableListTab and with parameter $whereType in addTab method of TableList you can manage WHERE statment of DQL.
+
+With method groupBy of TableListTab you can manage GROUP BY statment of DQL.
 
 ## 4. Tree and order forms usage
 

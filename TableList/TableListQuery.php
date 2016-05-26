@@ -33,6 +33,7 @@ class TableListQuery
     private $whereRoot;
     private $whereCurrent;
     private $order = '';
+    private $group = '';
     private $parameters = array();
 
 /**
@@ -62,6 +63,9 @@ class TableListQuery
     {
         $colIndex = count($this->cols);
         if (strpos(strtolower($dql), 'select ') !== false) {
+            if (in_array('('.$dql.')', $this->cols)) {
+                return array_search('('.$dql.')', $this->cols);
+            }
             $this->cols[$colIndex] = '('.$dql.')';
             $this->colNames[$colIndex] = 'col'.$colIndex;
         } elseif (preg_match('/^(([\w\d]+)\.)?([\w\d]+)\s+((((left|right|inner|outer)\s+)?join\s+[\w\d:\.]+)(\s+[\w\d]+)?(\s+on\s+.+)?)$/ui', $dql, $matches)) {
@@ -82,6 +86,9 @@ class TableListQuery
         } else {
             if (preg_match('/^[a-zA-Z]+$/ui', $dql)) {
                 $dql = 'item.'.$dql;
+            }
+            if (in_array($dql, $this->cols)) {
+                return array_search($dql, $this->cols);
             }
             $this->cols[$colIndex] = $dql;
             $this->colNames[$colIndex] = 'col'.$colIndex;
@@ -136,10 +143,15 @@ class TableListQuery
  * @param mixed $parameter Parameter
  * @return TableListQueryWhere Where group
  */    
-    public function where($columnIndex, $condition, $parameter)
+    public function where($columnIndex, $condition, $parameter = null)
     {
         if (!isset($this->cols[$columnIndex])) {
             throw new TableListException(__CLASS__.": column $columnIndex not found");
+        }
+        if (!preg_match('/:[\w\d]+/', $condition)) {
+            $dql = $this->cols[$columnIndex].' '.$condition;
+            $this->whereCurrent->add($dql);
+            return $this->whereCurrent;
         }
         $parameterIndex = null;
         foreach ($this->parameters as $parameterKey=>$parameterVal) {
@@ -172,6 +184,22 @@ class TableListQuery
     }
 
 /**
+ * Set group by settings
+ * 
+ * @param int $columnIndex Column index
+ */
+    public function group($columnIndex)
+    {
+        if (!isset($this->cols[$columnIndex])) {
+            throw new TableListException(__CLASS__.": column $columnIndex not found");
+        }
+        if (strpos($this->cols[$columnIndex], 'item.') !== 0) {
+            throw new TableListException(__CLASS__.": column for group statment must be a field of main entity");
+        }
+        $this->group = $this->cols[$columnIndex];
+    }
+    
+/**
  * Get query string
  * 
  * @return string Query string
@@ -183,7 +211,7 @@ class TableListQuery
             $select[] = $col.' as '.$this->colNames[$key];
         }
         $where = $this->whereRoot->getDql();
-        return 'SELECT '.implode(', ', $select).' FROM '.$this->repository.' item '.implode(' ', $this->joins).($where != '' ? ' WHERE '.$where : '').($this->order != '' ? 'ORDER BY '.$this->order : '');
+        return 'SELECT '.implode(', ', $select).' FROM '.$this->repository.' item '.implode(' ', $this->joins).($where != '' ? ' WHERE '.$where : '').($this->group != '' ? ' GROUP BY '.$this->group : '').($this->order != '' ? ' ORDER BY '.$this->order : '');
     }
 
 /**
@@ -194,7 +222,7 @@ class TableListQuery
     private function getCountQuery()
     {
         $where = $this->whereRoot->getDql();
-        return 'SELECT count(item.id) FROM '.$this->repository.' item '.implode(' ', $this->joins).($where != '' ? ' WHERE '.$where : '');
+        return 'SELECT count('.($this->group != '' ? 'DISTINCT '.$this->group : 'item.id').') FROM '.$this->repository.' item '.implode(' ', $this->joins).($where != '' ? ' WHERE '.$where : '');
     }
 
 /**
@@ -265,8 +293,8 @@ class TableListQueryWhere
     
     public function openGroup($type)
     {
-        $gorup = new TableListQueryWhere($type, $this);
-        $this->groups[] = $gorup;
+        $group = new TableListQueryWhere($type, $this);
+        $this->groups[] = $group;
         return $group;
     }
     
