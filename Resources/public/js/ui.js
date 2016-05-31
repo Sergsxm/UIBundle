@@ -1183,6 +1183,26 @@ var sergsxmUIFunctions = {
             $(this).val('');
             return false;
         });
+        $(selector).on('blur', function (e) {
+            if ($(this).val() == '') {
+                return true;
+            }
+            var inputId = ($(this).data('replace-input-id') ? $(this).data('replace-input-id') : $(this).prop('id')), 
+                $tagsContainer = $('#'+inputId+'-tags'), 
+                inputName = $tagsContainer.data('input-name'),
+                newTags = $(this).val().toString().split(',');
+            for (var i in newTags) {
+                var tag = newTags[i].trim();
+                if (!tag) {
+                    continue;
+                }
+                var escapeTag = sergsxmUIFunctions._htmlSpecialChars(tag);
+                var insertion = tagTemplate.replace('%tag%', escapeTag).replace('%input%', '<input type="hidden" name="'+inputName+'" value="'+escapeTag+'" />');
+                $tagsContainer.append(insertion);
+            }
+            $(this).val('');
+            return false;
+        });
     },
     
 };
