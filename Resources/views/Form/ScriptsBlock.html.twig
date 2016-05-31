@@ -2,6 +2,9 @@
         function formValidation_{{formId}} (element, log) {
             var form = document.forms['{{formId}}'];
             var errors = {};
+            if ((tinymce != undefined) && (typeof tinymce == 'object')) {
+                tinymce.triggerSave();
+            }
             {{jsValidation | raw}}
             if (element !== undefined) {
                 var inputId = ($(element).data('replace-input-id') ? $(element).data('replace-input-id') : $(element).prop('id'));
