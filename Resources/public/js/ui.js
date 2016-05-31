@@ -834,7 +834,7 @@ var sergsxmUIFunctions = {
                     xhr.upload.addEventListener("progress", function (e) {
                         if (e.lengthComputable) {
                             var completed = Math.ceil(e.loaded * 100 / e.total);
-                            $progressBar.attr('aria-valuenow', completed).css({width: completed+'%'}).find('span.sr-only').text(completed+'%');
+                            $progressBar.find('.progress-bar').attr('aria-valuenow', completed).css({width: completed+'%'}).find('span.sr-only').text(completed+'%');
                         }
                     }, false);
                     return xhr;
@@ -904,7 +904,7 @@ var sergsxmUIFunctions = {
                     xhr.upload.addEventListener("progress", function (e) {
                         if (e.lengthComputable) {
                             var completed = Math.ceil(e.loaded * 100 / e.total);
-                            $progressBar.attr('aria-valuenow', completed).css({width: completed+'%'}).find('span.sr-only').text(completed+'%');
+                            $progressBar.find('.progress-bar').attr('aria-valuenow', completed).css({width: completed+'%'}).find('span.sr-only').text(completed+'%');
                         }
                     }, false);
                     return xhr;
@@ -984,7 +984,7 @@ var sergsxmUIFunctions = {
                     xhr.upload.addEventListener("progress", function (e) {
                         if (e.lengthComputable) {
                             var completed = Math.ceil(e.loaded * 100 / e.total);
-                            $progressBar.attr('aria-valuenow', completed).css({width: completed+'%'}).find('span.sr-only').text(completed+'%');
+                            $progressBar.find('.progress-bar').attr('aria-valuenow', completed).css({width: completed+'%'}).find('span.sr-only').text(completed+'%');
                         }
                     }, false);
                     return xhr;
@@ -1052,7 +1052,7 @@ var sergsxmUIFunctions = {
                     xhr.upload.addEventListener("progress", function (e) {
                         if (e.lengthComputable) {
                             var completed = Math.ceil(e.loaded * 100 / e.total);
-                            $progressBar.attr('aria-valuenow', completed).css({width: completed+'%'}).find('span.sr-only').text(completed+'%');
+                            $progressBar.find('.progress-bar').attr('aria-valuenow', completed).css({width: completed+'%'}).find('span.sr-only').text(completed+'%');
                         }
                     }, false);
                     return xhr;
