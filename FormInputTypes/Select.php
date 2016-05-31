@@ -58,6 +58,9 @@ class Select extends FormInput
                 $this->value = $this->mappingProperty->getValue($mappingObject);
             }
         }
+        if (($this->configuration['multiply'] == true) && !is_array($this->value)) {
+            $this->value = array();
+        }
         if (isset($configuration['disabled'])) {
             $this->disabled = $configuration['disabled'];
         }
@@ -177,6 +180,9 @@ class Select extends FormInput
  */
     public function setValue($value)
     {
+        if (($this->configuration['multiply'] == true) && !is_array($value)) {
+            $value = array();
+        }
         $this->value = $value;
         if ($this->mappingObject !== null) {
             if (($this->configuration['explodeValue'] == true) && ($this->configuration['multiply'] == true)) {
@@ -201,7 +207,7 @@ class Select extends FormInput
         }
         $code = '';
         if (($this->configuration['multiply'] == true) && ($this->configuration['required'] == true)) {
-            $code .= 'var j = 0;if (form["'.$this->prefix.$this->name.'[]"] !== undefined) {for (var i in form["'.$this->prefix.$this->name.'[]"]) {if ((form["'.$this->prefix.$this->name.'[]"][i].selected) || (form["'.$this->prefix.$this->name.'[]"][i].checked)) {j++;}}}if (j == 0) {errors["'.$idPrefix.$this->prefix.$this->name.'"] = '.json_encode($this->configuration['requiredError']).';}'.self::JS_EOL;
+            $code .= 'var j = 0;if (form["'.$this->prefix.$this->name.'[]"].length != undefined) {for (var i = 0; i < form["'.$this->prefix.$this->name.'[]"].length; i++) {if ((form["'.$this->prefix.$this->name.'[]"][i].selected) || (form["'.$this->prefix.$this->name.'[]"][i].checked)) {j++;}}}if ((form["'.$this->prefix.$this->name.'[]"].length === undefined) && (form["'.$this->prefix.$this->name.'[]"].checked)) {j++;}if (j == 0) {errors["'.$idPrefix.$this->prefix.$this->name.'"] = '.json_encode($this->configuration['requiredError']).';}'.self::JS_EOL;
         }
         return $code;
     }
