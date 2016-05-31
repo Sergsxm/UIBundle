@@ -197,6 +197,7 @@ class Tag extends FormInput
             $valueTags = array_filter(array_map('trim', $valueTags));
             $em = $this->container->get('doctrine')->getManager();
             foreach ($valueTags as $valueTag) {
+                $valueTag = preg_replace('/\s+/', ' ', $valueTag);
                 $tagEntity = $this->getTagFromDoctrine($valueTag);
                 if (empty($tagEntity)) {
                     $tagEntity = new $this->configuration['doctrineClass'];
