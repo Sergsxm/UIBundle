@@ -27,6 +27,7 @@ class Number extends TableListColumn
             'thousandSeparator' => '',
             'decimals' => null,
             'orderEnabled' => true,
+            'searchEnabled' => false,
         );
     }
     
@@ -42,6 +43,9 @@ class Number extends TableListColumn
             return;
         }
         $this->columnIndex = $this->query->addColumn($this->dql);
+        if (($searchString != '') && ($this->configuration['searchEnabled'] == true)) {
+            $this->query->where($this->columnIndex, '= :value', floatval($searchString));
+        }
         if (($orderDirection !== null) && ($this->configuration['orderEnabled'] == true)) {
             $this->query->order($this->columnIndex, $orderDirection);
         }
