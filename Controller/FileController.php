@@ -51,6 +51,9 @@ class FileController extends Controller
         if (empty($file)) {
             return new JsonResponse(array('error' => 'Upload error'), 406);
         }
+        if ($file->isValid() == false) {
+            return new JsonResponse(array('error' => $file->getError()), 406);
+        }
         try {
             if (($fieldParameters['maxSize'] != null) && ($file->getSize() > $fieldParameters['maxSize'])) {
                 return new JsonResponse(array('error' => $fieldParameters['maxSizeError']), 406);
@@ -132,7 +135,7 @@ class FileController extends Controller
                 ));
             }
         } catch (\Exception $e) {
-            return new JsonResponse(array('error' => 'Exception: '.$e->getMessage()));
+            return new JsonResponse(array('error' => 'Exception: '.$e->getMessage()), 406);
         }
         return new JsonResponse(array(
             'fileName' => $value->getFileName(),
