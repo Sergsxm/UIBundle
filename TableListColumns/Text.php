@@ -26,6 +26,7 @@ class Text extends TableListColumn
             'orderEnabled' => true,
             'searchEnabled' => false,
             'pattern' => '{{text}}',
+            'textLimit' => null,
         );
     }
     
@@ -61,7 +62,15 @@ class Text extends TableListColumn
         if (!isset($item[$columnName])) {
             return null;
         }
-        $value = str_replace('{{text}}', htmlentities($item[$columnName]), $this->configuration['pattern']);
+        $value = $item[$columnName];
+        if ($this->configuration['textLimit'] !== null) {
+            if (function_exists('mb_strlen') && function_exists('mb_substr') && (mb_strlen($value) > $this->configuration['textLimit'])) {
+                $value = mb_substr($value, 0, $this->configuration['textLimit']).'...';
+            } elseif (strlen($value) > $this->configuration['textLimit']) {
+                $value = substr($value, 0, $this->configuration['textLimit']).'...';
+            }
+        }
+        $value = str_replace('{{text}}', htmlentities($value), $this->configuration['pattern']);
         $value = $this->wrapWithUrl($value, $item['id']);
         return $value;
     }
