@@ -546,7 +546,7 @@ Now you have TableList (Sergsxm\UIBundle\TableList\TableList) object. This objec
 
 ```php
 
-public function addTab($repository, $name, $description = null, $whereType = TableListQuery::WT_OR);
+public function addTab($repository, $name, $configuration = null);
 public function getTab($name);
 public function bindRequest(Request $request = null);
 public function getView();
@@ -580,7 +580,7 @@ Below is a code example of using table lists:
 $list = $this->get('sergsxm.ui')->createTableList();
 
 $list
-    ->addTab('TestBundle:FileEntity', 'files', 'Files')
+    ->addTab('TestBundle:FileEntity', 'files', array('description' => 'Files', 'countEnabled' => true))
     ->addColumn('text', 'fileName', array('description' => 'File name', 'searchEnabled' => true))
     ->addColumn('text', 'mimeType', array('description' => 'MIME type'))
     ->addColumn('timestamp', 'uploadDate', array('description' => 'Upload date'))
@@ -604,6 +604,14 @@ $list->bindRequest();
 return $list->render('SergsxmUIBundle:TableList:TableList.html.twig', 'SergsxmUIBundle:TableList:TableListAjax.html.twig');
 ```
 
+Default configuration of TableListTab:
+
+| Parameter      | Parameter description                                                                | Default value               |
+| -------------- | ------------------------------------------------------------------------------------ | --------------------------- |
+| description    | Tab description, which will be displayed at tab button                               | such as tab name            |
+| whereType      | Type of root WHERE statment (OR, AND or XOR)                                         | TableListQuery::WT_OR       |
+| countEnabled   | Enables items count display in tab button                                            | false                       |
+
 ### 3.2. Column types
 
 Supported column types: text, checkbox, select, timestamp, file, number, image, tag, category.
@@ -624,6 +632,7 @@ Type **text** has following personal settings:
 | orderEnabled   | Enables ordering for column                                                          | true                        |
 | searchEnabled  | Enables search for column                                                            | false                       |
 | pattern        | Text pattern. In this string statment "{{text}}" will be replaced by cell value      | "{{text}}"                  |
+| textLimit      | Limits text length                                                                   | null                        |
 
 Type **checkbox** has following personal settings:
 
@@ -671,6 +680,7 @@ Type **number** has following personal settings:
 | thousandSeparator | Sets the thousands separator                                              | ""                           |
 | decimals          | Sets the number of decimal points (or null for disable option)            | null                         |
 | orderEnabled      | Enables ordering for column                                               | true                         |
+| searchEnabled     | Enables search for column                                                 | false                        |
 
 Type **image** has following personal settings:
 
@@ -769,7 +779,7 @@ Also, it has the ability to perform join statments. To do this, as variable $nam
     ->addColumn('image', 'file.contentFile JOIN item.fooFile file', array('description' => 'Image'))
 ```
 
-With methods addWhereCondition, openWhereGroup, closeWhereGroup of TableListTab and with parameter $whereType in addTab method of TableList you can manage WHERE statment of DQL.
+With methods addWhereCondition, openWhereGroup, closeWhereGroup of TableListTab and with $configuration parameter *whereType* in addTab method of TableList you can manage WHERE statment of DQL.
 
 With method groupBy of TableListTab you can manage GROUP BY statment of DQL.
 

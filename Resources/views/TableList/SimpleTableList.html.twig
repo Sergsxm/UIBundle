@@ -7,7 +7,14 @@
     <div class="col-lg-3">
         <ul class="nav nav-pills nav-stacked">
         {% for tabname,tab in tabsDescription %}
-            <li {% if tabname == activeTab %}class="active"{% endif %}><a href="?tab={{tabname}}" class="sergsxmui-tab-btn">{{tab['description']}}</a></li>
+            <li {% if tabname == activeTab %}class="active"{% endif %}>
+                <a href="?tab={{tabname}}" class="sergsxmui-tab-btn">
+                    {{tab['description']}}
+                    {% if tab['configuration']['countEnabled'] == true %}
+                        <span class="badge pull-right">{{tab['itemsCount']}}</span>
+                    {% endif %}
+                </a>
+            </li>
         {% endfor %}
         </ul>
     </div>

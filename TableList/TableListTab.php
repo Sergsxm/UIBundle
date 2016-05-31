@@ -23,7 +23,7 @@ class TableListTab
     private $container;
     private $columns = array();
     private $name;
-    private $description;
+    private $configuration;
     private $orderColumn = null;
     private $orderDirection = 0;
     private $defaultOrderColumn = 0;
@@ -42,23 +42,39 @@ class TableListTab
  * @param ContainerInterface $container Symfony2 container
  * @param string $repository Doctrine main repository for list
  * @param string $name Tab name
- * @param string $description Tab description
- * @param int $whereType Where type 
+ * @param array|string $configuration Tab configuration (if string - description)
  * @return TableListTab Tab object
  */    
-    public function __construct(ContainerInterface $container, $repository, $name, $description = null, $whereType = TableListQuery::WT_OR)
+    public function __construct(ContainerInterface $container, $repository, $name, $configuration = null)
     {
         if (!preg_match('/^[A-Za-z0-9_\-]+$/ui', $name)) {
             throw new TableListException(__CLASS__.': tab name must contain only letters and numbers');
         }
         $this->container = $container;
         $this->name = $name;
-        $this->description = ($description != null ? $description : $name);
-        $this->query = new TableListQuery($this->container->get('doctrine')->getManager(), $repository, $whereType);
+        $this->setDefaults();
+        if (is_string($configuration)) {
+            $this->configuration['description'] = $configuration;
+        } elseif (is_array($configuration)) {
+            $this->configuration = array_merge($this->configuration, $configuration);
+        }
+        $this->query = new TableListQuery($this->container->get('doctrine')->getManager(), $repository, $this->configuration['whereType']);
         
         return $this;
     }
 
+/**
+ * Set configuration to default values
+ */    
+    private function setDefaults()
+    {
+        $this->configuration = array(
+            'description' => $this->name,
+            'whereType' => TableListQuery::WT_OR,
+            'countEnabled' => false,
+        );
+    }
+    
 /**
  * Add where condition
  * 
@@ -271,9 +287,16 @@ class TableListTab
  */    
     public function getDescription()
     {
+        $itemsCount = null;
+        if ($this->configuration['countEnabled'] == true) {
+            $subquery = clone $this->query;
+            $itemsCount = $subquery->getCount();
+        }
         return array(
             'name' => $this->name,
-            'description' => $this->description,
+            'description' => $this->configuration['description'],
+            'configuration' => $this->configuration,
+            'itemsCount' => $itemsCount,
         );
     }
     
@@ -337,7 +360,8 @@ class TableListTab
         
         return array(
             'name' => $this->name,
-            'description' => $this->description,
+            'description' => $this->configuration['description'],
+            'configuration' => $this->configuration,
             'columns' => $columns,
             'orderColumn' => $this->orderColumn,
             'orderDirection' => $this->orderDirection,

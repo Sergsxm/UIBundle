@@ -44,17 +44,16 @@ class TableList
  * 
  * @param string $repository Doctrine main repository for list
  * @param string $name Tab name
- * @param string $description Tab description
- * @param int $whereType Where type 
+ * @param array|string $configuration Tab configuration (if string - description)
  * @return TableList Table list object
  */    
-    public function addTab($repository, $name, $description = null, $whereType = TableListQuery::WT_OR)
+    public function addTab($repository, $name, $configuration = null)
     {
         if (isset($this->tabs[$name])) {
             throw new TableListException(__CLASS__.': tab "'.$name.'" already exist');
         }
         
-        $this->tabs[$name] = new TableListTab($this->container, $repository, $name, $description, $whereType);
+        $this->tabs[$name] = new TableListTab($this->container, $repository, $name, $configuration);
         return $this->tabs[$name];
     }
 
