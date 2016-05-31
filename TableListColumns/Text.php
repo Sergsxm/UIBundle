@@ -43,7 +43,7 @@ class Text extends TableListColumn
         }
         $this->columnIndex = $this->query->addColumn($this->dql);
         if (($searchString != '') && ($this->configuration['searchEnabled'] == true)) {
-            $this->query->where($this->columnIndex, 'LIKE :value', $searchString);
+            $this->query->where($this->columnIndex, 'LIKE :value', '%'.$searchString.'%');
         }
         if (($orderDirection !== null) && ($this->configuration['orderEnabled'] == true)) {
             $this->query->order($this->columnIndex, $orderDirection);
@@ -62,15 +62,19 @@ class Text extends TableListColumn
         if (!isset($item[$columnName])) {
             return null;
         }
-        $value = $item[$columnName];
-        if ($this->configuration['textLimit'] !== null) {
-            if (function_exists('mb_strlen') && function_exists('mb_substr') && (mb_strlen($value) > $this->configuration['textLimit'])) {
-                $value = mb_substr($value, 0, $this->configuration['textLimit']).'...';
-            } elseif (strlen($value) > $this->configuration['textLimit']) {
-                $value = substr($value, 0, $this->configuration['textLimit']).'...';
+        $value = htmlentities($item[$columnName]);
+        if ($this->configuration['textLimit'] != null) {
+            if (function_exists('mb_strlen') && function_exists('mb_substr')) {
+                if (mb_strlen($value, 'utf-8') > $this->configuration['textLimit']) {
+                    $value = mb_substr($value, 0, $this->configuration['textLimit'], 'utf-8').'...';
+                }
+            } else {
+                if (strlen($value) > $this->configuration['textLimit']) {
+                    $value = substr($value, 0, $this->configuration['textLimit']).'...';
+                }
             }
         }
-        $value = str_replace('{{text}}', htmlentities($value), $this->configuration['pattern']);
+        $value = str_replace('{{text}}', $value, $this->configuration['pattern']);
         $value = $this->wrapWithUrl($value, $item['id']);
         return $value;
     }

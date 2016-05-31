@@ -120,6 +120,9 @@ abstract class TableListColumn
         } else {
             $actionUrl = str_replace('{{id}}', $id, $this->configuration['url']);
         }
+        if ($value == '') {
+            $value = '[Unknown]';
+        }
         return '<a href="'.$actionUrl.'">'.$value.'</a>';
     }
     

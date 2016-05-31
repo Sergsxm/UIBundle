@@ -312,7 +312,7 @@ class TableListTab
             $this->orderDirection = $this->defaultOrderDirection;
         }
         foreach ($this->columns as $columnKey=>$column) {
-            $column->modifyQuery(($this->orderColumn == $columnKey ? $this->orderDirection : null), ($this->search != '' ? '%'.$this->search.'%' : ''));
+            $column->modifyQuery(($this->orderColumn == $columnKey ? $this->orderDirection : null), $this->search);
         }
         
         if (!in_array($this->itemsInPage, $this->itemsInPageValues)) {
