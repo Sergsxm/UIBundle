@@ -49,6 +49,7 @@ class Standart extends Captcha
             'background' => 'fff',
             'color' => '000',
             'noise' => false,
+            'length' => 6,
         );
     }
 
@@ -78,7 +79,7 @@ class Standart extends Captcha
     {
         $value = '';
         $letters = '123456789ABCDEFGHIJKLMNPQRSTUVWXYZ';
-        for ($i = 0; $i < 6; $i++) {
+        for ($i = 0; $i < $this->configuration['length']; $i++) {
             $value .= substr($letters, rand(0, strlen($letters) - 1), 1);
         }
         
@@ -178,7 +179,7 @@ class Standart extends Captcha
  */    
     public function getJsValidation($idPrefix)
     {
-        return 'if (!/^[A-Za-z0-9]{6}$/i.test(form["captcha"].value)) {errors["'.$idPrefix.'captcha"] = '.json_encode($this->configuration['validateError']).';}'.self::JS_EOL;
+        return 'if (!/^[A-Za-z0-9]{'.$this->configuration['length'].'}$/i.test(form["captcha"].value)) {errors["'.$idPrefix.'captcha"] = '.json_encode($this->configuration['validateError']).';}'.self::JS_EOL;
     }
     
 }

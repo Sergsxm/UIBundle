@@ -403,6 +403,7 @@ Type **standart** has following settings:
 | background     | Background color for captcha image (CSS like string)                              | "fff"                       |
 | color          | Main color for captcha image (CSS like string)                                    | "000"                       |
 | noise          | Enable noise lines                                                                | false                       |
+| length         | Length of text                                                                    | 6                           |
 
 ### 2.5. Advanced templating
 
