@@ -237,6 +237,12 @@ class FormGroup
                 $value = trim($matches[3]);
                 if (substr($value, 0, 1) == '\'') {
                     $value = "'".substr($value, 1, strrpos($value, '\'') - 1)."'";
+                } elseif (strtolower($value) == 'true') {
+                    $value = 'true';
+                } elseif (strtolower($value) == 'false') {
+                    $value = 'false';
+                } elseif (strtolower($value) == 'null') {
+                    $value = 'null';
                 } else {
                     $value = floatval($value);
                 }
@@ -259,8 +265,14 @@ class FormGroup
             $value = trim($matches[3]);
             if (substr($value, 0, 1) == '\'') {
                 $value = substr($value, 1, strrpos($value, '\'') - 1);
+            } elseif (strtolower($value) == 'true') {
+                $value = true;
+            } elseif (strtolower($value) == 'false') {
+                $value = false;
+            } elseif (strtolower($value) == 'null') {
+                $value = null;
             } else {
-                $value = floatval($value);
+                $value = floatval(trim($value));
             }
             if ($matches[2] == '==') {
                 return ($this->fields[$matches[1]]->getValue() == $value);
