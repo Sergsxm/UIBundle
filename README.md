@@ -623,6 +623,7 @@ All column types has following settings:
 | -------------- | ------------------------------------------------------------------------------------ | --------------------------- |
 | description    | Column description, which will be displayed at the table head                        | such as column name         |
 | url            | Link to any page, for example edit page of the row item (format describes below)     | null                        |
+| urlTarget      | Value of target property of link                                                     | null                        |
 | hidden         | Off column display                                                                   | false                       |
 | defaultOrderDirection | Sets column as default order column and specified direction (0 - ASC, 1 - DESC) | unset                     |
 

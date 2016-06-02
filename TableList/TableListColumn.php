@@ -123,7 +123,7 @@ abstract class TableListColumn
         if ($value == '') {
             $value = '[Unknown]';
         }
-        return '<a href="'.$actionUrl.'">'.$value.'</a>';
+        return '<a href="'.$actionUrl.'"'.(isset($this->configuration['urlTarget']) ? ' target="'.$this->configuration['urlTarget'].'"' : '').'>'.$value.'</a>';
     }
     
 }
