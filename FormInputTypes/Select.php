@@ -61,6 +61,11 @@ class Select extends FormInput
         if (($this->configuration['multiply'] == true) && !is_array($this->value)) {
             $this->value = array();
         }
+        if ($this->value === false) {
+            $this->value = 0;
+        } elseif ($this->value === true) {
+            $this->value = 1;
+        }
         if (isset($configuration['disabled'])) {
             $this->disabled = $configuration['disabled'];
         }
