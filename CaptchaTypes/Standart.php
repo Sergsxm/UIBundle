@@ -50,6 +50,7 @@ class Standart extends Captcha
             'color' => '000',
             'noise' => false,
             'length' => 6,
+            'letters' => '123456789ABCDEFGHIJKLMNPQRSTUVWXYZ',
         );
     }
 
@@ -78,7 +79,7 @@ class Standart extends Captcha
     public function getUniqueValue()
     {
         $value = '';
-        $letters = '123456789ABCDEFGHIJKLMNPQRSTUVWXYZ';
+        $letters = $this->configuration['letters'];
         for ($i = 0; $i < $this->configuration['length']; $i++) {
             $value .= substr($letters, rand(0, strlen($letters) - 1), 1);
         }

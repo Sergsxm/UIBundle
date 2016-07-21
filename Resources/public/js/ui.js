@@ -22,9 +22,8 @@ var SergsxmUIDraggableElement = (function () {
         this.configuration = {
             clickFilter: 'a, button, input'
         };
-        if (configuration !== undefined && configuration['clickFilter'] !== undefined) {
-            this.configuration['clickFilter'] = configuration['clickFilter'];
-        }
+        $.extend(this.configuration, configuration);
+        
         this.$container = $(container);
         this.$moveElement = null;
         this.savedZIndex = null;

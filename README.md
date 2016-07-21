@@ -404,6 +404,7 @@ Type **standart** has following settings:
 | color          | Main color for captcha image (CSS like string)                                    | "000"                       |
 | noise          | Enable noise lines                                                                | false                       |
 | length         | Length of text                                                                    | 6                           |
+| letters        | Allowed letters                                                                   | "123456789ABCDEFGHIJKLMNPQRSTUVWXYZ" |
 
 ### 2.5. Advanced templating
 

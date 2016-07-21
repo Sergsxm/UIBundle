@@ -52,7 +52,7 @@ class FileController extends Controller
             return new JsonResponse(array('error' => 'Upload error'), 406);
         }
         if ($file->isValid() == false) {
-            return new JsonResponse(array('error' => $file->getError()), 406);
+            return new JsonResponse(array('error' => $file->getErrorMessage()), 406);
         }
         try {
             if (($fieldParameters['maxSize'] != null) && ($file->getSize() > $fieldParameters['maxSize'])) {
