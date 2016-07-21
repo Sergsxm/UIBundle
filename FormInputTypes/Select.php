@@ -66,6 +66,10 @@ class Select extends FormInput
         } elseif ($this->value === true) {
             $this->value = 1;
         }
+        if (($this->value === '') || ($this->value === null) || (!isset($this->configuration['choices'][$this->value]))) {
+            reset($this->configuration['choices']);
+            $this->value = key($this->configuration['choices']);
+        }
         if (isset($configuration['disabled'])) {
             $this->disabled = $configuration['disabled'];
         }
