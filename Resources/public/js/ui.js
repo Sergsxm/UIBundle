@@ -685,6 +685,10 @@ var sergsxmUIFunctions = {
     
     locale: 'en',
     fileUploadPath: '',
+    configuration: {
+        mapCenter: [0, 0],
+        mapZoom: 5,
+    },
 
 /**
  * Init context for UI Bundle
@@ -693,9 +697,10 @@ var sergsxmUIFunctions = {
  * @param {string} locale Current locale code (2 letters, e.g. en, ru)
  * @param {string} fileUploadPath Ajax file upload URL
  */    
-    initContext : function (locale, fileUploadPath) {
+    initContext : function (locale, fileUploadPath, configuration) {
         this.locale = locale;
         this.fileUploadPath = fileUploadPath;
+        $.extend(this.configuration, configuration);
     },
 
 /**
@@ -1083,17 +1088,17 @@ var sergsxmUIFunctions = {
  * 
  * @param {string} selector Textarea selector
  */    
-    initMap : function (selector, zoom, center) {
+    initMap : function (selector) {
         if (($(selector).length) && (ymaps != undefined) && (typeof ymaps === 'object')) {
             ymaps.ready(function () {
                 $(selector).each(function () {
                     var inputId = '#'+$(this).data('input-id'), latitudeId = '#'+$(this).data('latitude-id'), longitudeId = '#'+$(this).data('longitude-id');
-                    if (center === undefined) {
+                    if (($(latitudeId).val() != '') || ($(longitudeId).val() != '')) {
                         center = [$(latitudeId).val(), $(longitudeId).val()];
+                    } else {
+                        center = sergsxmUIFunctions.configuration.mapCenter;
                     }
-                    if (zoom === undefined) {
-                        zoom = 5;
-                    }
+                    zoom = sergsxmUIFunctions.configuration.mapZoom;
                     var inputMap = new ymaps.Map(this, {center: center, zoom: zoom});                
                     var inputPlacemark = new ymaps.Placemark([$(latitudeId).val(), $(longitudeId).val()]);
                     inputMap.geoObjects.add(inputPlacemark);
