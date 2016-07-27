@@ -233,7 +233,7 @@ class FormGroup
     {
         $code = '';
         foreach ($this->groups as $group) {
-            if (preg_match('/^(\S+)\s+(==|<|>|!=|<=|>=)([\s\S]+)$/ui', $group['condition'], $matches)) {
+            if (preg_match('/^(\S+)\s+(==|<=?|>=?|!=)([\s\S]+)$/ui', $group['condition'], $matches)) {
                 $value = trim($matches[3]);
                 if (substr($value, 0, 1) == '\'') {
                     $value = "'".substr($value, 1, strrpos($value, '\'') - 1)."'";
