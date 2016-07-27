@@ -208,7 +208,7 @@ class FormGroup
             $code .= $field->getJsValidation($idPrefix);
         }
         foreach ($this->groups as $group) {
-            if (preg_match('/^(\S+)\s+(==|<|>|!=|<=|>=)([\s\S]+)$/ui', $group['condition'], $matches)) {
+            if (preg_match('/^(\S+)\s+(==|<=?|>=?|!=)([\s\S]+)$/ui', $group['condition'], $matches)) {
                 $value = trim($matches[3]);
                 if (substr($value, 0, 1) == '\'') {
                     $value = "'".substr($value, 1, strrpos($value, '\'') - 1)."'";
@@ -261,7 +261,7 @@ class FormGroup
  */    
     private function checkCondition($condition) 
     {
-        if (preg_match('/^(\S+)\s+(==|<|>|!=|<=|>=)([\s\S]+)$/ui', $condition, $matches)) {
+        if (preg_match('/^(\S+)\s+(==|<=?|>=?|!=)([\s\S]+)$/ui', $condition, $matches)) {
             $value = trim($matches[3]);
             if (substr($value, 0, 1) == '\'') {
                 $value = substr($value, 1, strrpos($value, '\'') - 1);
@@ -298,7 +298,7 @@ class FormGroup
  */    
     private function checkConditionFormat($condition) 
     {
-        if (preg_match('/^(\S+)\s+(==|<|>|!=|<=|>=)([\s\S]+)$/ui', $condition, $matches)) {
+        if (preg_match('/^(\S+)\s+(==|<=?|>=?|!=)([\s\S]+)$/ui', $condition, $matches)) {
             if (!isset($this->fields[$matches[1]])) {
                 throw new FormException(__CLASS__.': bad field name "'.$matches[1].'" in group condition');
             }
