@@ -16,11 +16,21 @@
                     $('.'+inputId+'-error').text('');
                 }
             } else {
+                var top = null;
                 $('#{{formId}} .has-error').removeClass('has-error');
                 $('#{{formId}} .form-error-text').text('');
                 for (var inputId in errors) {
                     $('.'+inputId+'-container').addClass('has-error');
+                    if ((top === null) && ($('.'+inputId+'-container').length > 0)) {
+                        top = $('.'+inputId+'-container').eq(0).offset().top;
+                    }
                     $('.'+inputId+'-error').text(errors[inputId]);
+                    if ((top === null) && ($('.'+inputId+'-error').length > 0)) {
+                        top = $('.'+inputId+'-error').eq(0).offset().top;
+                    }
+                }
+                if (top !== null) {
+                    $('html,body').scrollTop(top);
                 }
             }
             {{jsVisibility | raw}}
