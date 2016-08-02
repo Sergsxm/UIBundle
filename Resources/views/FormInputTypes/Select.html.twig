@@ -1,6 +1,6 @@
 {% if configuration['multiply'] == false %}
     {% if configuration['expanded'] == false %}
-        <div class="form-group {{inputId}}-container{% if error %} has-error{% endif %}">
+        <div class="row form-group {{inputId}}-container{% if error %} has-error{% endif %}">
             <label for="{{inputId}}" class="col-sm-5">{{configuration['description']}}</label>
             <div class="col-sm-7">
                 <select class="form-control" id="{{inputId}}" name="{{inputName}}" {% if disabled %}disabled="disabled"{% endif %}>
@@ -12,7 +12,7 @@
             </div>
         </div>        
     {% else %}
-        <div>
+        <div class="row">
             <label class="col-sm-5">{{configuration['description']}}</label>
             <div class="col-sm-7">
                 <div id="{{inputId}}">
@@ -30,7 +30,7 @@
     {% endif %}
 {% else %}
     {% if configuration['expanded'] == false %}
-        <div class="form-group {{inputId}}-container{% if error %} has-error{% endif %}">
+        <div class="row form-group {{inputId}}-container{% if error %} has-error{% endif %}">
             <label for="{{inputId}}" class="col-sm-5">{{configuration['description']}}</label>
             <div class="col-sm-7">
                 <select class="form-control" id="{{inputId}}" name="{{inputName}}[]" multiple="multiple" {% if disabled %}disabled="disabled"{% endif %}>
@@ -42,7 +42,7 @@
             </div>
         </div>        
     {% else %}
-        <div>
+        <div class="row">
             <label class="col-sm-5">{{configuration['description']}}</label>
             <div class="col-sm-7">
                 <div id="{{inputId}}">

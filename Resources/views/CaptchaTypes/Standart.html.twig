@@ -1,4 +1,4 @@
-<div class="form-group {{inputId}}-container{% if error %} has-error{% endif %}">
+<div class="row form-group {{inputId}}-container{% if error %} has-error{% endif %}">
     <label for="{{inputId}}" class="col-sm-5">{{configuration['description']}}<div>{{valueTag | raw}}</div></label>
     <div class="col-sm-7">
         <input type="text" class="form-control" id="{{inputId}}" name="{{inputName}}" placeholder="{{(configuration['placeholder'] is defined ? configuration['placeholder'] : configuration['description'])}}" value="" />
