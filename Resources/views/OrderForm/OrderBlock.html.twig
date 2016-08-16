@@ -4,7 +4,7 @@
             <i class="glyphicon glyphicon-resize-vertical"></i>
             {% if item['url'] != null %}<a href="{{item['url']}}">{{item['title']}}</a>{% else %}{{item['title']}}{% endif %}
             {% if (configuration['removeEnabled'] == true) and (readOnly == false) %}
-            <button type="button" class="close"><span>&times;</span></button>    
+            <button type="button" class="close">&times;</button>    
             {% endif %}
         </div>
     {% endfor %}

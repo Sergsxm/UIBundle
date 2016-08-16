@@ -18,7 +18,7 @@
                     <div class="thumbnail sergsxmui-form-thumbnail">
                         <input type="hidden" name="{{inputName}}[]" value="{{file.getId()}}" />
                         <img src="{{thumbnails[file.getId()]}}" title="{% trans with {'%name%': file.getFileName(), '%size%': file.getSize()} from "sergsxmui" %}%name% (%size% bytes){% endtrans %}" />
-                        <button type="button" class="close" onclick="$(this).closest('.thumbnail').remove();return false;"><span>&times;</span></button>
+                        <button type="button" class="close" onclick="$(this).closest('.thumbnail').remove();return false;">&times;</button>
                     </div>
                 {% endfor %}
             </div>

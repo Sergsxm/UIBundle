@@ -15,7 +15,7 @@
                     <li class="list-group-item">
                         <input type="hidden" name="{{inputName}}[]" value="{{file.getId()}}" />
                         {% trans with {'%name%': file.getFileName(), '%size%': file.getSize()} from "sergsxmui" %}%name% (%size% bytes){% endtrans %}
-                        <button type="button" class="close" onclick="$(this).closest('.list-group-item').remove();return false;"><span>&times;</span></button>
+                        <button type="button" class="close" onclick="$(this).closest('.list-group-item').remove();return false;">&times;</button>
                     </li>
                 {% endfor %}
             </ul>
