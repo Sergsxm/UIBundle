@@ -88,13 +88,15 @@ class Number extends FormInput
             $this->error = $this->configuration['requiredError'];
             return false;
         }
-        if (($this->configuration['minValue'] !== null) && ($this->value < $this->configuration['minValue'])) {
-            $this->error = $this->configuration['valueError'];
-            return false;
-        }
-        if (($this->configuration['maxValue'] !== null) && ($this->value > $this->configuration['maxValue'])) {
-            $this->error = $this->configuration['valueError'];
-            return false;
+        if ($this->value !== null) {
+            if (($this->configuration['minValue'] !== null) && ($this->value < $this->configuration['minValue'])) {
+                $this->error = $this->configuration['valueError'];
+                return false;
+            }
+            if (($this->configuration['maxValue'] !== null) && ($this->value > $this->configuration['maxValue'])) {
+                $this->error = $this->configuration['valueError'];
+                return false;
+            }
         }
         
         $this->error = null;
@@ -117,7 +119,7 @@ class Number extends FormInput
             $code .= 'if (form["'.$this->prefix.$this->name.'"].value == "") {errors["'.$idPrefix.$this->prefix.$this->name.'"] = '.json_encode($this->configuration['requiredError']).';}'.self::JS_EOL;
         }
         $code .= 'if (form["'.$this->prefix.$this->name.'"].value != "") {'.self::JS_EOL;
-        $code .= 'var v = parseFloat(form["'.$this->prefix.$this->name.'"].value.replace('.json_encode($this->configuration['thousandSeparator']).', \'\').replace('.json_encode($this->configuration['decimalPoint']).', \'.\'));'.self::JS_EOL;
+        $code .= 'var v = +(form["'.$this->prefix.$this->name.'"].value.replace('.json_encode($this->configuration['thousandSeparator']).', \'\').replace('.json_encode($this->configuration['decimalPoint']).', \'.\'));'.self::JS_EOL;
         $code .= 'if (isNaN(v)) {errors["'.$idPrefix.$this->prefix.$this->name.'"] = '.json_encode($this->configuration['notNumberError']).';}'.self::JS_EOL;
         if ($this->configuration['minValue'] !== null) {
             $code .= 'else if (v < '.$this->configuration['minValue'].') {errors["'.$idPrefix.$this->prefix.$this->name.'"] = '.json_encode($this->configuration['valueError']).';}'.self::JS_EOL;
