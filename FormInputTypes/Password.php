@@ -126,6 +126,16 @@ class Password extends FormInput
     }
 
 /**
+ * Get raw password value
+ * 
+ * @return string Value
+ */    
+    public function getRawValue()
+    {
+        return $this->value;
+    }
+
+/**
  * Get password salt
  * 
  * @return string Salt
