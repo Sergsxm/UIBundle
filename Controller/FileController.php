@@ -187,7 +187,7 @@ class FileController extends Controller
         if (($params[2] == IMAGETYPE_PNG) || ($params[2] == IMAGETYPE_GIF)) {
             $transparencyIndex = imagecolortransparent($source);
             $transparencyColor = array('red' => self::backgroundRed, 'green' => self::backgroundGreen, 'blue' => self::backgroundBlue);
-            if ($transparencyIndex >= 0) {
+            if (($transparencyIndex >= 0) && ($transparencyIndex < imagecolorstotal($source))) {
                 $transparencyColor = imagecolorsforindex($source, $transparencyIndex);
             }
             $transparencyIndex = imagecolorallocate($thumb, $transparencyColor['red'], $transparencyColor['green'], $transparencyColor['blue']);
