@@ -56,6 +56,9 @@ class Form implements FormInterface
         $this->formBag = new FormBag($this->container->get('request_stack')->getMasterRequest()->getSession());
         $this->currentGroup = new FormGroup($container, $this->formBag);
         $this->rootGroup = $this->currentGroup;
+        if (($mappingObject != null) && is_subclass_of($mappingObject, '\Doctrine\ORM\Proxy\Proxy')) {
+            $mappingObject->__load();
+        }
     }
 
 /**
@@ -484,7 +487,12 @@ class Form implements FormInterface
         if (!is_object($mappingObject)) {
             throw new FormException(__CLASS__.': you must specify mapping object for import from annotations');
         }
-        $object = new \ReflectionObject($mappingObject);
+        if (is_subclass_of($mappingObject, '\Doctrine\ORM\Proxy\Proxy')) {
+            $mappingObject->__load();
+            $object = new \ReflectionClass(get_parent_class($mappingObject));
+        } else {
+            $object = new \ReflectionObject($mappingObject);
+        }
         
         $translatorDomain = null;
         $translatorAnnotation = $reader->getClassAnnotation($object, '\Sergsxm\UIBundle\Annotations\TranslationDomain');
