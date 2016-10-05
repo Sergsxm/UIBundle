@@ -770,7 +770,7 @@ var sergsxmUIFunctions = {
  * @param {string} selector Textarea selector
  */    
     initWysiwyg : function (selector) {
-        if (($(selector).length) && (tinymce != undefined) && (typeof tinymce === 'object')) {
+        if (($(selector).length) && (window.tinymce != undefined) && (typeof tinymce === 'object')) {
             tinymce.init({
                 selector: selector,
                 locale: this.locale,

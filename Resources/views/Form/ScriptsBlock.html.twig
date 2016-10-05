@@ -2,7 +2,7 @@
         function formValidation_{{formId}} (element, log) {
             var form = document.forms['{{formId}}'];
             var errors = {};
-            if ((tinymce != undefined) && (typeof tinymce == 'object')) {
+            if ((window.tinymce != undefined) && (typeof tinymce == 'object')) {
                 tinymce.triggerSave();
             }
             {{jsValidation | raw}}
