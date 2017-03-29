@@ -47,6 +47,7 @@ class Text extends FormInput
             'requiredError' => 'The field can not be empty',
             'regexp' => '/^[\s\S]*$/i',
             'regexpError' => 'The field is not valid',
+            'trim' => false,
             'validateCallback' => null,
             'validateCallbackParameters' => null,
             'uniqueInDoctrine' => false,
@@ -109,5 +110,18 @@ class Text extends FormInput
         $code .= 'if ((form["'.$this->prefix.$this->name.'"].value != "") && !'.$this->configuration['regexp'].'.test(form["'.$this->prefix.$this->name.'"].value)) {errors["'.$idPrefix.$this->prefix.$this->name.'"] = '.json_encode($this->configuration['regexpError']).';}'.self::JS_EOL;
         return $code;
     }
-    
+
+/**
+ * Set value
+ * 
+ * @param mixed $value Value
+ * @return boolean There are no errors
+ */
+    public function setValue($value)
+    {
+        if ($this->configuration['trim'] == true) {
+            $value = trim($value);
+        }
+        return parent::setValue($value);
+    }    
 }

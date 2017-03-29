@@ -206,7 +206,8 @@ Type **text** has following settings:
 | validateCallback           | User-defined function to check the field (see below)                      | null                         |
 | validateCallbackParameters | Additional parameters for validateCallback function                       | null                         |
 | uniqueInDoctrine           | Enables checking the uniqueness of the field in the Doctrine database     | false                        |
-| uniqueError                | Text for the "unique" error                                               | "This value already exists in the database" |       
+| uniqueError                | Text for the "unique" error                                               | "This value already exists in the database" |
+| trim                       | Trim value                                                                | false                        |
 | disabled                   | Set field to disabled state                                               | false                        |
 
 Type **textarea** has following settings:
