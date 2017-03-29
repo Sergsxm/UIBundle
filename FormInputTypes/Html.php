@@ -102,17 +102,17 @@ class Html extends FormInput
      
     private function clearHtmlPropertyTd($matches)
     {
-        $this->clearHtmlProperty($matches, array('colspan', 'rowspan'));
+        return $this->clearHtmlProperty($matches, array('colspan', 'rowspan'));
     }
      
     private function clearHtmlPropertyImg($matches)
     {
-        $this->clearHtmlProperty($matches, array('src', 'title'));
+        return $this->clearHtmlProperty($matches, array('src', 'title'));
     }
 
     private function clearHtmlPropertyA($matches)
     {
-        $this->clearHtmlProperty($matches, array('href'));
+        return $this->clearHtmlProperty($matches, array('href'));
     }
     
 /**
