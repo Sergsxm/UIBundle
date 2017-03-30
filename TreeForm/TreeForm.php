@@ -292,6 +292,19 @@ class TreeForm
     }
     
 /**
+ * Pre remove tree item
+ * 
+ * @param object $item Item object
+ */    
+    private function preRemoveItem($item)
+    {
+        if ($this->configuration['removeEnabled'] == false) {
+            throw new TreeFormException(__CLASS__.': somthing wrong, item remove is disabled but remove function is called');
+        }
+        $item->setParent(null);
+    }
+
+/**
  * Remove tree item
  * 
  * @param object $item Item object
@@ -412,6 +425,12 @@ class TreeForm
                     $nsNestingOld = $treeParameters['nesting'];
                 }
             }
+            foreach ($this->objects as $object) {
+                if (!in_array($object->getId(), $foundedIds)) {
+                    $this->preRemoveItem($object);
+                }
+            }
+            $this->container->get('doctrine')->getManager()->flush();
             foreach ($this->objects as $object) {
                 if (!in_array($object->getId(), $foundedIds)) {
                     $this->removeItem($object);
