@@ -56,3 +56,14 @@
     color: #fff;
     text-decoration: none;
 }
+
+.sergsxmui-lock-btn {
+    border: none;
+    background: transparent;
+    color: #ccc;
+    display: inline;
+}
+
+.sergsxmui-lock-btn.active {
+    color: #333;
+}

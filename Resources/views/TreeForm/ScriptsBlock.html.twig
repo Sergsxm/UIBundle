@@ -2,6 +2,7 @@
     $(function () {
         var tree = new SergsxmUITree('#{{formId}}-items', {
             removeButton: '.close',
+            lockButton: '.sergsxmui-lock-btn',
             inputName: 'tree',
             readOnly: {{readOnly ? 'true' : 'false'}}
         });

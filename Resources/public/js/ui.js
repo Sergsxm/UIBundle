@@ -293,7 +293,8 @@ var SergsxmUITree = (function () {
             maxNesting: false,              // max nesting or false to disable function
             nestingPadding: 50,             // element padding to one nesing level
             clickFilter: 'a, button, input',// filter of click elements
-            removeButton: false,             // close button selector
+            removeButton: false,            // remove button selector
+            lockButton: false,              // lock/unlock childrens button selector
             
             formContainer: false,           // Container for form inputs
             inputName: 'tree',              // Input name
@@ -304,6 +305,8 @@ var SergsxmUITree = (function () {
         this.$container = $(container);
         this.changed = false;
         this.$moveElement = null;
+        this.$lockElements = null;
+        this.lockElementsNesting = null;
         this.moveOffsetX = null;
         this.moveOffsetY = null;
         this.moveCurrentX = null;
@@ -336,6 +339,11 @@ var SergsxmUITree = (function () {
         if (this.configuration.removeButton !== false) {
             this.$container.delegate('>* '+this.configuration.removeButton, 'click', function (e) {
                 that.removeElement(e.currentTarget);
+            });
+        }
+        if (this.configuration.lockButton !== false) {
+            this.$container.delegate('>* '+this.configuration.lockButton, 'click', function (e) {
+                that.lockElement(e.currentTarget);
             });
         }
         this.$container.delegate('>*', 'mousedown', function (e) {
@@ -376,6 +384,24 @@ var SergsxmUITree = (function () {
             }
         });
     }
+
+/**
+ * Lock/unlock tree element
+ * 
+ * @param {DOMElement} element Event element
+ */
+    SergsxmUITree.prototype.lockElement = function (element) {
+        this.changed = true;
+        var $item = $(element).closest(this.$container.children()), state = $item.data('locked');
+        if (state == 'true') {
+            $(element).removeClass('active');
+            $item.data('locked', '');
+        } else {
+            $(element).addClass('active');
+            $item.data('locked', 'true');
+        }
+        this.updateElementsNesting(true);
+    };
 
 /**
  * Remove element from tree
@@ -603,8 +629,27 @@ var SergsxmUITree = (function () {
         if (this.configuration.clickFilter.toString().toUpperCase().replace(' ', '').split(',').indexOf(target.tagName) >= 0) {
             return false;
         }
-        this.$elements = this.$container.children();
         this.$moveElement = $(element);
+        this.$lockElements = null;
+        if (this.$moveElement.data('locked') == 'true') {
+            var $els = this.$container.children(), 
+                s = $els.index(this.$moveElement) + 1, 
+                e = s,
+                nesting = this.$moveElement.data(this.configuration.nestingDataProperty);
+            this.lockElementsNesting = nesting + 1;
+            while (e < $els.length) {
+                if ($($els.get(e)).data(this.configuration.nestingDataProperty) > nesting) {
+                    e++;
+                } else {
+                    break;
+                }
+            }
+            console.log(e,s);
+            if (e > s) {
+                this.$lockElements = $els.slice(s, e).detach();
+            }
+        }
+        this.$elements = this.$container.children();
         var offset = this.$moveElement.offset(), currentLeft = this.$moveElement.data(this.configuration.nestingDataProperty) * this.configuration.nestingPadding;
         this.moveOffsetX = x - offset.left;
         this.moveOffsetY = y - offset.top;
@@ -630,6 +675,15 @@ var SergsxmUITree = (function () {
         this.destroyShadow();
         this.$moveElement.data(this.configuration.nestingDataProperty, this.currentNesting);
         this.$moveElement.css({top: 0, left: this.currentNesting * this.configuration.nestingPadding, 'z-index': 0});
+        if (this.$lockElements) {
+            this.$lockElements.insertAfter(this.$moveElement);
+            var nestingOffset = this.currentNesting - this.lockElementsNesting, nestingPropName = this.configuration.nestingDataProperty;
+            this.$lockElements.each(function () {
+                var nesting = $(this).data(nestingPropName);
+                $(this).data(nestingPropName, nesting + nestingOffset + 1);
+            });
+            this.$lockElements = null;
+        }
         this.updateElementsNesting(true);
         this.$moveElement = null;
         return true;

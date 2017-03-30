@@ -3,6 +3,7 @@
         <div class="list-group-item" data-nesting="{{item['nesting']}}" data-id="{{item['id']}}">
             <i class="glyphicon glyphicon-move"></i>
             {% if item['url'] != null %}<a href="{{item['url']}}">{{item['title']}}</a>{% else %}{{item['title']}}{% endif %}
+            <button type="button" class="sergsxmui-lock-btn"><i class="glyphicon glyphicon-lock"></i></button>
             {% if (configuration['removeEnabled'] == true) and (readOnly == false) %}
             <button type="button" class="close">&times;</button>    
             {% endif %}
