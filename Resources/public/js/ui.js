@@ -1146,7 +1146,7 @@ var sergsxmUIFunctions = {
         if (($(selector).length) && (ymaps != undefined) && (typeof ymaps === 'object')) {
             ymaps.ready(function () {
                 $(selector).each(function () {
-                    var inputId = '#'+$(this).data('input-id'), latitudeId = '#'+$(this).data('latitude-id'), longitudeId = '#'+$(this).data('longitude-id');
+                    var $input = $(this), inputId = '#'+$(this).data('input-id'), latitudeId = '#'+$(this).data('latitude-id'), longitudeId = '#'+$(this).data('longitude-id');
                     if (($(latitudeId).val() != '') || ($(longitudeId).val() != '')) {
                         center = [$(latitudeId).val(), $(longitudeId).val()];
                     } else {
@@ -1174,7 +1174,11 @@ var sergsxmUIFunctions = {
                                 }
                             }
                         });*/
-                        ymaps.geocode($(this).val(), {
+                        var baseRegion = $input.data('region');
+                        if (baseRegion) {
+                            baseRegion += ' ';
+                        }
+                        ymaps.geocode(baseRegion+$(this).val(), {
                             results: 1
                         }).then(function (res) {
                             var firstGeoObject = res.geoObjects.get(0),
