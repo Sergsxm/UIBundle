@@ -51,6 +51,7 @@ class Standart extends Captcha
             'noise' => false,
             'length' => 6,
             'letters' => '123456789ABCDEFGHIJKLMNPQRSTUVWXYZ',
+            'font' => null,
         );
     }
 
@@ -150,7 +151,7 @@ class Standart extends Captcha
             $x = rand($x, $x + 4);
             $y = ($this->configuration['height'] + $fontSize) / 2;
             $angle = rand(-25, 25);
-            imagettftext($image, $fontSize, $angle, $x, $y, $frontColor, __DIR__.DIRECTORY_SEPARATOR."cfont.ttf", $letter);
+            imagettftext($image, $fontSize, $angle, $x, $y, $frontColor, ($this->configuration['font'] ? $this->configuration['font'] : __DIR__.DIRECTORY_SEPARATOR."cfont.ttf"), $letter);
         }
         if ($this->configuration['noise'] == true) {
             for ($i = 0; $i < 6; $i++) {

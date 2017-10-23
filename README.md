@@ -406,6 +406,7 @@ Type **standart** has following settings:
 | noise          | Enable noise lines                                                                | false                       |
 | length         | Length of text                                                                    | 6                           |
 | letters        | Allowed letters                                                                   | "123456789ABCDEFGHIJKLMNPQRSTUVWXYZ" |
+| font           | TTF font file for captcha letters                                                 | null means internal font    |
 
 ### 2.5. Advanced templating
 
