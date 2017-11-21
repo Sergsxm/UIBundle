@@ -63,7 +63,8 @@ class Standart extends Captcha
  */
     public function validateValue($value)
     {
-        if (($this->getValue() == '') || ($this->getValue() !== strtoupper(trim($value)))) {
+        $strtoupper = (function_exists('mb_strtoupper') ? 'mb_strtoupper' : 'strtoupper');
+        if (($this->getValue() == '') || ($this->getValue() !== $strtoupper(trim($value)))) {
             $this->error = $this->configuration['validateError'];
             return false;
         }
@@ -82,7 +83,11 @@ class Standart extends Captcha
         $value = '';
         $letters = $this->configuration['letters'];
         for ($i = 0; $i < $this->configuration['length']; $i++) {
-            $value .= substr($letters, rand(0, strlen($letters) - 1), 1);
+            if (function_exists('mb_substr')) {
+                $value .= mb_substr($letters, rand(0, mb_strlen($letters) - 1), 1);
+            } else {
+                $value .= substr($letters, rand(0, strlen($letters) - 1), 1);
+            }
         }
         
         return $value;
@@ -145,9 +150,10 @@ class Standart extends Captcha
         $frontColor = imagecolorallocate($image, $r, $g, $b);
         
         imagefill ($image, 0, 0, $backColor);
-        for ($i = 0; $i < strlen($value); $i++) {
-            $letter = substr($value, $i, 1);
-            $x = $this->configuration['width'] / (strlen($value) + 1) * ($i + 0.5);
+        $valueLength = (function_exists('mb_strlen') ? mb_strlen($value) : strlen($value));
+        for ($i = 0; $i < $valueLength; $i++) {
+            $letter = (function_exists('mb_substr') ? mb_substr($value, $i, 1) : substr($value, $i, 1));
+            $x = $this->configuration['width'] / ($valueLength + 1) * ($i + 0.5);
             $x = rand($x, $x + 4);
             $y = ($this->configuration['height'] + $fontSize) / 2;
             $angle = rand(-25, 25);
@@ -181,7 +187,7 @@ class Standart extends Captcha
  */    
     public function getJsValidation($idPrefix)
     {
-        return 'if (!/^[A-Za-z0-9]{'.$this->configuration['length'].'}$/i.test(form["captcha"].value)) {errors["'.$idPrefix.'captcha"] = '.json_encode($this->configuration['validateError']).';}'.self::JS_EOL;
+        return 'if (!/^['.$this->configuration['letters'].']{'.$this->configuration['length'].'}$/i.test(form["captcha"].value)) {errors["'.$idPrefix.'captcha"] = '.json_encode($this->configuration['validateError']).';}'.self::JS_EOL;
     }
     
 }
