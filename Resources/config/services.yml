@@ -13,6 +13,7 @@ parameters:
         address: "Sergsxm\\UIBundle\\FormInputTypes\\Address"
         tag: "Sergsxm\\UIBundle\\FormInputTypes\\Tag"
         category: "Sergsxm\\UIBundle\\FormInputTypes\\Category"
+        email: "Sergsxm\\UIBundle\\FormInputTypes\\Email"
 
     captcha_types:
         standart: "Sergsxm\\UIBundle\\CaptchaTypes\\Standart"

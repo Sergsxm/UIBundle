@@ -210,6 +210,8 @@ Type **text** has following settings:
 | trim                       | Trim value                                                                | false                        |
 | disabled                   | Set field to disabled state                                               | false                        |
 
+Type **email** is same as **text** type with predefined regexp.
+
 Type **textarea** has following settings:
 
 | Parameter                  | Parameter description                                                     | Default value                |
